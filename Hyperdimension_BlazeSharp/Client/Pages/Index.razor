@@ -1,6 +1,11 @@
 ﻿@page "/"
+@inject HttpClient HttpClient
 
 <div>
+    @if (imageList is not null)
+    {
+        <img src="@imageList[0]" class="img-fluid">
+    }
     <div class="bg-darkergrey border border-secondary text-center h5 py-4">
         Defeat the Night Parade of One Hundred Demons using <span class="text-orange">C#</span>
     </div>
@@ -23,6 +28,18 @@
                 Japanese <span class="text-orange">folk</span> beliefs.
             </span>
         </div>
-        <img class="img-fluid col w-75" src="http://japoland.pl/blog/wp-content/uploads/400px-Ikku_Mikosi-nyudo.jpg">
+        @if (imageList is not null)
+        {
+            <img class="img-fluid col w-75" src="@imageList[1]">
+        }
     </div>
 </div>
+
+@code {
+    List<string> imageList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        imageList = await HttpClient.GetFromJsonAsync<List<string>>("staticimages");
+    }
+}
