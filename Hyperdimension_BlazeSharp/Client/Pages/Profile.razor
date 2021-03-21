@@ -1,0 +1,29 @@
+﻿@page "/profile"
+@inject HttpClient HttpClient
+
+<div class="d-flex flex-column">
+    <div class="p-2 d-flex flex-column justify-content-center">
+        <img src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg" class="rounded mx-auto d-block" alt="...">
+        <h4 class="p-2 text-center">Nazwa</h4>
+    </div>
+
+    <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Completed modules</h1>
+    <hr class="mt-2 mb-5">
+
+    <div class="d-flex flex-row p-2">
+        @foreach (var module in completedModules)
+        {
+<div class="card p-2 mw-25">
+    <img class="card-img-top" src="@module.Item1" alt="Card image cap">
+    <div class="card-body"> @module.Item2 </div>
+</div>}
+    </div>
+
+</div>
+
+
+@code { List<Tuple<string, string>> completedModules = new()
+    {
+            new(
+                "https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
+        }; }
