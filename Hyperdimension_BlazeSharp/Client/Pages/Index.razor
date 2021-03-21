@@ -4,7 +4,19 @@
 <div>
     @if (imageList is not null)
     {
-        <img src="@imageList[0]" class="img-fluid">
+        <div class="bg-banner" style="background-image: url(@imageList[0])">
+            <div class="bg-text-overlay">
+                <span class="font-weight-lighter">
+                    "Victory is reserved for those<br />
+                    who are willing to pay its price."
+                </span>
+                <span class="text-orange font-weight-normal" id="suntzu">
+                    <br /><br />
+                    ~ Sun Tzu
+                </span>
+            </div>
+        </div>
+        //<img src="@imageList[0]" class="img-fluid">
     }
     <div class="bg-darkergrey border border-secondary text-center h5 py-4">
         Defeat the Night Parade of One Hundred Demons using <span class="text-orange">C#</span>
