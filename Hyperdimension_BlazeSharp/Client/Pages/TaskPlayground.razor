@@ -1,0 +1,32 @@
+﻿<div class="row">
+    <div class="col">
+        <h4>Task nr: @ID</h4>
+        @if (instruction is null)
+        {
+            <h3>Loading...</h3>
+        }
+        else
+        {
+            @instruction
+        }
+    </div>
+    <div class="col">
+        Editor
+    </div>
+</div>
+
+@code {
+    private string constInstruction = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu libero eu tellus ultrices condimentum. Mauris ultrices vel magna et efficitur. Proin commodo odio sed nisi aliquet, eu consequat risus vehicula. Quisque laoreet neque ut hendrerit pharetra. Sed laoreet sed ex nec rutrum. Maecenas faucibus aliquam eros sit amet cursus. Ut id commodo magna. Vivamus pretium mauris sapien, sed laoreet ipsum dignissim ut. Fusce ut libero ut purus bibendum molestie in vehicula mi. Maecenas aliquet faucibus quam eu ornare.";
+    private string instruction = string.Empty;
+
+
+    [Parameter] public int ID { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ID == 1 || ID == 2)
+        {
+            instruction = constInstruction;
+        }
+    }
+}

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hyperdimension_BlazeSharp.Server", "Server\Hyperdimension_BlazeSharp.Server.csproj", "{5F02C13A-E6A1-46E7-B513-4A61532C381D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hyperdimension_BlazeSharp.Server", "Server\Hyperdimension_BlazeSharp.Server.csproj", "{5F02C13A-E6A1-46E7-B513-4A61532C381D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hyperdimension_BlazeSharp.Client", "Client\Hyperdimension_BlazeSharp.Client.csproj", "{2E18AA30-574B-4BBB-BC94-238C6854DFEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hyperdimension_BlazeSharp.Client", "Client\Hyperdimension_BlazeSharp.Client.csproj", "{2E18AA30-574B-4BBB-BC94-238C6854DFEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hyperdimension_BlazeSharp.Shared", "Shared\Hyperdimension_BlazeSharp.Shared.csproj", "{02FAD66E-5427-4599-ABFE-2489EF508051}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hyperdimension_BlazeSharp.Shared", "Shared\Hyperdimension_BlazeSharp.Shared.csproj", "{02FAD66E-5427-4599-ABFE-2489EF508051}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
