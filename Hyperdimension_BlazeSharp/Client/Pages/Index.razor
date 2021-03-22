@@ -23,27 +23,31 @@
         Defeat the Night Parade of One Hundred Demons using <span class="text-orange">C#</span>
     </div>
     <div class="row py-3 bg-lightergrey border border-secondary">
-        <span class="text-orange col-sm-6 text-right text-sm-center display-1 font-weight-bold pr-1">
+        <div class="col-md-4"></div>
+        <span class="text-orange col-md-2 col-sm-12 col-12 text-md-left text-sm-center text-center display-1 font-weight-bold pr-1">
             C#
         </span>
-        <div class="col-sm-4 text-left text-sm-center d-flex flex-column align-self-center">
-            <span class="font-weight-normal p-2">Sharpen your C# coding skills</span>
+        <div class="col-md-6 col-sm-12 col-12 text-sm-center text-md-left text-center d-flex flex-column align-self-center">
+            <span class="font-weight-normal p-2 h4">Sharpen your C# coding skills</span>
             <span class="font-weight-light p-2">Solve tasks to get experience</span>
         </div>
     </div>
-    <div class="bg-white row py-3">
-        <div class="text-right col">
-            <span class="font-weight-normal p-2">
-                Broaden your cultural horizons
+    <div class="bg-white row py-4">
+        <div class="col-md-3"></div>
+        <div class="col-md-3 col-8 text-left py-5">
+            <span class="font-weight-normal py-5 h4">
+                Broaden your cultural horizons<br />
             </span>
-            <span class="font-weight-light p-2">
-                Each task is preceded by a story about<br>
+            <span class="font-weight-light">
+                Each task is preceded by a story about<br />
                 Japanese <span class="text-orange">folk</span> beliefs.
             </span>
         </div>
         @if (imageList is not null)
         {
-            <img class="img-fluid col w-75" src="@imageList[1]">
+            <div class="col-md-6 col-4 pl-sm-5 bg-panel bg-right" style="background-image: url( @imageList[1] );">
+
+            </div>
         }
     </div>
 </div>
