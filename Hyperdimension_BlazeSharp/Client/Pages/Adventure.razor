@@ -1,0 +1,25 @@
+﻿@page "/adventure"
+@inject HttpClient HttpClient
+
+<div class="list-group">
+    <a href="#" class="list-group-item list-group-item-action active">
+        Parts
+    </a>
+    @if (tutorials.Count == 0)
+    {
+        <h4>Loading...</h4>
+    }
+    else
+    {
+        foreach (var tutorial in tutorials)
+        {
+            <a href="@("TaskContainer/"+tutorial.Key)" class="list-group-item list-group-item-action">@tutorial.Value</a>
+        }
+    }
+</div>
+
+@code {
+    List<KeyValuePair<int, string>> tutorials = new() { new(4, "one"), new(5, "two"), new(6, "3") };
+
+
+}
