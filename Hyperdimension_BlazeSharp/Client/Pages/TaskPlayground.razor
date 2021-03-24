@@ -64,9 +64,14 @@ else
 
     protected override void OnInitialized()
     {
-        if (ID == 1 || ID == 2)
+        if (ID == 1)
         {
             instruction = constInstruction;
+        }
+
+        if(ID == 2)
+        {
+            instruction = "Make the program output Hell World! instead of Hello World!";
         }
 
         if (ID == 4 || ID == 5 || ID == 6)
@@ -75,9 +80,28 @@ else
         }
     }
 
-    private void Execute()
+    private async Task Execute()
     {
-        output.Add("Hello World!");
+        var tmp = await _editor.GetValue();
+        var outputText = string.Empty;
+        bool isPassed = false;
+
+        var match = System.Text.RegularExpressions.Regex.Match(tmp, @"Console.WriteLine\(""(.*)""\);");
+        outputText = match.Groups[1].Value;
+
+        if (ID == 2)
+        {
+            if (outputText == "Hell World!")
+            {
+                isPassed = true;
+            }
+        }
+        output.Add(outputText);
+
+        if(isPassed)
+        {
+            output.Add("Passed, good job!");
+        }
     }
 
     private void ChangeEditorPosition()
