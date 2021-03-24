@@ -51,6 +51,6 @@
 
     .bg-panel {
         background-size: contain;
-        height: auto;
+        height: 12rem;
     }
 }
