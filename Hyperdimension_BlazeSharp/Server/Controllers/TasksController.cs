@@ -35,8 +35,8 @@ namespace BlazeSharpPlayground
 
             new() { Id = "9e4ef438-bb2f-44e7-bf27-07103c2c31cf",
             ModuleId = "e7d97879-a1cd-47e0-ace2-2b6911e9bc89",
-            Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec pharetra dui",
-            Title = "Task nr 1",
+            Description = "Make the program output Hell World! instead of Hello World!",
+            Title = "Task nr 2",
             InitialCode = @"using System;
 namespace BlazeSharpPlayground
 {
@@ -87,8 +87,8 @@ namespace BlazeSharpPlayground
                 {
                     Id = "9e4ef438-bb2f-44e7-bf27-07103c2c31cf",
                     ModuleId = "e7d97879-a1cd-47e0-ace2-2b6911e9bc89",
-                    Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec pharetra dui",
-                    Title = "Task nr 1",
+                    Description = "Make the program output Hell World! instead of Hello World!",
+                    Title = "Task nr 2",
                     InitialCode = @"using System;
 namespace BlazeSharpPlayground
 {
