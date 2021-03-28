@@ -18,16 +18,27 @@
         }
     </div>
     <div class="@editorPosition col-12">
-        <button type="button" class="btn btn-outline-orange float-right d-md-block d-none" @onclick="ChangeEditorPosition">Change Position</button>
-        <button type="button" class="btn btn-outline-orange float-right" @onclick="Execute">Execute</button>
-        Editor
-        <div class="row">
+        <div class="row mb-2">
             <div class="col">
-                @Code
+                <select class="custom-select" @onchange="ChangeTheme">
+                    <option value="vs">Visual Studio</option>
+                    <option value="vs-dark">Visual Studio Dark</option>
+                    <option value="hc-black">High Contrast Black</option>
+                </select>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-outline-orange float-right" @onclick="Execute">Execute</button>
+                <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="ChangeEditorPosition">Change Position</button>
             </div>
         </div>
         <div class="row">
-            <div class="row-4">
+            <div class="col">
+                <MonacoEditor Id="monaco-editor" @ref="_editor" ConstructionOptions="EditorConstructionOptions" />
+            </div>
+        </div>
+        <div class="row w-100">
+            <p>Output:</p>
+            <div class="col border-top">
                 @foreach (var item in output)
                 {
                     @item <br />
@@ -46,7 +57,6 @@ else
 }
 
 @code {
-    //private string constInstruction = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu libero eu tellus ultrices condimentum. Mauris ultrices vel magna et efficitur. Proin commodo odio sed nisi aliquet, eu consequat risus vehicula. Quisque laoreet neque ut hendrerit pharetra. Sed laoreet sed ex nec rutrum. Maecenas faucibus aliquam eros sit amet cursus. Ut id commodo magna. Vivamus pretium mauris sapien, sed laoreet ipsum dignissim ut. Fusce ut libero ut purus bibendum molestie in vehicula mi. Maecenas aliquet faucibus quam eu ornare.";
     private string instruction = string.Empty;
     private List<string> output = new();
     private Hyperdimension_BlazeSharp.Shared.Task task;
@@ -58,18 +68,8 @@ else
     [Parameter] public string Uuid { get; set; }
     [Parameter] public bool IsAdventure { get; set; } = false;
 
-    //protected override void OnInitialized()
-    //{
-    //    if (ID == 1 || ID == 2)
-    //    {
-    //        instruction = constInstruction;
-    //    }
-
-    //    if (ID == 4 || ID == 5 || ID == 6)
-    //    {
-    //        IsAdventure = true;
-    //    }
-    //}
+    private MonacoEditor _editor { get; set; }
+    private string _code;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,11 +81,42 @@ else
 
     private void Execute()
     {
-        output.Add("output");
+        output.Add("Hello World!");
     }
 
     private void ChangeEditorPosition()
     {
         editorPosition = (editorPosition == "col-md-6" ? "col-md-12" : "col-md-6");
+    }
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "csharp",
+            Value = @"using System;
+
+namespace BlazeSharpPlayground
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine(""Hello World!"");
+        }
+    }
+}"
+        };
+    }
+
+    private async Task ChangeTheme(ChangeEventArgs e)
+    {
+        await MonacoEditor.SetTheme(e.Value.ToString());
+    }
+
+    private async Task GetValue()
+    {
+        _code = await _editor.GetValue();
     }
 }

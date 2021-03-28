@@ -75,3 +75,7 @@ a, .btn-link {
 .btn-outline-orange:not(:disabled):not(.disabled).active:focus,
 .btn-outline-orange:not(:disabled):not(.disabled):active:focus,.show>
 .btn-outline-orange.dropdown-toggle:focus{box-shadow:0 0 0 .2rem rgba(0,123,255,.5)}
+
+#monaco-editor {
+    height: 400px;
+}
