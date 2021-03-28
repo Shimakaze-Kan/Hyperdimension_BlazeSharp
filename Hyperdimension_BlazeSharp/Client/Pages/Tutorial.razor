@@ -1,25 +1,34 @@
 ﻿@page "/tutorial"
 @inject HttpClient HttpClient
 
-<div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action active">
-        Parts
-    </a>
-    @if (tutorials.Count == 0)
+
+@if (modulesWithTasks is null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    @foreach (var module in modulesWithTasks)
     {
-        <h4>Loading...</h4>
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action active">
+                @module.Module.Title
+            </a>
+
+            @foreach (var task in module.Tasks)
+            {
+                <a href="@("TaskContainer/" + task.Id)" class="list-group-item list-group-item-action">@task.Title</a>
+            }
+
+        </div>
     }
-    else
-    {
-        foreach (var tutorial in tutorials)
-        {
-            <a href="@("TaskContainer/"+tutorial.Key)" class="list-group-item list-group-item-action">@tutorial.Value</a>
-        }
-    }
-</div>
+}
 
 @code {
-    List<KeyValuePair<int, string>> tutorials = new() { new(1, "first"), new(2, "second"), new(3, "third") };
+    List<Hyperdimension_BlazeSharp.Shared.ModuleWithTasks> modulesWithTasks;
 
-
+    protected override async Task OnInitializedAsync()
+    {
+        modulesWithTasks = await HttpClient.GetFromJsonAsync<List<Hyperdimension_BlazeSharp.Shared.ModuleWithTasks>>("modules/list");
+    }
 }

@@ -1,6 +1,13 @@
-﻿<div class="row">
+﻿@inject HttpClient HttpClient
+
+<div class="row">
     <div class="@editorPosition col-12">
-        <h4>Task nr: @ID</h4>
+        
+        @if (task is not null)
+        {
+            <h4>@task.Title</h4>
+        }
+
         @if (instruction is null)
         {
             <h3>Loading...</h3>
@@ -16,7 +23,7 @@
         Editor
         <div class="row">
             <div class="col">
-                code here
+                @Code
             </div>
         </div>
         <div class="row">
@@ -39,26 +46,37 @@ else
 }
 
 @code {
-    private string constInstruction = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu libero eu tellus ultrices condimentum. Mauris ultrices vel magna et efficitur. Proin commodo odio sed nisi aliquet, eu consequat risus vehicula. Quisque laoreet neque ut hendrerit pharetra. Sed laoreet sed ex nec rutrum. Maecenas faucibus aliquam eros sit amet cursus. Ut id commodo magna. Vivamus pretium mauris sapien, sed laoreet ipsum dignissim ut. Fusce ut libero ut purus bibendum molestie in vehicula mi. Maecenas aliquet faucibus quam eu ornare.";
+    //private string constInstruction = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu libero eu tellus ultrices condimentum. Mauris ultrices vel magna et efficitur. Proin commodo odio sed nisi aliquet, eu consequat risus vehicula. Quisque laoreet neque ut hendrerit pharetra. Sed laoreet sed ex nec rutrum. Maecenas faucibus aliquam eros sit amet cursus. Ut id commodo magna. Vivamus pretium mauris sapien, sed laoreet ipsum dignissim ut. Fusce ut libero ut purus bibendum molestie in vehicula mi. Maecenas aliquet faucibus quam eu ornare.";
     private string instruction = string.Empty;
     private List<string> output = new();
+    private Hyperdimension_BlazeSharp.Shared.Task task;
+
+    public string Code { get; set; } = string.Empty;
 
     private string editorPosition = "col-md-6";
 
-    [Parameter] public int ID { get; set; }
+    [Parameter] public string Uuid { get; set; }
     [Parameter] public bool IsAdventure { get; set; } = false;
 
-    protected override void OnInitialized()
-    {
-        if (ID == 1 || ID == 2)
-        {
-            instruction = constInstruction;
-        }
+    //protected override void OnInitialized()
+    //{
+    //    if (ID == 1 || ID == 2)
+    //    {
+    //        instruction = constInstruction;
+    //    }
 
-        if (ID == 4 || ID == 5 || ID == 6)
-        {
-            IsAdventure = true;
-        }
+    //    if (ID == 4 || ID == 5 || ID == 6)
+    //    {
+    //        IsAdventure = true;
+    //    }
+    //}
+
+    protected override async Task OnInitializedAsync()
+    {
+        task = await HttpClient.GetFromJsonAsync<Hyperdimension_BlazeSharp.Shared.Task>("tasks/" + Uuid);
+
+        instruction = task.Description;
+        Code = task.InitialCode;
     }
 
     private void Execute()
