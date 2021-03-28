@@ -1,10 +1,10 @@
-﻿@page "/TaskContainer/{taskId}"
+﻿@page "/TaskContainer/{taskId:guid}"
 @inject HttpClient HttpClient
 
 <h3>Task</h3>
 
-<TaskPlayground Uuid=@TaskID/>
+<TaskPlayground Guid=@TaskID/>
 
 @code {
-    [Parameter] public string TaskID { get; set; }
+    [Parameter] public Guid TaskID { get; set; }
 }

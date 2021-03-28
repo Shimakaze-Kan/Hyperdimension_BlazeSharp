@@ -65,7 +65,7 @@ else
 
     private string editorPosition = "col-md-6";
 
-    [Parameter] public string Uuid { get; set; }
+    [Parameter] public Guid Guid { get; set; }
     [Parameter] public bool IsAdventure { get; set; } = false;
 
     private MonacoEditor _editor { get; set; }
@@ -73,7 +73,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        task = await HttpClient.GetFromJsonAsync<Hyperdimension_BlazeSharp.Shared.Task>("tasks/" + Uuid);
+        task = await HttpClient.GetFromJsonAsync<Hyperdimension_BlazeSharp.Shared.Task>("tasks/" + Guid);
 
         instruction = task.Description;
         Code = task.InitialCode;
