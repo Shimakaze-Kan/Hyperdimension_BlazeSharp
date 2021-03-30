@@ -14,7 +14,7 @@
         }
         else
         {
-            @instruction
+            @((MarkupString) instruction)
         }
     </div>
     <div class="@editorPosition col-12">
@@ -75,7 +75,7 @@ else
     {
         task = await HttpClient.GetFromJsonAsync<Hyperdimension_BlazeSharp.Shared.Task>("tasks/" + Guid);
 
-        instruction = task.Description;
+        instruction = Markdig.Markdown.ToHtml(task.Description);
         Code = task.InitialCode;
         await _editor.SetValue(Code);
     }
