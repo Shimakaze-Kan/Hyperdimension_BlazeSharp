@@ -1,20 +1,20 @@
 ﻿@inject HttpClient HttpClient
 
+
+@if (tasks is not null)
+{
+    <h4>@tasks.Title</h4>
+}
+
 <div class="row">
     <div class="@editorPosition col-12">
-        
-        @if (tasks is not null)
-        {
-            <h4>@tasks.Title</h4>
-        }
-
-        @if (instruction is null)
+        @if (markDownInstruction is null)
         {
             <h3>Loading...</h3>
         }
         else
         {
-            @((MarkupString) instruction)
+            @((MarkupString) markDownInstruction)
         }
     </div>
     <div class="@editorPosition col-12">
@@ -47,37 +47,39 @@
         </div>
     </div>
 </div>
-@if (IsAdventure)
-{
-    <div class="fixed-bottom" style="background-color: #FF9912; color: white">Adventure mode</div>
-}
-else
-{
-    <div class="fixed-bottom" style="background-color: #3A66A7; color: white">Tutorial mode</div>
-}
+
+<div class="fixed-bottom d-flex" style="background-color: @(mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
+    <label class="mr-auto pl-2 mb-0">
+        @mode.ToString() mode
+    </label>
+    @if (tasks?.Points is not null)
+    {
+        <label class="ml-auto pr-2 mb-0">
+            Points: @tasks.Points
+        </label>
+    }
+</div>
+
 
 @code {
-    private string instruction = string.Empty;
+    [Parameter] public Guid Guid { get; set; }
+
     private List<string> output = new();
     private Tasks tasks;
-
-    public string Code { get; set; } = string.Empty;
+    private Mode mode;
 
     private string editorPosition = "col-md-6";
 
-    [Parameter] public Guid Guid { get; set; }
-    [Parameter] public bool IsAdventure { get; set; } = false;
-
+    private string markDownInstruction;
     private MonacoEditor _editor { get; set; }
     private string _code;
 
     protected override async Task OnInitializedAsync()
     {
-        tasks = await HttpClient.GetFromJsonAsync<Tasks>("tasks/" + Guid);
+        tasks = await HttpClient.GetFromJsonAsync<Tasks>($"tasks/{Guid}");
 
-        instruction = Markdig.Markdown.ToHtml(tasks.Description);
-        Code = tasks.InitialCode;
-        await _editor.SetValue(Code);
+        markDownInstruction = Markdig.Markdown.ToHtml(tasks.Description);
+        await _editor.SetValue(tasks.InitialCode);
     }
 
     private void Execute()
@@ -108,5 +110,11 @@ else
     private async Task GetValue()
     {
         _code = await _editor.GetValue();
+    }
+
+    enum Mode
+    {
+        Tutorial,
+        Adventure
     }
 }
