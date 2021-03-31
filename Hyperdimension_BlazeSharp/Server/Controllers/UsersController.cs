@@ -1,4 +1,4 @@
-﻿using Hyperdimension_BlazeSharp.Server.Models;
+﻿using Hyperdimension_BlazeSharp.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;

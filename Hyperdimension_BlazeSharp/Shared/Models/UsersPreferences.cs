@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Hyperdimension_BlazeSharp.Server.Models
+namespace Hyperdimension_BlazeSharp.Shared.Models
 {
     public partial class UsersPreferences
     {

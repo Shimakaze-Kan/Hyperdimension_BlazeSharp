@@ -1,4 +1,3 @@
-using Hyperdimension_BlazeSharp.Server.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,7 +24,10 @@ namespace Hyperdimension_BlazeSharp.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<HblazesharpContext>(options => options.UseMySql(Configuration.GetConnectionString("hblazesharp")));
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
             services.AddRazorPages();
         }
 

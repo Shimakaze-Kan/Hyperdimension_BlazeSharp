@@ -3,9 +3,9 @@
 <div class="row">
     <div class="@editorPosition col-12">
         
-        @if (task is not null)
+        @if (tasks is not null)
         {
-            <h4>@task.Title</h4>
+            <h4>@tasks.Title</h4>
         }
 
         @if (instruction is null)
@@ -59,7 +59,7 @@ else
 @code {
     private string instruction = string.Empty;
     private List<string> output = new();
-    private Hyperdimension_BlazeSharp.Shared.Task task;
+    private Tasks tasks;
 
     public string Code { get; set; } = string.Empty;
 
@@ -73,10 +73,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        task = await HttpClient.GetFromJsonAsync<Hyperdimension_BlazeSharp.Shared.Task>("tasks/" + Guid);
+        tasks = await HttpClient.GetFromJsonAsync<Tasks>("tasks/" + Guid);
 
-        instruction = Markdig.Markdown.ToHtml(task.Description);
-        Code = task.InitialCode;
+        instruction = Markdig.Markdown.ToHtml(tasks.Description);
+        Code = tasks.InitialCode;
         await _editor.SetValue(Code);
     }
 

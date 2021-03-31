@@ -5,21 +5,20 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Hyperdimension_BlazeSharp.Server.Models
+namespace Hyperdimension_BlazeSharp.Shared.Models
 {
-    public partial class Modules
+    public partial class FolkStories
     {
-        public Modules()
+        public FolkStories()
         {
-            Tasks = new HashSet<Tasks>();
+            Modules = new HashSet<Modules>();
         }
 
         public Guid Id { get; set; }
-        public Guid? FolkStoryId { get; set; }
         public string Title { get; set; }
-        public int Mode { get; set; }
+        public string Story { get; set; }
+        public string ImageUrl { get; set; }
 
-        public virtual FolkStories FolkStory { get; set; }
-        public virtual ICollection<Tasks> Tasks { get; set; }
+        public virtual ICollection<Modules> Modules { get; set; }
     }
 }

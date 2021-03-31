@@ -5,16 +5,17 @@ using System.Collections.Generic;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Hyperdimension_BlazeSharp.Server.Models
+namespace Hyperdimension_BlazeSharp.Shared.Models
 {
-    public partial class UsersDetails
+    public partial class Comments
     {
-        public int Id { get; set; }
-        public string AvatarUrl { get; set; }
-        public string About { get; set; }
-        public int Points { get; set; }
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
+        public Guid TaskId { get; set; }
+        public string Text { get; set; }
+        public DateTime SubmittedAt { get; set; }
 
+        public virtual Tasks Task { get; set; }
         public virtual Users User { get; set; }
     }
 }
