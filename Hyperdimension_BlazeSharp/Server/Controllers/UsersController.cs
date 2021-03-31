@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,37 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             await System.Threading.Tasks.Task.Delay(1000);
 
             return list.OrderByDescending(x => x.Item2).ToList();
+        }
+
+        [HttpGet("test")]
+        public async Task<ActionResult<Tuple<string,string>>> GetName()
+        {
+            var oldDate = await _db.Users.Where(x => x.Email == "Test@tesat.test122").FirstOrDefaultAsync();
+
+            if(oldDate is not null)
+            {
+                _db.Users.Remove(oldDate);
+            }
+
+            UsersDetails usersDetails = new() { About = "hi" };
+            Users user = new()
+            {
+                Id = Guid.NewGuid(),
+                Email = "Test@tesat.test122",
+                Password = "123",
+                Role = "casual",
+                Source = "qqq",
+                UsersDetails = usersDetails
+            };
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            var id = user.Id;
+
+            var ret = await _db.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            return new Tuple<string, string>(ret.Id.ToString(), ret.Email);
         }
     }
 }
