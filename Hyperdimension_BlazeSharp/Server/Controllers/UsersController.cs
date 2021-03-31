@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hyperdimension_BlazeSharp.Server.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     public class UsersController : Controller
     {
         List<Tuple<string,int>> list = new() { new("user1", 12), new("user1212", 122), new("user1000", 4) };
+        private readonly HblazesharpContext _db;
+
+        public UsersController(HblazesharpContext db)
+        {
+            _db = db;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<Tuple<string, int>>>> GetUsers()
