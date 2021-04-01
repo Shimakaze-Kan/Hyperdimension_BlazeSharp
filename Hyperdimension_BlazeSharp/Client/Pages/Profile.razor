@@ -1,7 +1,9 @@
 ﻿@page "/profile"
 @inject HttpClient HttpClient
+@layout NoPaddingLayout
 
-<div class="d-flex flex-column">
+<div class="bg-banner" style="background-image: url('../img/@banner')"/>
+<div class="d-flex flex-column px-4">
     <div class="p-2 d-flex flex-column justify-content-center">
         <img src="@(user?.UsersDetails.AvatarUrl)" class="rounded mx-auto d-block" alt="...">
         <h4 class="p-2 text-center">@(user?.Email)</h4>
@@ -30,10 +32,12 @@
     };
 
     private Users user;
+    private string banner = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         user = await HttpClient.GetFromJsonAsync<Users>("users/profile");
-
+        var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
+        banner = banners[new Random().Next(0, banners.Length)];
     }
 }
