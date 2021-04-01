@@ -66,5 +66,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return new Tuple<string, string>(ret.Id.ToString(), ret.Email);
         }
+
+        [HttpGet("profile")]
+        public async Task<ActionResult<Users>> GetUser()
+        {
+            return await _db.Users.Include(x => x.UsersDetails).FirstOrDefaultAsync();
+        }
     }
 }

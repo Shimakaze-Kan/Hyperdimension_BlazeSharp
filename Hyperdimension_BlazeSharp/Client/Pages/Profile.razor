@@ -3,8 +3,8 @@
 
 <div class="d-flex flex-column">
     <div class="p-2 d-flex flex-column justify-content-center">
-        <img src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg" class="rounded mx-auto d-block" alt="...">
-        <h4 class="p-2 text-center">Nazwa</h4>
+        <img src="@(user?.UsersDetails.AvatarUrl)" class="rounded mx-auto d-block" alt="...">
+        <h4 class="p-2 text-center">@(user?.Email)</h4>
     </div>
 
     <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Completed modules</h1>
@@ -22,8 +22,18 @@
 </div>
 
 
-@code { List<Tuple<string, string>> completedModules = new()
+@code { 
+    List<Tuple<string, string>> completedModules = new()
     {
-            new(
-                "https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
-        }; }
+        new(
+                    "https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
+    };
+
+    private Users user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await HttpClient.GetFromJsonAsync<Users>("users/profile");
+
+    }
+}
