@@ -10,13 +10,6 @@
     color: #C65938;
 }
 
-.bg-banner {
-    width: 100%;
-    background-size: cover;
-    min-height: 200px;
-    position: relative;
-}
-
 .bg-text-overlay {
     position: absolute;
     left: 8%;
@@ -39,11 +32,7 @@
         background: rgba(0,0,0, 0.5);
         padding: 0.2rem;
         color: white;
-    }
-
-    .bg-banner {
-        background-position: right;
-    }
+    }    
 
     #suntzu {
         text-shadow: 0.1rem 0.1rem 0.05rem white;

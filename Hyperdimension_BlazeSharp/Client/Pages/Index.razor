@@ -3,22 +3,19 @@
 @layout IndexLayout
 
 <div>
-    @if (imageList is not null)
-    {
-        <div class="bg-banner" style="background-image: url(@imageList[0])">
-            <div class="bg-text-overlay">
-                <span class="font-weight-lighter">
-                    "Victory is reserved for those<br />
-                    who are willing to pay its price."
-                </span>
-                <span class="text-orange font-weight-normal" id="suntzu">
-                    <br /><br />
-                    ~ Sun Tzu
-                </span>
-            </div>
+    <div class="bg-banner" style="background-image: url('../img/sam.jpg')">
+        <div class="bg-text-overlay">
+            <span class="font-weight-lighter">
+                "Victory is reserved for those<br />
+                who are willing to pay its price."
+            </span>
+            <span class="text-orange font-weight-normal" id="suntzu">
+                <br /><br />
+                ~ Sun Tzu
+            </span>
         </div>
-        //<img src="@imageList[0]" class="img-fluid">
-    }
+    </div>
+
     <div class="bg-darkergrey border border-secondary text-center h5 py-4 m-0">
         Defeat the Night Parade of One Hundred Demons using <span class="text-orange">C#</span>
     </div>
@@ -43,20 +40,8 @@
                 Japanese <span class="text-orange">folk</span> beliefs.
             </span>
         </div>
-        @if (imageList is not null)
-        {
-            <div class="col-md-7 col-12 pl-sm-5 bg-panel bg-right" style="background-image: url( @imageList[1] );">
+        <div class="col-md-7 col-12 pl-sm-5 bg-panel bg-right" style="background-image: url('../img/nyudo.jpg' );">
 
-            </div>
-        }
+        </div>
     </div>
 </div>
-
-@code {
-    List<string> imageList;
-
-    protected override async Task OnInitializedAsync()
-    {
-        imageList = await HttpClient.GetFromJsonAsync<List<string>>("staticimages");
-    }
-}

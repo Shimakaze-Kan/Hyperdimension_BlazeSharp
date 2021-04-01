@@ -79,3 +79,16 @@ a, .btn-link {
 #monaco-editor {
     height: 400px;
 }
+
+.bg-banner {
+    width: 100%;
+    background-size: cover;
+    min-height: 200px;
+    position: relative;
+}
+
+@media only screen and (min-width : 1224px) {
+    .bg-banner {
+        background-position: right;
+    }
+}
