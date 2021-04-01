@@ -1,11 +1,20 @@
 ﻿@page "/profile"
 @inject HttpClient HttpClient
 
-<div class="d-flex flex-column">
-    <div class="p-2 d-flex flex-column justify-content-center">
-        <img src="@(user?.UsersDetails.AvatarUrl)" class="rounded mx-auto d-block" alt="...">
-        <h4 class="p-2 text-center">@(user?.Email)</h4>
+<div class="bg-banner" style="background-image: url('../img/@banner')" />
+<div class="d-flex flex-column px-4">
+    <div class="p-2 d-flex flex-column flex-sm-row">
+        <img src="@(user?.UsersDetails.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
+        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(user?.Email)</h4>
     </div>
+
+    @if (user?.UsersDetails.About is not null)
+    {
+        <div class="container-fluid py-2 my-3 rounded bg-lightergrey">
+            <span class="pb-2 h3">About</span><br />
+            <span>@user.UsersDetails.About</span>
+        </div>
+    }
 
     <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Completed modules</h1>
     <hr class="mt-2 mb-5">
@@ -27,7 +36,7 @@
     List<Tuple<string, string>> completedModules = new()
     {
             new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
-    };
+        };
 
     private Users user;
 
