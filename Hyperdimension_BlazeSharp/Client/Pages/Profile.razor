@@ -13,20 +13,20 @@
     <div class="d-flex flex-row p-2">
         @foreach (var module in completedModules)
         {
-<div class="card p-2 mw-25">
-    <img class="card-img-top" src="@module.Item1" alt="Card image cap">
-    <div class="card-body"> @module.Item2 </div>
-</div>}
+            <div class="card p-2 mw-25">
+                <img class="card-img-top" src="@module.Item1" alt="Card image cap">
+                <div class="card-body"> @module.Item2 </div>
+            </div>
+        }
     </div>
 
 </div>
 
 
-@code { 
+@code {
     List<Tuple<string, string>> completedModules = new()
     {
-        new(
-                    "https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
+            new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
     };
 
     private Users user;

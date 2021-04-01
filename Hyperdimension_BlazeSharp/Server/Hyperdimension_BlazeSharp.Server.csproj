@@ -25,5 +25,9 @@
     <ProjectReference Include="..\Shared\Hyperdimension_BlazeSharp.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Uploads\Images\" />
+  </ItemGroup>
+
 
 </Project>
