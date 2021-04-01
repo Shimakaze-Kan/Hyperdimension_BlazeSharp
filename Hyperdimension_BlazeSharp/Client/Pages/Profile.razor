@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 @inject HttpClient HttpClient
+@layout NoPaddingLayout
 
 <div class="bg-banner" style="background-image: url('../img/@banner')" />
 <div class="d-flex flex-column px-4">
@@ -35,14 +36,16 @@
 @code {
     List<Tuple<string, string>> completedModules = new()
     {
-            new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
-        };
+        new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
+    };
 
     private Users user;
+    private string banner = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         user = await HttpClient.GetFromJsonAsync<Users>("users/profile");
-
+        var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
+        banner = banners[new Random().Next(0, banners.Length)];
     }
 }
