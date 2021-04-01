@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Shared
 {
-    public class ModuleWithTasks
+    public class UsersMinimal
     {
-        public Module Module { get; set; }
-        public List<Shared.Task> Tasks { get; set; }
+        public Guid Id { get; set; }
+        public string Email { get; set; }
+        public int Points { get; set; }
     }
 }
