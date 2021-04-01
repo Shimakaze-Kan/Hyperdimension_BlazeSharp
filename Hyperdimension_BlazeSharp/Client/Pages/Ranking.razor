@@ -13,8 +13,8 @@
         @foreach (var (user,index) in RankingList.Select((value, i) => (value, i+1)))
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <strong>@index</strong> @user.Item1
-                <span class="badge badge-primary badge-pill">Points: @user.Item2</span>
+                <strong>@index</strong> @user.Email
+                <span class="badge badge-primary badge-pill">Points: @user.Points</span>
             </li>
         }
     }
@@ -22,11 +22,11 @@
 
 @code {
 
-    public List<Tuple<string, int>> RankingList { get; set; }
+    public List<UsersMinimal> RankingList { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        RankingList = await HttpClient.GetFromJsonAsync<List<Tuple<string, int>>>("users/ranking");
+        RankingList = await HttpClient.GetFromJsonAsync<List<UsersMinimal>>("users/ranking");
     }
 
 }

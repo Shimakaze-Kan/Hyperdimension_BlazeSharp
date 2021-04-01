@@ -1,4 +1,5 @@
 ﻿using Hyperdimension_BlazeSharp.Shared.Models;
+using Hyperdimension_BlazeSharp.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,19 +22,18 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Tuple<string, int>>>> GetUsers()
+        public async Task<ActionResult<List<UsersMinimal>>> GetUsers()
         {
-            await System.Threading.Tasks.Task.Delay(1000);
-
-            return list;
+            return await _db.Users.Include(x => x.UsersDetails)
+                .Select(x => new UsersMinimal { Id = x.Id, Email = x.Email, Points = x.UsersDetails.Points }).ToListAsync();
         }
 
         [HttpGet("ranking")]
-        public async Task<ActionResult<List<Tuple<string, int>>>> GetRanking()
+        public async Task<ActionResult<List<UsersMinimal>>> GetRanking()
         {
-            await System.Threading.Tasks.Task.Delay(1000);
-
-            return list.OrderByDescending(x => x.Item2).ToList();
+            return (await _db.Users.Include(x => x.UsersDetails)
+                .Select(x => new UsersMinimal { Id = x.Id, Email = x.Email, Points = x.UsersDetails.Points }).ToListAsync())
+                .OrderByDescending(m => m.Points).ToList();
         }
 
         [HttpGet("test")]
