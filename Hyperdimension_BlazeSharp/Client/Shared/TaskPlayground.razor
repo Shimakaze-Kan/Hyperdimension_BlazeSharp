@@ -1,5 +1,6 @@
 ﻿@inject HttpClient HttpClient
-
+@inject NavigationManager NavigationManager
+@inject CompileService CompileService
 
 @if (tasks is not null)
 {
@@ -39,10 +40,7 @@
         <div class="row w-100">
             <p>Output:</p>
             <div class="col border-top">
-                @foreach (var item in output)
-                {
-                    @item <br />
-                }
+                @((MarkupString) output.Replace("\n","<br />"))
             </div>
         </div>
     </div>
@@ -64,7 +62,8 @@
 @code {
     [Parameter] public Guid Guid { get; set; }
 
-    private List<string> output = new();
+    private string output = string.Empty;
+    string CompileText { get; set; }
     private Tasks tasks;
     private Mode mode;
 
@@ -74,17 +73,43 @@
     private MonacoEditor _editor { get; set; }
     private string _code;
 
+
+
     protected override async Task OnInitializedAsync()
     {
         tasks = await HttpClient.GetFromJsonAsync<Tasks>($"tasks/{Guid}");
 
         markDownInstruction = Markdig.Markdown.ToHtml(tasks.Description);
         await _editor.SetValue(tasks.InitialCode);
+
     }
 
-    private void Execute()
+    private async void Execute()
     {
-        output.Add("Hello World!");
+        try
+        {
+            CompileService.CompileLog = new List<string>();
+            var code = await _editor.GetValue();
+
+            var index = code.IndexOf("class Program");
+
+            code = code.Insert(code.IndexOf('{', index)+1, tasks.TestCode);
+            code = code.Insert(0, "using System.Text;using System.IO;");
+
+            Console.WriteLine(code);
+            output = await CompileService.CompileAndRun(code);
+        }
+        catch (Exception e)
+        {
+            CompileService.CompileLog.Add(e.Message);
+            CompileService.CompileLog.Add(e.StackTrace);
+            throw;
+        }
+        finally
+        {
+            CompileText = string.Join("\r\n", CompileService.CompileLog);
+            this.StateHasChanged();
+        }
     }
 
     private void ChangeEditorPosition()

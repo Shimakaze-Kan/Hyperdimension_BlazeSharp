@@ -1,3 +1,4 @@
+using Hyperdimension_BlazeSharp.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,7 @@ namespace Hyperdimension_BlazeSharp.Server
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
-            services.AddRazorPages();
+            services.AddRazorPages();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
