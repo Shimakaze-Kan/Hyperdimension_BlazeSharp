@@ -51,6 +51,10 @@ namespace Hyperdimension_BlazeSharp.Client
                         MetadataReference.CreateFromStream(
                             await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/" + name)));
                 }
+
+                references.Add(
+                        MetadataReference.CreateFromStream(
+                            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/mscorlib.dll")));
             }
         }
 
