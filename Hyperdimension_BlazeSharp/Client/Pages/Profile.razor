@@ -1,4 +1,5 @@
 ﻿@page "/profile"
+@page "/profile/{userId:guid}"
 @inject HttpClient HttpClient
 @layout NoPaddingLayout
 
@@ -39,12 +40,16 @@
         new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
     };
 
+    [Parameter]
+    public Guid UserId { get; set; } = Guid.Empty;
+
     private Users user;
     private string banner = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        user = await HttpClient.GetFromJsonAsync<Users>("users/profile");
+        var tmpGuid = UserId == Guid.Empty ? Guid.Parse("4b2d2ef1-d094-4f4e-ae32-b6450b8f18f4") : UserId;
+        user = await HttpClient.GetFromJsonAsync<Users>($"users/profile/{tmpGuid}");
         var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
         banner = banners[new Random().Next(0, banners.Length)];
     }
