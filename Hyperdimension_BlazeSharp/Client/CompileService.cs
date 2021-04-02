@@ -73,8 +73,6 @@ namespace Hyperdimension_BlazeSharp.Client
                 return null;
             }
 
-            CompileLog.Add("Parse SyntaxTree Success");
-
             CSharpCompilation compilation = CSharpCompilation.Create("BlazeSharpPlayground", new[] { syntaxTree },
                 references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -92,8 +90,6 @@ namespace Hyperdimension_BlazeSharp.Client
                     CompileLog.Add("Compilation error");
                     return null;
                 }
-
-                CompileLog.Add("Compilation success!");
 
                 stream.Seek(0, SeekOrigin.Begin);
 

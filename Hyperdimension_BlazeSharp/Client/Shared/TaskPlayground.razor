@@ -40,7 +40,17 @@
         <div class="row w-100">
             <p>Output:</p>
             <div class="col border-top">
-                @((MarkupString) output.Replace("\n","<br />"))
+                @if (CompileText is not null && CompileText.Any(x => x.Contains("error")))
+                {
+                    foreach (var error in CompileText)
+                    {
+                        <span class="text-danger">@((MarkupString) (error + "<br />"))</span>
+                    }
+                }
+                else
+                {
+                    @((MarkupString)output.Replace("\n", "<br />"))
+                }
             </div>
         </div>
     </div>
@@ -63,7 +73,7 @@
     [Parameter] public Guid Guid { get; set; }
 
     private string output = string.Empty;
-    string CompileText { get; set; }
+    List<string> CompileText { get; set; }
     private Tasks tasks;
     private Mode mode;
 
@@ -107,7 +117,7 @@
         }
         finally
         {
-            CompileText = string.Join("\r\n", CompileService.CompileLog);
+            CompileText = CompileService.CompileLog;
             this.StateHasChanged();
         }
     }
