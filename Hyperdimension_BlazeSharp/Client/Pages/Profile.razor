@@ -18,16 +18,21 @@
         </div>
     }
 
-    <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0">Completed modules</h1>
-    <hr class="mt-2 mb-5">
 
-    <div class="d-flex flex-row p-2">
-        @foreach (var module in completedModules)
+    <div class="list-group mt-4">
+        <a href="#" class="list-group-item list-group-item-action active">
+            User's history
+        </a>
+        @if (userTaskHistories is not null)
         {
-            <div class="card p-2 mw-25">
-                <img class="card-img-top" src="@module.Item1" alt="Card image cap">
-                <div class="card-body"> @module.Item2 </div>
-            </div>
+            @foreach (var task in userTaskHistories)
+            {
+                <a href="@($"taskcontainer/{task.TaskId}")" class="list-group-item list-group-item-action">@task.Task.Title</a>
+            }
+        }
+        else
+        {
+            <text>Loading...</text>
         }
     </div>
 
@@ -35,16 +40,13 @@
 
 
 @code {
-    List<Tuple<string, string>> completedModules = new()
-    {
-        new("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg", "first module")
-    };
 
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
 
     private Users user;
     private string banner = string.Empty;
+    private IEnumerable<UserTaskHistory> userTaskHistories;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,5 +54,6 @@
         user = await HttpClient.GetFromJsonAsync<Users>($"users/profile/{tmpGuid}");
         var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
         banner = banners[new Random().Next(0, banners.Length)];
+        userTaskHistories = await HttpClient.GetFromJsonAsync<IEnumerable<UserTaskHistory>>($"tasks/history/{tmpGuid}");
     }
 }
