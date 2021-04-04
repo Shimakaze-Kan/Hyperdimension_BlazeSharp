@@ -1,6 +1,7 @@
 ﻿@inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject CompileService CompileService
+@inject TasksHistoryDraft TasksHistoryDraft
 
 @if (tasks is not null)
 {
@@ -30,6 +31,10 @@
             <div class="col">
                 <button type="button" class="btn btn-outline-orange float-right" @onclick="Execute">Execute</button>
                 <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="ChangeEditorPosition">Change Position</button>
+                @if (isPreviousVersion)
+                {
+                    <button type="button" class="btn btn-outline-orange float-right" @onclick="RestorePreviousVersion">Restore</button>
+                }
             </div>
         </div>
         <div class="row">
@@ -82,7 +87,7 @@
     private string markDownInstruction;
     private MonacoEditor _editor { get; set; }
     private string _code;
-
+    private bool isPreviousVersion = false;
 
 
     protected override async Task OnInitializedAsync()
@@ -91,19 +96,26 @@
 
         markDownInstruction = Markdig.Markdown.ToHtml(tasks.Description);
         await _editor.SetValue(tasks.InitialCode);
+    }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        isPreviousVersion = TasksHistoryDraft.CheckIfDraftExists(Guid);
     }
 
     private async void Execute()
     {
+        var code = await _editor.GetValue();
+        TasksHistoryDraft.AddDraft(new(Guid, code));
+        isPreviousVersion = false;
+
         try
         {
             CompileService.CompileLog = new List<string>();
-            var code = await _editor.GetValue();
 
             var index = code.IndexOf("class Program");
 
-            code = code.Insert(code.IndexOf('{', index)+1, tasks.TestCode);
+            code = code.Insert(code.IndexOf('{', index) + 1, tasks.TestCode);
             code = code.Insert(0, "using System.Text;using System.IO;");
 
             Console.WriteLine(code);
@@ -145,6 +157,17 @@
     private async Task GetValue()
     {
         _code = await _editor.GetValue();
+    }
+
+    private async Task SetValue(string value)
+    {
+        await _editor.SetValue(value);
+    }
+
+    private async Task RestorePreviousVersion()
+    {
+        await SetValue(TasksHistoryDraft.GetDraft(Guid));
+        isPreviousVersion = false;
     }
 
     enum Mode
