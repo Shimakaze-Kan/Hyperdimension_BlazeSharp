@@ -100,3 +100,7 @@ a, .btn-link {
         background-position: right;
     }
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}

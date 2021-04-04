@@ -1,0 +1,10 @@
+﻿.sidebar {
+    background-color: #2b2b2b;    
+    display: flex;
+    flex-direction: column;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+}

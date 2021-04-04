@@ -3,9 +3,22 @@
 <div class="page">
 
     <div class="main">
-        <NavMenu />
-        <div class="content px-4">
+        <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
+        <div class="content px-4 position-relative">
             @Body
+            @if (showingTasksHistoryManager)
+            {
+                <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
+            }
         </div>
     </div>
 </div>
+
+@code {
+    public bool showingTasksHistoryManager;
+
+    public void ChangeVisibilityOfTasksHistoryManagerDialog()
+    {
+        showingTasksHistoryManager = !showingTasksHistoryManager;
+    }
+}

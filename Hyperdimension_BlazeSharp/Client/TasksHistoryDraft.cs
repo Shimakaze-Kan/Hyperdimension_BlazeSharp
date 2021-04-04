@@ -7,9 +7,15 @@ namespace Hyperdimension_BlazeSharp.Client
 {
     public class TasksHistoryDraft
     {
-        public Dictionary<Guid, string> Drafts { get; set; } = new();
+        public class DraftRecord
+        {
+            public string Code { get; set; }
+            public string Title { get; set; }
+        }
 
-        public void AddDraft(KeyValuePair<Guid, string> draft) => Drafts[draft.Key] = draft.Value;
+        public Dictionary<Guid, DraftRecord> Drafts { get; set; } = new();
+
+        public void AddDraft((Guid id, string title, string code) draft) => Drafts[draft.id] = new() { Title = draft.title, Code = draft.code };
 
         public void RemoveDraft(Guid id)
         {
@@ -19,11 +25,11 @@ namespace Hyperdimension_BlazeSharp.Client
             }
         }
 
-        public string GetDraft(Guid id)
+        public string GetDraftCode(Guid id)
         {
-            if (Drafts.TryGetValue(id, out string code))
+            if (Drafts.TryGetValue(id, out DraftRecord record))
             {
-                return code;
+                return record.Code;
             }
             else
             {
@@ -32,5 +38,7 @@ namespace Hyperdimension_BlazeSharp.Client
         }
 
         public bool CheckIfDraftExists(Guid id) => Drafts.TryGetValue(id, out _);
+
+        public int Count() => Drafts.Count;
     }
 }

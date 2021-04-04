@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light navbar-bg-light border border-secondary">
+﻿@inject TasksHistoryDraft TasksHistoryDraft
+
+<nav class="navbar navbar-expand-lg navbar-light navbar-bg-light border border-secondary">
     <a class="navbar-brand" href="">Hyperdimension BlazeSharp</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -32,11 +34,20 @@
                     Ranking
                 </NavLink>
             </li>
+            <li class="nav-item">
+                <div class="nav-link cursor-pointer" @onclick="OnTasksHistoryManagerChangeVisibility">
+                    <span class="oi oi-command"></span>
+                    <span class="badge badge-primary badge-pill">@TasksHistoryDraft.Count()</span>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>
 
 @code {
+
+    [Parameter] public EventCallback OnTasksHistoryManagerChangeVisibility { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;

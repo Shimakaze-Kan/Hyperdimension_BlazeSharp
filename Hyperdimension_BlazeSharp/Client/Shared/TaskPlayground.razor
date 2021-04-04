@@ -106,7 +106,7 @@
     private async void Execute()
     {
         var code = await _editor.GetValue();
-        TasksHistoryDraft.AddDraft(new(Guid, code));
+        TasksHistoryDraft.AddDraft(new(Guid, tasks.Title, code));
         isPreviousVersion = false;
 
         try
@@ -166,7 +166,7 @@
 
     private async Task RestorePreviousVersion()
     {
-        await SetValue(TasksHistoryDraft.GetDraft(Guid));
+        await SetValue(TasksHistoryDraft.GetDraftCode(Guid));
         isPreviousVersion = false;
     }
 
