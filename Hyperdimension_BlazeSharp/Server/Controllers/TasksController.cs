@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hyperdimension_BlazeSharp.Shared.Models;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
@@ -26,9 +27,12 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Tasks>> GetSpecyficTask(Guid id)
+        public async Task<ActionResult<TaskDataPlayground>> GetSpecyficTask(Guid id)
         {
-            var task = await _db.Tasks.FirstOrDefaultAsync(x => x.Id == id);
+            var task = await _db.Tasks.Where(x => x.Id == id)
+                .Select(task => 
+                    new TaskDataPlayground(task.Id, task.Title, task.Points, task.Description, task.InitialCode, task.TestCode))
+                .FirstOrDefaultAsync();
 
             if(task is null)
             {
