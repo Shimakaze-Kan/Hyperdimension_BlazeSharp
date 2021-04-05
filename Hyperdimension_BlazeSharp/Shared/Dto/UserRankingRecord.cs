@@ -8,7 +8,7 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
     public record UserRankingRecord : UserMinimal
     {
-        public Guid Guid { get; }
+        public Guid Guid { get; init; }
 
         public UserRankingRecord(string email, int points, Guid guid)
             : base(email, points) => Guid = guid;

@@ -8,9 +8,9 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
     public record TaskDataPlayground : TaskMinimalWithPoints
     {
-        public string Description { get; }
-        public string InitialCode { get; }
-        public string TestCode { get; }
+        public string Description { get; init; }
+        public string InitialCode { get; init; }
+        public string TestCode { get; init; }
 
         public TaskDataPlayground(Guid guid, string title, int? points, string description, string initialCode, string testCode)
             : base(guid, title, points) => (Description, InitialCode, TestCode) = (description, initialCode, testCode);

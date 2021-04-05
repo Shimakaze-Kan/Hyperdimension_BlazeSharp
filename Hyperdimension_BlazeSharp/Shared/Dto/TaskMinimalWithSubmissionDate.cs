@@ -8,7 +8,7 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
     public record TaskMinimalWithSubmissionDate : TaskMinimal
     {
-        public DateTime SubmittedAt { get; }
+        public DateTime SubmittedAt { get; init; }
 
         public TaskMinimalWithSubmissionDate(Guid guid, string title, DateTime submittedAt)
             : base(guid, title) => SubmittedAt = submittedAt;
