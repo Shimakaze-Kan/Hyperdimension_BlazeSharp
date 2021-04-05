@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
-    public record TaskDataPlayground : TaskMinimal
+    public record TaskDataPlayground : TaskMinimalWithPoints
     {
         public string Description { get; }
         public string InitialCode { get; }

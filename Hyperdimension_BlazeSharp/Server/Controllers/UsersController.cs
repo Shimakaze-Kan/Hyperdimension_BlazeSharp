@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Shared.Models;
 using Hyperdimension_BlazeSharp.Shared;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,10 +30,10 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet("ranking")]
-        public async Task<ActionResult<List<UsersMinimal>>> GetRanking()
+        public async Task<ActionResult<IEnumerable<UserRankingRecord>>> GetRanking()
         {
             return (await _db.Users.Include(x => x.UsersDetails)
-                .Select(x => new UsersMinimal { Id = x.Id, Email = x.Email, Points = x.UsersDetails.Points }).ToListAsync())
+                .Select(x => new UserRankingRecord(x.Email, x.UsersDetails.Points, x.Id)).ToListAsync())
                 .OrderByDescending(m => m.Points).ToList();
         }
 
@@ -68,9 +69,24 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet("profile/{id:guid}")]
-        public async Task<ActionResult<Users>> GetUser(Guid id)
+        public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
         {
-            return await _db.Users.Where(x => x.Id == id).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            var user = await _db.Users.Where(user => user.Id == id)
+                .Include(x => x.UsersDetails)
+                .Include(x => x.UserTaskHistory)
+                .ThenInclude(x => x.Task)
+                .Select(user => new UserProfile(user.Email, user.UsersDetails.Points, 
+                    user.UsersDetails.AvatarUrl, user.UsersDetails.About, 
+                    user.UserTaskHistory
+                        .Select(x => new TaskMinimalWithSubmissionDate(x.TaskId, x.Task.Title, x.SubmittedAt))))
+                .FirstOrDefaultAsync();
+
+            if(user is null)
+            {
+                return NotFound();
+            }
+
+            return user;
         }
     }
 }

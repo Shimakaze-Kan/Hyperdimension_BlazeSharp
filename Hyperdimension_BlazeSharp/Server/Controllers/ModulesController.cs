@@ -34,7 +34,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 .Select(module => 
                     new ModuleWithTasks(module.Title, module.Tasks
                     .Select(task => 
-                        new TaskMinimal(task.Id, task.Title, task.Points)))).ToListAsync();       
+                        new TaskMinimalWithPoints(task.Id, task.Title, task.Points)))).ToListAsync();       
         }
     }
 }

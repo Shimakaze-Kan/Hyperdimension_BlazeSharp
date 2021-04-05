@@ -6,15 +6,15 @@
 <div class="bg-banner" style="background-image: url('../img/@banner')" />
 <div class="d-flex flex-column px-4">
     <div class="p-2 d-flex flex-column flex-sm-row">
-        <img src="@(user?.UsersDetails.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
-        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(user?.Email)</h4>
+        <img src="@(userProfile?.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
+        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(userProfile?.Email)</h4>
     </div>
 
-    @if (user?.UsersDetails.About is not null)
+    @if (userProfile?.About is not null)
     {
         <div class="container-fluid py-2 my-3 rounded bg-lightergrey">
             <span class="pb-2 h3">About</span><br />
-            <span>@user.UsersDetails.About</span>
+            <span>@userProfile.About</span>
         </div>
     }
 
@@ -23,11 +23,11 @@
         <a href="#" class="list-group-item list-group-item-action active">
             User's history
         </a>
-        @if (userTaskHistories is not null)
+        @if (userProfile?.Tasks is not null)
         {
-            @foreach (var task in userTaskHistories)
+            @foreach (var task in userProfile.Tasks)
             {
-                <a href="@($"taskcontainer/{task.TaskId}")" class="list-group-item list-group-item-action">@task.Task.Title</a>
+                <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
             }
         }
         else
@@ -44,16 +44,14 @@
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
 
-    private Users user;
-    private string banner = string.Empty;
-    private IEnumerable<UserTaskHistory> userTaskHistories;
+    private UserProfile userProfile;
+    private string banner = string.Empty;    
 
     protected override async Task OnInitializedAsync()
     {
         var tmpGuid = UserId == Guid.Empty ? Guid.Parse("4b2d2ef1-d094-4f4e-ae32-b6450b8f18f4") : UserId;
-        user = await HttpClient.GetFromJsonAsync<Users>($"users/profile/{tmpGuid}");
+        userProfile = await HttpClient.GetFromJsonAsync<UserProfile>($"users/profile/{tmpGuid}");
         var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
-        banner = banners[new Random().Next(0, banners.Length)];
-        userTaskHistories = await HttpClient.GetFromJsonAsync<IEnumerable<UserTaskHistory>>($"tasks/history/{tmpGuid}");
+        banner = banners[new Random().Next(0, banners.Length)];        
     }
 }
