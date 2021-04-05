@@ -1,4 +1,5 @@
 ﻿using Hyperdimension_BlazeSharp.Shared.Models;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,9 +27,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet("mode/{mode:int}")]
-        public async Task<ActionResult<List<Modules>>> GetModulesWithTasks(int mode)
+        public async Task<ActionResult<IEnumerable<ModuleWithTasks>>> GetModulesWithTasks(int mode)
         {
-            return await _db.Modules.Where(x => x.Mode == mode).Include("Tasks").ToListAsync();        
+            return await _db.Modules.Where(x => x.Mode == mode)
+                .Include(m => m.Tasks)
+                .Select(module => 
+                    new ModuleWithTasks(module.Title, module.Tasks
+                    .Select(task => 
+                        new TaskMinimal(task.Id, task.Title, task.Points)))).ToListAsync();       
         }
     }
 }
