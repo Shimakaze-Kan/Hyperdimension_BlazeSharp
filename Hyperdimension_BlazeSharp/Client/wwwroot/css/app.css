@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
 }
 
 a, .btn-link {
@@ -103,4 +104,8 @@ a, .btn-link {
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+#app {
+    height: 100%;
 }

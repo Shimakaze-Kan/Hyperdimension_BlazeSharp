@@ -1,10 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
+<div class="page h-100">
 
     <div class="main">
         <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
-        <div class="content px-4 position-relative">
+        <div class="content px-4 position-relative h-100">
             @Body
             @if (showingTasksHistoryManager)
             {

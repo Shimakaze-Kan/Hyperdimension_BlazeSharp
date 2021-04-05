@@ -1,10 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits MainLayout
 
-<div class="page">
+<div class="page h-100">
 
     <div class="main">
         <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog"/>
-        <div class="position-relative">
+        <div class="position-relative h-100">
             @Body
             @if (showingTasksHistoryManager)
             {
@@ -13,12 +13,3 @@
         </div>
     </div>
 </div>
-
-@code {
-    public bool showingTasksHistoryManager;
-
-    public void ChangeVisibilityOfTasksHistoryManagerDialog()
-    {
-        showingTasksHistoryManager = !showingTasksHistoryManager;        
-    }
-}
