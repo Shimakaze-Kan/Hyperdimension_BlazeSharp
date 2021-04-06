@@ -19,9 +19,10 @@ namespace Hyperdimension_BlazeSharp.Client
             builder.RootComponents.Add<App>("#app");
             builder.Services.AddSingleton<CompileService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            // TODO: Use HttpClientFactory to eliminate Socket Exhaustion
+            
             builder.Services.AddSingleton<TasksHistoryDraft>();
-            builder.Services.AddSingleton<IProfileViewModel, ProfileViewModel>();
+            builder.Services.AddHttpClient<IProfileViewModel, ProfileViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             await builder.Build().RunAsync();
         }
