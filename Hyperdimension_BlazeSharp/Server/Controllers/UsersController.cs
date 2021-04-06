@@ -1,4 +1,4 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Models;
+﻿using Hyperdimension_BlazeSharp.Server.Models;
 using Hyperdimension_BlazeSharp.Shared;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;

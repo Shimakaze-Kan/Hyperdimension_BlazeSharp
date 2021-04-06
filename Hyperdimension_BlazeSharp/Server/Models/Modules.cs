@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Hyperdimension_BlazeSharp.Server.Models;
+using System;
 using System.Collections.Generic;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Hyperdimension_BlazeSharp.Shared.Models
+namespace Hyperdimension_BlazeSharp.Server.Models
 {
     public partial class Modules
     {

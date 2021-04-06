@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Hyperdimension_BlazeSharp.Shared.Models;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
+using Hyperdimension_BlazeSharp.Server.Models;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
 {
