@@ -1,20 +1,21 @@
 ﻿@page "/profile"
 @page "/profile/{userId:guid}"
-@inject HttpClient HttpClient
 @layout NoPaddingLayout
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject IProfileViewModel _profileViewModel
 
-<div class="bg-banner" style="background-image: url('../img/@banner')" />
+<div class="bg-banner" style="background-image: url('../img/@_profileViewModel.Banner')" />
 <div class="d-flex flex-column px-4">
     <div class="p-2 d-flex flex-column flex-sm-row">
-        <img src="@(userProfile?.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
-        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(userProfile?.Email)</h4>
+        <img src="@(_profileViewModel.UserProfile?.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
+        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(_profileViewModel.UserProfile?.Email)</h4>
     </div>
 
-    @if (userProfile?.About is not null)
+    @if (_profileViewModel.UserProfile?.About is not null)
     {
         <div class="container-fluid py-2 my-3 rounded bg-lightergrey">
             <span class="pb-2 h3">About</span><br />
-            <span>@userProfile.About</span>
+            <span>@_profileViewModel.UserProfile?.About</span>
         </div>
     }
 
@@ -23,9 +24,9 @@
         <a href="#" class="list-group-item list-group-item-action active">
             User's history
         </a>
-        @if (userProfile?.Tasks is not null)
+        @if (_profileViewModel.UserProfile?.Tasks is not null)
         {
-            @foreach (var task in userProfile.Tasks)
+            @foreach (var task in _profileViewModel.UserProfile.Tasks)
             {
                 <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
             }
@@ -44,14 +45,10 @@
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
 
-    private UserProfile userProfile;
-    private string banner = string.Empty;    
-
     protected override async Task OnInitializedAsync()
     {
-        var tmpGuid = UserId == Guid.Empty ? Guid.Parse("4b2d2ef1-d094-4f4e-ae32-b6450b8f18f4") : UserId;
-        userProfile = await HttpClient.GetFromJsonAsync<UserProfile>($"users/profile/{tmpGuid}");
-        var banners = await HttpClient.GetFromJsonAsync<string[]>("img/bg-banners.json");
-        banner = banners[new Random().Next(0, banners.Length)];        
+        _profileViewModel.UserId = UserId == Guid.Empty ? Guid.Parse("4b2d2ef1-d094-4f4e-ae32-b6450b8f18f4") : UserId;
+        await _profileViewModel.GetProfileData();
+        await _profileViewModel.GetBanner();
     }
 }

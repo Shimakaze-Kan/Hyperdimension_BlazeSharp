@@ -1,3 +1,4 @@
+using Hyperdimension_BlazeSharp.Client.ViewModels;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,9 @@ namespace Hyperdimension_BlazeSharp.Client
             builder.RootComponents.Add<App>("#app");
             builder.Services.AddSingleton<CompileService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            // TODO: Use HttpClientFactory to eliminate Socket Exhaustion
             builder.Services.AddSingleton<TasksHistoryDraft>();
+            builder.Services.AddSingleton<IProfileViewModel, ProfileViewModel>();
 
             await builder.Build().RunAsync();
         }
