@@ -1,14 +1,15 @@
 ﻿@page "/tutorial"
-@inject HttpClient HttpClient
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject ILearningPathViewModel _learningPathViewModel
 
 
-@if (modulesWithTasks is null)
+@if (_learningPathViewModel.ModulesWithTasks is null)
 {
     <h4>Loading...</h4>
 }
 else
 {
-    @foreach (var module in modulesWithTasks)
+    @foreach (var module in _learningPathViewModel.ModulesWithTasks)
     {
         <div class="list-group">
             <a href="#" class="list-group-item list-group-item-action active">
@@ -25,10 +26,10 @@ else
 }
 
 @code {
-    IEnumerable<ModuleWithTasks> modulesWithTasks;
 
     protected override async Task OnInitializedAsync()
     {
-        modulesWithTasks = await HttpClient.GetFromJsonAsync<IEnumerable<ModuleWithTasks>>("modules/mode/0");
+        _learningPathViewModel.ModeNumber = 0;
+        await _learningPathViewModel.GetModulesWithTasks();
     }
 }

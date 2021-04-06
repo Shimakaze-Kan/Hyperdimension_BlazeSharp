@@ -23,6 +23,8 @@ namespace Hyperdimension_BlazeSharp.Client
             builder.Services.AddSingleton<TasksHistoryDraft>();
             builder.Services.AddHttpClient<IProfileViewModel, ProfileViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<ILearningPathViewModel, LearningPathViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             await builder.Build().RunAsync();
         }
