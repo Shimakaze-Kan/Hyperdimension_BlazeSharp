@@ -1,96 +1,70 @@
 ﻿@inject NavigationManager NavigationManager
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ITaskPlaygroundViewModel _taskPlaygroundViewModel
-@implements IDisposable
 
 
-@if (_taskPlaygroundViewModel.Title is not null)
-{
-<h4>@_taskPlaygroundViewModel.Title</h4>
-}
-
-<div class="row">
-    <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
-
-        @((MarkupString)(_taskPlaygroundViewModel.Instruction ?? string.Empty))
-
-    </div>
-    <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
-        <div class="row mb-2">
-            <div class="col">
-                <select class="custom-select" @onchange="_taskPlaygroundViewModel.ChangeTheme">
-                    <option value="vs">Visual Studio</option>
-                    <option value="vs-dark">Visual Studio Dark</option>
-                    <option value="hc-black">High Contrast Black</option>
-                </select>
-            </div>
-            <div class="col">
-                <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.Execute">Execute</button>
-                <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="_taskPlaygroundViewModel.ChangeEditorPosition">Change Position</button>
-                @if (_taskPlaygroundViewModel.IsPreviousVersion)
-                {
-                    <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.RestorePreviousVersion">Restore</button>
-                }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <MonacoEditor Id="monaco-editor" @ref="_taskPlaygroundViewModel.Editor" ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
-            </div>
-        </div>
-        <div class="row w-100">
-            <p>Output:</p>
-            <div class="col border-top">
-                @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
-                {
-
-                    <span class="text-danger">@((MarkupString) _taskPlaygroundViewModel.CompileText)</span>
-
-                }
-                else
-                {
-                    @((MarkupString)(_taskPlaygroundViewModel.Output ?? string.Empty))
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="fixed-bottom d-flex" style="background-color: @(_taskPlaygroundViewModel.Mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
-    <label class="mr-auto pl-2 mb-0">
-        @_taskPlaygroundViewModel.Mode.ToString() mode
-    </label>
-    @if (_taskPlaygroundViewModel.Points is not null)
+<PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">
+    @if (_taskPlaygroundViewModel.Title is not null)
     {
-        <label class="ml-auto pr-2 mb-0">
-            Points: @_taskPlaygroundViewModel.Points
+        <h4>@_taskPlaygroundViewModel.Title</h4>
+    }
+
+    <div class="row">
+        <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
+
+            @((MarkupString)(_taskPlaygroundViewModel.Instruction ?? string.Empty))
+
+        </div>
+        <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
+            <div class="row mb-2">
+                <div class="col">
+                    <select class="custom-select" @onchange="_taskPlaygroundViewModel.ChangeTheme">
+                        <option value="vs">Visual Studio</option>
+                        <option value="vs-dark">Visual Studio Dark</option>
+                        <option value="hc-black">High Contrast Black</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.Execute">Execute</button>
+                    <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="_taskPlaygroundViewModel.ChangeEditorPosition">Change Position</button>
+                    @if (_taskPlaygroundViewModel.IsPreviousVersion)
+                    {
+                        <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.RestorePreviousVersion">Restore</button>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <MonacoEditor Id="monaco-editor" @ref="_taskPlaygroundViewModel.Editor" ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
+                </div>
+            </div>
+            <div class="row w-100">
+                <p>Output:</p>
+                <div class="col border-top">
+                    @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
+                    {
+
+                        <span class="text-danger">@((MarkupString) _taskPlaygroundViewModel.CompileText)</span>
+
+                    }
+                    else
+                    {
+                        @((MarkupString)(_taskPlaygroundViewModel.Output ?? string.Empty))
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-bottom d-flex" style="background-color: @(_taskPlaygroundViewModel.Mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
+        <label class="mr-auto pl-2 mb-0">
+            @_taskPlaygroundViewModel.Mode.ToString() mode
         </label>
-    }
-</div>
-
-
-@code {
-    [Parameter] public Guid Guid { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _taskPlaygroundViewModel.TaskId = Guid;
-        await _taskPlaygroundViewModel.GetTask();
-        _taskPlaygroundViewModel.CheckIfDraftExists();
-        _taskPlaygroundViewModel.PropertyChanged += OnPropertyChanged;
-    }
-
-    void OnPropertyChanged(object _, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        InvokeAsync(() =>
+        @if (_taskPlaygroundViewModel.Points is not null)
         {
-            StateHasChanged();
-        });        
-    }
-
-    void IDisposable.Dispose()
-    {
-        _taskPlaygroundViewModel.PropertyChanged -= OnPropertyChanged;        
-    }
-
-}
+            <label class="ml-auto pr-2 mb-0">
+                Points: @_taskPlaygroundViewModel.Points
+            </label>
+        }
+    </div>
+</PropertyHasChangedListener>

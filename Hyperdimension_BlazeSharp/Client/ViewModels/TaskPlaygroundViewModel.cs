@@ -16,25 +16,78 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
     {
         private string _output;
         private string _compileText;
+        private Guid _taskId;
+        private int? _points;
+        private bool _isPreviousVersion = false;
+        private string _instruction;
+        private Mode _mode = 0;
+        private string _editorPosition = "col-md-6";
+        private string _title;
+        private MonacoEditor _editor;
 
-        public Guid TaskId { get; set; }
-        public string Output { get => _output; set => OnPropertyChanged(ref _output, value.Replace("\n", "<br />")); }
-        public string CompileText { get => _compileText; set => OnPropertyChanged(ref _compileText, value); }
-        public string Instruction { get; set; }
+
+        public Guid TaskId 
+        { 
+            get => _taskId;
+            set 
+            {
+                _taskId = value;
+                new Task(async () => await Init()).Start();
+            }
+        }
+        public string Output 
+        { 
+            get => _output; 
+            set => OnPropertyChanged(ref _output, value.Replace("\n", "<br />")); 
+        }
+        public string CompileText 
+        { 
+            get => _compileText; 
+            set => OnPropertyChanged(ref _compileText, value); 
+        }
+        public string Instruction 
+        { 
+            get => _instruction; 
+            set => OnPropertyChanged(ref _instruction, value); 
+        }        
+        public Mode Mode 
+        { 
+            get => _mode; 
+            set => _mode = value; 
+        }
+        public string EditorPosition 
+        { 
+            get => _editorPosition;
+            set => OnPropertyChanged(ref _editorPosition, value); 
+        }
+        public string Title 
+        { 
+            get => _title; 
+            set => OnPropertyChanged(ref _title, value); 
+        }
+        public MonacoEditor Editor 
+        { 
+            get => _editor; 
+            set => OnPropertyChanged(ref _editor,value); 
+        }
+        public int? Points 
+        { 
+            get => _points; 
+            set => OnPropertyChanged(ref _points, value); 
+        }
+        public bool IsPreviousVersion 
+        { 
+            get => _isPreviousVersion; 
+            set => OnPropertyChanged(ref _isPreviousVersion, value); 
+        }
         public TaskDataPlayground TaskDataPlayground { get; set; }
-        public Mode Mode { get; set; } = 0; //tmp
-        public string EditorPosition { get; set; } = "col-md-6";
-        public string Title { get; set; }
-        public MonacoEditor Editor { get; set; } = new();
-        public int? Points { get; set; }
-        public bool IsPreviousVersion { get; set; } = false;
 
         private TasksHistoryDraft _tasksHistoryDraft;
         private CompileService _compileService;
         private HttpClient _httpClient;
         private string _testCode;
         private string _initialCode;
-
+        
 
         public TaskPlaygroundViewModel() { }
         public TaskPlaygroundViewModel(HttpClient httpClient, TasksHistoryDraft tasksHistoryDraft, CompileService compileService)
@@ -42,6 +95,13 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _httpClient = httpClient;
             _tasksHistoryDraft = tasksHistoryDraft;
             _compileService = compileService;
+        }
+
+
+        private async Task Init()
+        {
+            await GetTask();
+            CheckIfDraftExists();
         }
 
         public void ChangeEditorPosition()
@@ -114,6 +174,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public async Task GetTask()
         {
             var task = await _httpClient.GetFromJsonAsync<TaskDataPlayground>($"tasks/{TaskId}");
+            if(task is not null)
             LoadCurrentObject(task);
             await SetValue(_initialCode);
         }
@@ -137,7 +198,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         {
             return new()
             {
-                TaskId = taskDataPlayground.Guid,
+                _taskId = taskDataPlayground.Guid,
                 Instruction = Markdig.Markdown.ToHtml(taskDataPlayground.Description),
                 Title = taskDataPlayground.Title,
                 //Mode = taskDataPlayground.Mode

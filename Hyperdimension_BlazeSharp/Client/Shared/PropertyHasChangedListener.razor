@@ -1,0 +1,30 @@
+﻿@ChildContent
+@using System.ComponentModel
+@implements IDisposable
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public INotifyPropertyChanged ViewModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ViewModel.PropertyChanged += OnPropertyChanged;
+    }
+
+    void OnPropertyChanged(object _, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
+
+    void IDisposable.Dispose()
+    {
+        ViewModel.PropertyChanged -= OnPropertyChanged;
+    }
+}
