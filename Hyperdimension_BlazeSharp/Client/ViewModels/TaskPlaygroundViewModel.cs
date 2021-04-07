@@ -64,7 +64,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             };
         }
 
-        public async void Execute()
+        public async Task Execute()
         {
             var code = await Editor.GetValue();
             _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
@@ -87,7 +87,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             {
                 _compileService.CompileLog.Add(e.Message);
                 _compileService.CompileLog.Add(e.StackTrace);
-                throw;
+                //throw;
             }
             finally
             {

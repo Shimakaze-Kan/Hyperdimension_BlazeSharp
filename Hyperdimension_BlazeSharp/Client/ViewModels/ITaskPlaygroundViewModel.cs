@@ -24,7 +24,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public bool IsPreviousVersion { get; set; }
         
 
-        public void Execute();
+        public Task Execute();
         public void ChangeEditorPosition();
         public StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor);
         public Task ChangeTheme(ChangeEventArgs e);

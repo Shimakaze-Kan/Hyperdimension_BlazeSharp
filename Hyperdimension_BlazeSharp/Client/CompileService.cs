@@ -35,26 +35,70 @@ namespace Hyperdimension_BlazeSharp.Client
             if (references == null)
             {
                 references = new List<MetadataReference>();
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (assembly.IsDynamic)
-                    {
-                        continue;
-                    }
-                    var name = assembly.GetName().Name + ".dll";
-                    if(name.Contains("crosoft.CodeAnalys"))
-                    {
-                        continue;
-                    }
-                    Console.WriteLine(name);
-                    references.Add(
-                        MetadataReference.CreateFromStream(
-                            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/" + name)));
-                }
+                //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                //{
+                //    if (assembly.IsDynamic)
+                //    {
+                //        continue;
+                //    }
+                //    var name = assembly.GetName().Name + ".dll";
+                //    if(name.Contains("crosoft.CodeAnalys"))
+                //    {
+                //        continue;
+                //    }
+                //    Console.WriteLine(name);
+                //    references.Add(
+                //        MetadataReference.CreateFromStream(
+                //            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/" + name)));
+                //}
 
-                references.Add(
-                        MetadataReference.CreateFromStream(
-                            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/mscorlib.dll")));
+                //references.Add(
+                //        MetadataReference.CreateFromStream(
+                //            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/mscorlib.dll")));
+
+                var assemblies = new string[]
+                    {"System.Private.CoreLib.dll",
+                    "System.Runtime.dll",
+                    "System.Collections.dll",
+                    "System.Collections.Concurrent.dll",
+                    "System.Text.Json.dll",
+                    "System.Private.Uri.dll",
+                    "System.dll",
+                    "System.Console.dll",
+                    "System.Linq.dll",
+                    "System.ComponentModel.dll",
+                    "netstandard.dll",
+                    "System.Net.Http.dll",
+                    "System.ObjectModel.dll",
+                    "System.Text.Encodings.Web.dll",
+                    "System.Memory.dll",
+                    "System.Text.Encoding.Extensions.dll",
+                    "System.Runtime.Intrinsics.dll",
+                    "System.Threading.dll",
+                    "System.Net.Primitives.dll",
+                    "System.Diagnostics.Tracing.dll",
+                    "System.Runtime.Loader.dll",
+                    "System.Runtime.InteropServices.RuntimeInformation.dll",
+                    "System.Reflection.Emit.Lightweight.dll",
+                    "System.Reflection.Emit.ILGeneration.dll",
+                    "System.Reflection.Primitives.dll ",
+                    "System.Diagnostics.DiagnosticSource.dll",
+                    "System.Linq.Expressions.dll",
+                    "System.Net.Http.Json.dll",
+                    "System.Runtime.CompilerServices.Unsafe.dll",
+                    "System.Numerics.Vectors.dll",
+                    "System.Runtime.Extensions.dll",
+                    "System.Resources.ResourceManager.dll",
+                    "System.Collections.Immutable.dll",
+                    "System.Reflection.Metadata.dll"
+                    };
+
+                foreach (var item in assemblies)
+                {
+                    references.Add(
+                            MetadataReference.CreateFromStream(
+                                await this._http.GetStreamAsync(_uriHelper.BaseUri + $"_framework/{item}")));
+                }
             }
         }
 
@@ -65,7 +109,7 @@ namespace Hyperdimension_BlazeSharp.Client
         {
             await Init();
 
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code, new CSharpParseOptions(LanguageVersion.Preview));
+            SyntaxTree syntaxTree = await Task.Run(() => CSharpSyntaxTree.ParseText(code, new CSharpParseOptions(LanguageVersion.Preview)));
             foreach (var diagnostic in syntaxTree.GetDiagnostics())
             {
                 CompileLog.Add(diagnostic.ToString());
@@ -77,8 +121,8 @@ namespace Hyperdimension_BlazeSharp.Client
                 return null;
             }
 
-            CSharpCompilation compilation = CSharpCompilation.Create("BlazeSharpPlayground", new[] { syntaxTree },
-                references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            CSharpCompilation compilation = await Task.Run(() => CSharpCompilation.Create("BlazeSharpPlayground", new[] { syntaxTree },
+                references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)));
 
             using (MemoryStream stream = new MemoryStream())
             {
