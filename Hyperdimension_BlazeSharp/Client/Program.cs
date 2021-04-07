@@ -25,6 +25,10 @@ namespace Hyperdimension_BlazeSharp.Client
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient<ILearningPathViewModel, LearningPathViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<IRankingViewModel, RankingViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<ITaskPlaygroundViewModel, TaskPlaygroundViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             await builder.Build().RunAsync();
         }

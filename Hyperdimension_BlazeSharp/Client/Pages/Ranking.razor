@@ -1,17 +1,18 @@
 ﻿@page "/ranking"
-@inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject IRankingViewModel _rankingViewModel
 
 <h3>Ranking</h3>
 
 <div class="list-group">
-    @if (RankingList is null)
+    @if (_rankingViewModel.UserRankingRecords is null)
     {
         <text>Loading...</text>
     }
     else
     {
-        @foreach (var (user,index) in RankingList.Select((value, i) => (value, i+1)))
+        @foreach (var (user,index) in _rankingViewModel.UserRankingRecords.Select((value, i) => (value, i+1)))
         {
             <a href="@($"profile/{user.Guid}")" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 <strong>@index</strong> @user.Email
@@ -21,13 +22,7 @@
     }
 </div>
 
-@code {
+@code {    
 
-    public IEnumerable<UserRankingRecord> RankingList { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        RankingList = await HttpClient.GetFromJsonAsync<IEnumerable<UserRankingRecord>>("users/ranking");
-    }
-
+    protected override async Task OnInitializedAsync() => await _rankingViewModel.GetRankingList();
 }

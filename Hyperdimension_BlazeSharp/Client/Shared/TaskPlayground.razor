@@ -1,74 +1,69 @@
-﻿@inject HttpClient HttpClient
-@inject NavigationManager NavigationManager
-@inject CompileService CompileService
-@inject TasksHistoryDraft TasksHistoryDraft
+﻿@inject NavigationManager NavigationManager
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject ITaskPlaygroundViewModel _taskPlaygroundViewModel
+@implements IDisposable
 
-@if (task is not null)
+
+@if (_taskPlaygroundViewModel.Title is not null)
 {
-    <h4>@task.Title</h4>
+<h4>@_taskPlaygroundViewModel.Title</h4>
 }
 
 <div class="row">
-    <div class="@editorPosition col-12">
-        @if (markDownInstruction is null)
-        {
-            <h3>Loading...</h3>
-        }
-        else
-        {
-            @((MarkupString) markDownInstruction)
-        }
+    <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
+
+        @((MarkupString)(_taskPlaygroundViewModel.Instruction ?? string.Empty))
+
     </div>
-    <div class="@editorPosition col-12">
+    <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
         <div class="row mb-2">
             <div class="col">
-                <select class="custom-select" @onchange="ChangeTheme">
+                <select class="custom-select" @onchange="_taskPlaygroundViewModel.ChangeTheme">
                     <option value="vs">Visual Studio</option>
                     <option value="vs-dark">Visual Studio Dark</option>
                     <option value="hc-black">High Contrast Black</option>
                 </select>
             </div>
             <div class="col">
-                <button type="button" class="btn btn-outline-orange float-right" @onclick="Execute">Execute</button>
-                <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="ChangeEditorPosition">Change Position</button>
-                @if (isPreviousVersion)
+                <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.Execute">Execute</button>
+                <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="_taskPlaygroundViewModel.ChangeEditorPosition">Change Position</button>
+                @if (_taskPlaygroundViewModel.IsPreviousVersion)
                 {
-                    <button type="button" class="btn btn-outline-orange float-right" @onclick="RestorePreviousVersion">Restore</button>
+                    <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.RestorePreviousVersion">Restore</button>
                 }
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <MonacoEditor Id="monaco-editor" @ref="_editor" ConstructionOptions="EditorConstructionOptions" />
+                <MonacoEditor Id="monaco-editor" @ref="_taskPlaygroundViewModel.Editor" ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
             </div>
         </div>
         <div class="row w-100">
             <p>Output:</p>
             <div class="col border-top">
-                @if (CompileText is not null && CompileText.Any(x => x.Contains("error")))
+                @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
                 {
-                    foreach (var error in CompileText)
-                    {
-                        <span class="text-danger">@((MarkupString) (error + "<br />"))</span>
-                    }
+
+                    <span class="text-danger">@((MarkupString) _taskPlaygroundViewModel.CompileText)</span>
+
                 }
                 else
                 {
-                    @((MarkupString)output.Replace("\n", "<br />"))
+                    @((MarkupString)(_taskPlaygroundViewModel.Output ?? string.Empty))
                 }
             </div>
         </div>
     </div>
 </div>
 
-<div class="fixed-bottom d-flex" style="background-color: @(mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
+<div class="fixed-bottom d-flex" style="background-color: @(_taskPlaygroundViewModel.Mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
     <label class="mr-auto pl-2 mb-0">
-        @mode.ToString() mode
+        @_taskPlaygroundViewModel.Mode.ToString() mode
     </label>
-    @if (task?.Points is not null)
+    @if (_taskPlaygroundViewModel.Points is not null)
     {
         <label class="ml-auto pr-2 mb-0">
-            Points: @task.Points
+            Points: @_taskPlaygroundViewModel.Points
         </label>
     }
 </div>
@@ -77,102 +72,25 @@
 @code {
     [Parameter] public Guid Guid { get; set; }
 
-    private string output = string.Empty;
-    List<string> CompileText { get; set; }
-    private TaskDataPlayground task;
-    private Mode mode;
-
-    private string editorPosition = "col-md-6";
-
-    private string markDownInstruction;
-    private MonacoEditor _editor { get; set; }
-    private string _code;
-    private bool isPreviousVersion = false;
-
-
     protected override async Task OnInitializedAsync()
     {
-        task = await HttpClient.GetFromJsonAsync<TaskDataPlayground>($"tasks/{Guid}");
-
-        markDownInstruction = Markdig.Markdown.ToHtml(task.Description);
-        await _editor.SetValue(task.InitialCode);
+        _taskPlaygroundViewModel.TaskId = Guid;
+        await _taskPlaygroundViewModel.GetTask();
+        _taskPlaygroundViewModel.CheckIfDraftExists();
+        _taskPlaygroundViewModel.PropertyChanged += OnPropertyChanged;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    void OnPropertyChanged(object _, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        isPreviousVersion = TasksHistoryDraft.CheckIfDraftExists(Guid);
-    }
-
-    private async void Execute()
-    {
-        var code = await _editor.GetValue();
-        TasksHistoryDraft.AddDraft(new(Guid, task.Title, code));
-        isPreviousVersion = false;
-
-        try
+        InvokeAsync(() =>
         {
-            CompileService.CompileLog = new List<string>();
-
-            var index = code.IndexOf("class Program");
-
-            code = code.Insert(code.IndexOf('{', index) + 1, task.TestCode);
-            code = code.Insert(0, "using System.Text;using System.IO;");
-
-            Console.WriteLine(code);
-            output = await CompileService.CompileAndRun(code);
-        }
-        catch (Exception e)
-        {
-            CompileService.CompileLog.Add(e.Message);
-            CompileService.CompileLog.Add(e.StackTrace);
-            throw;
-        }
-        finally
-        {
-            CompileText = CompileService.CompileLog;
-            this.StateHasChanged();
-        }
+            StateHasChanged();
+        });        
     }
 
-    private void ChangeEditorPosition()
+    void IDisposable.Dispose()
     {
-        editorPosition = (editorPosition == "col-md-6" ? "col-md-12" : "col-md-6");
+        _taskPlaygroundViewModel.PropertyChanged -= OnPropertyChanged;        
     }
 
-    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
-    {
-        return new StandaloneEditorConstructionOptions
-        {
-            AutomaticLayout = true,
-            Language = "csharp",
-            Value = string.Empty
-        };
-    }
-
-    private async Task ChangeTheme(ChangeEventArgs e)
-    {
-        await MonacoEditor.SetTheme(e.Value.ToString());
-    }
-
-    private async Task GetValue()
-    {
-        _code = await _editor.GetValue();
-    }
-
-    private async Task SetValue(string value)
-    {
-        await _editor.SetValue(value);
-    }
-
-    private async Task RestorePreviousVersion()
-    {
-        await SetValue(TasksHistoryDraft.GetDraftCode(Guid));
-        isPreviousVersion = false;
-    }
-
-    enum Mode
-    {
-        Tutorial,
-        Adventure
-    }
 }
