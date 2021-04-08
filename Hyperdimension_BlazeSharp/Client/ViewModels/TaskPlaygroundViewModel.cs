@@ -26,15 +26,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private MonacoEditor _editor;
 
 
-        public Guid TaskId 
-        { 
-            get => _taskId;
-            set 
-            {
-                _taskId = value;
-                new Task(async () => await Init()).Start();
-            }
-        }
+        public Guid TaskId { get; set; }
         public string Output 
         { 
             get => _output; 
@@ -95,13 +87,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _httpClient = httpClient;
             _tasksHistoryDraft = tasksHistoryDraft;
             _compileService = compileService;
-        }
-
-
-        private async Task Init()
-        {
-            await GetTask();
-            CheckIfDraftExists();
         }
 
         public void ChangeEditorPosition()

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Hyperdimension_BlazeSharp.Client.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Client
 {
-    public class TasksHistoryDraft
+    public class TasksHistoryDraft : ObservableObject
     {
         public class DraftRecord
         {
@@ -13,15 +14,24 @@ namespace Hyperdimension_BlazeSharp.Client
             public string Title { get; set; }
         }
 
-        public Dictionary<Guid, DraftRecord> Drafts { get; set; } = new();
+        private bool _isHidden = true;
+        private Dictionary<Guid, DraftRecord> _drafts = new();
 
-        public void AddDraft((Guid id, string title, string code) draft) => Drafts[draft.id] = new() { Title = draft.title, Code = draft.code };
+        public Dictionary<Guid, DraftRecord> Drafts { get => _drafts; set => OnPropertyChanged(ref _drafts, value); }
+        public bool IsHidden { get => _isHidden; set => OnPropertyChanged(ref _isHidden, value); }
+
+        public void AddDraft((Guid id, string title, string code) draft)
+        {
+            Drafts[draft.id] = new() { Title = draft.title, Code = draft.code };
+            Drafts = Drafts;
+        }
 
         public void RemoveDraft(Guid id)
         {
             if (CheckIfDraftExists(id))
             {
                 Drafts.Remove(id);
+                Drafts = Drafts;
             }
         }
 
@@ -40,5 +50,7 @@ namespace Hyperdimension_BlazeSharp.Client
         public bool CheckIfDraftExists(Guid id) => Drafts.TryGetValue(id, out _);
 
         public int Count() => Drafts.Count;
-    }
+
+        public void ChangeVisibility() => IsHidden = !IsHidden;
+    }    
 }

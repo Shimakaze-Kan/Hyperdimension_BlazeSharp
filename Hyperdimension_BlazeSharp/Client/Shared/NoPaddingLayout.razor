@@ -1,15 +1,19 @@
 ﻿@inherits MainLayout
+@inject TasksHistoryDraft _tasksHistoryDraft
 
-<div class="page h-100">
 
-    <div class="main">
-        <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog"/>
-        <div class="position-relative h-100">
-            @Body
-            @if (showingTasksHistoryManager)
-            {
-                <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog"/>
-            }
+    <div class="page h-100">
+
+        <div class="main">
+            <PropertyHasChangedListener ViewModel="_tasksHistoryDraft">
+                <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
+            </PropertyHasChangedListener>
+            <div class="position-relative h-100">
+                @Body
+                @if (!_tasksHistoryDraft.IsHidden)
+                {
+                    <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
+                }
+            </div>
         </div>
     </div>
-</div>

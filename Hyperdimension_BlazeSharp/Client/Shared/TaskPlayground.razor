@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ITaskPlaygroundViewModel _taskPlaygroundViewModel
+@inject TasksHistoryDraft _tasksHistoryDraft
 
 
 <PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">
@@ -27,10 +28,12 @@
                 <div class="col">
                     <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.Execute">Execute</button>
                     <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="_taskPlaygroundViewModel.ChangeEditorPosition">Change Position</button>
-                    @if (_taskPlaygroundViewModel.IsPreviousVersion)
+
+                    @if (_taskPlaygroundViewModel.IsPreviousVersion && _tasksHistoryDraft.CheckIfDraftExists(_taskPlaygroundViewModel.TaskId))
                     {
                         <button type="button" class="btn btn-outline-orange float-right" @onclick="_taskPlaygroundViewModel.RestorePreviousVersion">Restore</button>
                     }
+
                 </div>
             </div>
             <div class="row">

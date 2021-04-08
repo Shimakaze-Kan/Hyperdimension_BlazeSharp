@@ -8,6 +8,13 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 {
     public partial class TaskPlayground
     {
-        [Parameter] public Guid Guid { set => _taskPlaygroundViewModel.TaskId = value; }
+        [Parameter] public Guid Guid { get; set; }
+
+        protected async override Task OnInitializedAsync()
+        {
+            _taskPlaygroundViewModel.TaskId = Guid;
+            await _taskPlaygroundViewModel.GetTask();
+            _taskPlaygroundViewModel.CheckIfDraftExists();
+        }
     }
 }

@@ -1,10 +1,10 @@
-﻿@inject TasksHistoryDraft TasksHistoryDraft
+﻿@inject TasksHistoryDraft _tasksHistoryDraft
 
 <div class="col-12 col-md-3 col-xl-2 sidebar p-2">
 
     <a @onclick="OnHide" class="oi oi-chevron-right cursor-pointer md-2"></a>
 
-    @if (TasksHistoryDraft.Drafts.Count() == 0)
+    @if (_tasksHistoryDraft.Drafts.Count() == 0)
     {
         <h4 class="text-center">No drafts</h4>
         <h5>This panel will show links to started tasks</h5>
@@ -12,13 +12,13 @@
     else
     {
         <ol class="list-group list-group-numbered">
-            @foreach (var draft in TasksHistoryDraft.Drafts)
+            @foreach (var draft in _tasksHistoryDraft.Drafts)
             {
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <a href="@($"taskcontainer/{draft.Key}")" class="ms-2 me-auto">
                         @draft.Value.Title
                     </a>
-                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(_ => RemoveDraft(draft.Key))">Remove</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(_ => _tasksHistoryDraft.RemoveDraft(draft.Key))">Remove</button>
                 </li>
             }
         </ol>
@@ -28,10 +28,5 @@
 @code {
 
     [Parameter] public EventCallback OnHide { get; set; }
-
-    public void RemoveDraft(Guid id)
-    {
-        TasksHistoryDraft.RemoveDraft(id);
-    }
 
 }

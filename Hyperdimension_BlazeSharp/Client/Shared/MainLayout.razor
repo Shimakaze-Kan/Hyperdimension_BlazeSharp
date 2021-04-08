@@ -1,24 +1,24 @@
 ﻿@inherits LayoutComponentBase
+@inject TasksHistoryDraft _tasksHistoryDraft
 
-<div class="page h-100">
+    <div class="page h-100">
 
-    <div class="main">
-        <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
-        <div class="content px-4 position-relative h-100">
-            @Body
-            @if (showingTasksHistoryManager)
-            {
-                <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
-            }
+        <div class="main">
+            <PropertyHasChangedListener ViewModel="_tasksHistoryDraft">
+                <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
+
+                <div class="content px-4 position-relative h-100">
+                    @Body
+                    @if (!_tasksHistoryDraft.IsHidden)
+                    {
+                        <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
+                    }
+                </div>
+            </PropertyHasChangedListener>
         </div>
     </div>
-</div>
 
-@code {
-    public bool showingTasksHistoryManager;
+@code {    
 
-    public void ChangeVisibilityOfTasksHistoryManagerDialog()
-    {
-        showingTasksHistoryManager = !showingTasksHistoryManager;
-    }
+    public void ChangeVisibilityOfTasksHistoryManagerDialog() => _tasksHistoryDraft.ChangeVisibility();
 }
