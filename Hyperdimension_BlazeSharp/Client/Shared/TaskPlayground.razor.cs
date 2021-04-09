@@ -8,6 +8,8 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 {
     public partial class TaskPlayground
     {
+        [CascadingParameter(Name = "_tasksHistoryDraft")]
+        TasksHistoryDraft _tasksHistoryDraft { get; set; }
         [Parameter] public Guid Guid { get; set; }
 
         protected async override Task OnInitializedAsync()

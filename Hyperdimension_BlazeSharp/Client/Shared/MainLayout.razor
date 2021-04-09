@@ -6,14 +6,15 @@
         <div class="main">
             <PropertyHasChangedListener ViewModel="_tasksHistoryDraft">
                 <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
-
-                <div class="content px-4 position-relative h-100">
-                    @Body
-                    @if (!_tasksHistoryDraft.IsHidden)
-                    {
-                        <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
-                    }
-                </div>
+                <CascadingValue Value="_tasksHistoryDraft" Name="_tasksHistoryDraft">
+                    <div class="content px-4 position-relative h-100">
+                        @Body
+                        @if (!_tasksHistoryDraft.IsHidden)
+                        {
+                            <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
+                        }
+                    </div>
+                </CascadingValue>
             </PropertyHasChangedListener>
         </div>
     </div>

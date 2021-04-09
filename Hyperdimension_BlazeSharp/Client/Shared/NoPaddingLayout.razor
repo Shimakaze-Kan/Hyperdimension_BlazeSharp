@@ -2,12 +2,13 @@
 @inject TasksHistoryDraft _tasksHistoryDraft
 
 
-    <div class="page h-100">
+<div class="page h-100">
 
-        <div class="main">
-            <PropertyHasChangedListener ViewModel="_tasksHistoryDraft">
-                <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
-            </PropertyHasChangedListener>
+    <div class="main">
+        <PropertyHasChangedListener ViewModel="_tasksHistoryDraft">
+            <NavMenu OnTasksHistoryManagerChangeVisibility="ChangeVisibilityOfTasksHistoryManagerDialog" />
+        </PropertyHasChangedListener>
+        <CascadingValue Value="_tasksHistoryDraft" Name="_tasksHistoryDraft">
             <div class="position-relative h-100">
                 @Body
                 @if (!_tasksHistoryDraft.IsHidden)
@@ -15,5 +16,6 @@
                     <TasksHistoryManager OnHide="ChangeVisibilityOfTasksHistoryManagerDialog" />
                 }
             </div>
-        </div>
+        </CascadingValue>
     </div>
+</div>

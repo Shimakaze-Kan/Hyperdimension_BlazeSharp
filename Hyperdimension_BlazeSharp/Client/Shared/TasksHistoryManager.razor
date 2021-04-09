@@ -1,5 +1,4 @@
-﻿@inject TasksHistoryDraft _tasksHistoryDraft
-
+﻿
 <div class="col-12 col-md-3 col-xl-2 sidebar p-2">
 
     <a @onclick="OnHide" class="oi oi-chevron-right cursor-pointer md-2"></a>
@@ -26,6 +25,8 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "_tasksHistoryDraft")]
+    TasksHistoryDraft _tasksHistoryDraft { get; set; }
 
     [Parameter] public EventCallback OnHide { get; set; }
 
