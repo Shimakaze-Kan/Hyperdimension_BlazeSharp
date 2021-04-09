@@ -15,15 +15,14 @@ namespace Hyperdimension_BlazeSharp.Client
         }
 
         private bool _isHidden = true;
-        private Dictionary<Guid, DraftRecord> _drafts = new();
 
-        public Dictionary<Guid, DraftRecord> Drafts { get => _drafts; set => OnPropertyChanged(ref _drafts, value); }
+        public Dictionary<Guid, DraftRecord> Drafts { get; set; } = new();
         public bool IsHidden { get => _isHidden; set => OnPropertyChanged(ref _isHidden, value); }
 
         public void AddDraft((Guid id, string title, string code) draft)
         {
             Drafts[draft.id] = new() { Title = draft.title, Code = draft.code };
-            Drafts = Drafts;
+            OnPropertyChanged(nameof(Drafts));
         }
 
         public void RemoveDraft(Guid id)
@@ -31,7 +30,7 @@ namespace Hyperdimension_BlazeSharp.Client
             if (CheckIfDraftExists(id))
             {
                 Drafts.Remove(id);
-                Drafts = Drafts;
+                OnPropertyChanged(nameof(Drafts));
             }
         }
 

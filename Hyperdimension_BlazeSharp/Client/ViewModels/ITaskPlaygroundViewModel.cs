@@ -28,7 +28,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public void ChangeEditorPosition();
         public StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor);
         public Task ChangeTheme(ChangeEventArgs e);
-        public Task GetValue();
+        public Task<string> GetValue();
         public Task SetValue(string value);
         public Task RestorePreviousVersion();
         public Task GetTask();

@@ -15,8 +15,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
     public class TaskPlaygroundViewModel : ObservableObject, ITaskPlaygroundViewModel
     {
         private string _output;
-        private string _compileText;
-        private Guid _taskId;
+        private string _compileText;        
         private int? _points;
         private bool _isPreviousVersion = false;
         private string _instruction;
@@ -45,7 +44,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Mode Mode 
         { 
             get => _mode; 
-            set => _mode = value; 
+            set => OnPropertyChanged(ref _mode, value); 
         }
         public string EditorPosition 
         { 
@@ -74,9 +73,9 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         }
         public TaskDataPlayground TaskDataPlayground { get; set; }
 
-        private TasksHistoryDraft _tasksHistoryDraft;
-        private CompileService _compileService;
-        private HttpClient _httpClient;
+        private readonly TasksHistoryDraft _tasksHistoryDraft;
+        private readonly CompileService _compileService;
+        private readonly HttpClient _httpClient;
         private string _testCode;
         private string _initialCode;
         
@@ -111,7 +110,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task Execute()
         {
-            var code = await Editor.GetValue();
+            var code = await GetValue();
             _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
             IsPreviousVersion = false;
 
@@ -140,9 +139,9 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             }
         }
 
-        public Task GetValue()
+        public async Task<string> GetValue()
         {
-            throw new NotImplementedException();
+            return await Editor.GetValue();
         }
 
         public async Task RestorePreviousVersion()
@@ -183,7 +182,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         {
             return new()
             {
-                _taskId = taskDataPlayground.Guid,
+                TaskId = taskDataPlayground.Guid,
                 Instruction = Markdig.Markdown.ToHtml(taskDataPlayground.Description),
                 Title = taskDataPlayground.Title,
                 //Mode = taskDataPlayground.Mode
