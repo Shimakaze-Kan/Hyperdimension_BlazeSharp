@@ -1,0 +1,24 @@
+﻿@page "/login"
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject ILoginViewModel _loginViewModel
+
+<h3>Login</h3>
+
+<div class="col-6">
+    <input type="text" @bind="_loginViewModel.Email" class="form-control" placeholder="email address">
+</div>
+<br />
+<div class="col-6">
+    <input type="password" @bind="_loginViewModel.Password" class="form-control" placeholder="password">
+</div>
+<br />
+<div class="col-6">
+    <button class="btn btn-outline-orange" @onclick="LoginUser">Login</button>
+</div>
+
+@code {
+    public async Task LoginUser()
+    {
+        await _loginViewModel.LoginUser();
+    }
+}

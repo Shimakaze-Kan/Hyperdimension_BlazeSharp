@@ -1,11 +1,13 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Models;
 using Hyperdimension_BlazeSharp.Shared;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
@@ -87,6 +89,44 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             }
 
             return user;
+        }
+
+        [HttpPost("loginuser")]
+        public async Task<ActionResult<UserAuthenticationMinimal>> LoginUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        {
+            // unsafe
+            var user = await _db.Users.Where(x => x.Email == userAuthenticationMinimal.Email && x.Password == userAuthenticationMinimal.Password)
+                .Select(x => new UserAuthenticationMinimal(x.Email, x.Password))
+                .FirstOrDefaultAsync();
+
+            if(user is not null)
+            {
+                var claims = new Claim(ClaimTypes.Name, ClaimTypes.Email);
+                var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                await HttpContext.SignInAsync(claimsPrincipal);
+            }
+
+            return await Task.FromResult(user);
+        }
+
+        [HttpGet("logoutuser")]
+        public async Task<ActionResult<string>> LogoutUser()
+        {
+            await HttpContext.SignOutAsync();
+            return "done";
+        }
+         
+        [HttpGet("getloggedinusers")]
+        public async Task<ActionResult<string>> GetLoggedInUsers()
+        {
+            if(User.Identity.IsAuthenticated)
+            {
+                return await Task.FromResult( User.FindFirstValue(ClaimTypes.Name));
+            }
+
+            return "ddd";
         }
     }
 }

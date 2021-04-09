@@ -1,4 +1,5 @@
 using Hyperdimension_BlazeSharp.Client.ViewModels;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,10 @@ namespace Hyperdimension_BlazeSharp.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
+
             builder.Services.AddSingleton<CompileService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             
@@ -29,6 +34,10 @@ namespace Hyperdimension_BlazeSharp.Client
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient<ITaskPlaygroundViewModel, TaskPlaygroundViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<ILoginViewModel, LoginViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
             await builder.Build().RunAsync();
         }
