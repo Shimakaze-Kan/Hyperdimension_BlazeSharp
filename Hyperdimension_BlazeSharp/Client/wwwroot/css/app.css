@@ -109,3 +109,9 @@ a, .btn-link {
 #app {
     height: 100%;
 }
+
+.navbar-nav > li:last-child {
+    position: absolute;
+    right: 0;
+    margin-right: 1.5rem;
+}

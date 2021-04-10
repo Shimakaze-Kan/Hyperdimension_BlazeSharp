@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ILoginViewModel _loginViewModel
+@inject NavigationManager NavigationManager
 
 <h3>Login</h3>
 
@@ -20,5 +21,6 @@
     public async Task LoginUser()
     {
         await _loginViewModel.LoginUser();
+        NavigationManager.NavigateTo("/", true);
     }
 }

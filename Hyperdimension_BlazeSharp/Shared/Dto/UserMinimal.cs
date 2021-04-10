@@ -6,5 +6,11 @@ using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
-    public record UserMinimal(string Email, int Points);
+    public record UserMinimal : UserEmail
+    {
+        public int Points { get; init; }
+
+        public UserMinimal(string email, int points)
+            : base(email) => Points = points;
+    }
 }

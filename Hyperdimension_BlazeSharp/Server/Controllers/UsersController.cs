@@ -101,7 +101,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             if(user is not null)
             {
-                var claims = new Claim(ClaimTypes.Name, ClaimTypes.Email);
+                var claims = new Claim(ClaimTypes.Name, user.Email);
                 var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
@@ -118,15 +118,17 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return "done";
         }
          
-        [HttpGet("getloggedinusers")]
-        public async Task<ActionResult<string>> GetLoggedInUsers()
+        [HttpGet("getcurrentuser")]
+        public async Task<ActionResult<UserEmail>> GetCurrentuser()
         {
-            if(User.Identity.IsAuthenticated)
-            {
-                return await Task.FromResult( User.FindFirstValue(ClaimTypes.Name));
+            UserEmail userEmail = new(null);
+
+            if (User.Identity.IsAuthenticated)
+            {                
+                userEmail = new(User.FindFirstValue(ClaimTypes.Name));
             }
 
-            return "ddd";
+            return await Task.FromResult(userEmail);
         }
     }
 }

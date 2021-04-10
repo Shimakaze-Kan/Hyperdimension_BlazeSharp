@@ -1,4 +1,6 @@
 ﻿@inject TasksHistoryDraft TasksHistoryDraft
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
 
 <nav class="navbar navbar-expand-lg navbar-light navbar-bg-light border border-secondary">
     <a class="navbar-brand" href="">Hyperdimension BlazeSharp</a>
@@ -40,6 +42,21 @@
                     <span class="badge badge-primary badge-pill">@TasksHistoryDraft.Count()</span>
                 </div>
             </li>
+            <li>
+                <AuthorizeView>
+                    <Authorized>
+                        <div>
+                            <span class="mr-2 text-dark">@context.User.Identity.Name</span>
+                            <button class="btn btn-outline-orange" @onclick="Logout">Logout</button>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div>
+                            <button class="btn btn-outline-orange" @onclick="Login">Login</button>
+                        </div>
+                    </NotAuthorized>                    
+                </AuthorizeView>
+            </li>
         </ul>
     </div>
 </nav>
@@ -55,5 +72,16 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task Logout()
+    {
+        await HttpClient.GetAsync("users/logoutuser");
+        NavigationManager.NavigateTo("/", true);
+    }
+
+    private void Login()
+    {
+        NavigationManager.NavigateTo("login", true);
     }
 }
