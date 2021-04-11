@@ -45,9 +45,23 @@
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
 
+    [CascadingParameter]
+    public Task<AuthenticationState> authenticationState { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        _profileViewModel.UserId = UserId == Guid.Empty ? Guid.Parse("4b2d2ef1-d094-4f4e-ae32-b6450b8f18f4") : UserId;
+        var user = (await authenticationState).User;
+
+        if(UserId == Guid.Empty && user.Identity.IsAuthenticated)
+        {
+            var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);            
+            _profileViewModel.UserId = Guid.Parse(claim?.Value);            
+        }
+        else if(UserId != Guid.Empty)
+        {
+            _profileViewModel.UserId = UserId;           
+        }
+        
         await _profileViewModel.GetProfileData();
         await _profileViewModel.GetBanner();
     }

@@ -119,16 +119,17 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
          
         [HttpGet("getcurrentuser")]
-        public async Task<ActionResult<UserEmail>> GetCurrentuser()
+        public async Task<ActionResult<UserGuidEmail>> GetCurrentuser()
         {
-            UserEmail userEmail = new(null);
+            UserGuidEmail userGuidEmail = new(default, null);
 
             if (User.Identity.IsAuthenticated)
             {                
-                userEmail = new(User.FindFirstValue(ClaimTypes.Name));
+                var userEmail = User.FindFirstValue(ClaimTypes.Name);
+                userGuidEmail = await _db.Users.Where(x => x.Email == userEmail).Select(x => new UserGuidEmail(x.Id, x.Email)).FirstOrDefaultAsync();
             }
 
-            return await Task.FromResult(userEmail);
+            return await Task.FromResult(userGuidEmail);
         }
     }
 }

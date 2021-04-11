@@ -27,9 +27,13 @@
                 </NavLink>
             </li>
             <li class="nav-item">
-                <NavLink class="nav-link" href="profile">
-                    Profile
-                </NavLink>
+                <AuthorizeView>
+                    <Authorized>
+                        <NavLink class="nav-link" href="profile">
+                            Profile
+                        </NavLink>
+                    </Authorized>
+                </AuthorizeView>
             </li>
             <li class="nav-item">
                 <NavLink class="nav-link" href="ranking">

@@ -21,12 +21,13 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var currentUser = await _httpClient.GetFromJsonAsync<UserEmail>("users/getcurrentuser");
+            var currentUser = await _httpClient.GetFromJsonAsync<UserGuidEmail>("users/getcurrentuser");
 
             if (currentUser is not null && !string.IsNullOrEmpty(currentUser.Email))
             {
-                var claims = new Claim(ClaimTypes.Name, currentUser.Email);
-                var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
+                var claimEmail = new Claim(ClaimTypes.Name, currentUser.Email);
+                var claimNameIdentifier = new Claim(ClaimTypes.NameIdentifier, Convert.ToString(currentUser.Guid));
+                var claimsIdentity = new ClaimsIdentity(new[] { claimEmail, claimNameIdentifier }, "ServerSideAuthentication");
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                 return new AuthenticationState(claimsPrincipal);
