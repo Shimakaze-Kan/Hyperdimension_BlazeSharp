@@ -94,10 +94,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpPost("loginuser")]
         public async Task<ActionResult<UserAuthenticationMinimal>> LoginUser(UserAuthenticationMinimal userAuthenticationMinimal)
         {
-            // unsafe
-            var user = await _db.Users.Where(x => x.Email == userAuthenticationMinimal.Email && x.Password == userAuthenticationMinimal.Password)
+            var user = await _db.Users.Where(x => x.Email == userAuthenticationMinimal.Email)
                 .Select(x => new UserAuthenticationMinimal(x.Email, x.Password))
                 .FirstOrDefaultAsync();
+
+            if(PasswordHasher.Verify(userAuthenticationMinimal.Password, user.Password) is false)
+            {
+                return BadRequest();
+            }
 
             if(user is not null)
             {
@@ -114,7 +118,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpPost("registeruser")]
         public async Task<ActionResult<UserAuthenticationMinimal>> RegisterUser(UserAuthenticationMinimal userAuthenticationMinimal)
         {
-            //unsafe
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
 
             if(user is not null)
@@ -126,7 +129,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             {
                 Id = Guid.NewGuid(),
                 Email = userAuthenticationMinimal.Email,
-                Password = userAuthenticationMinimal.Password, //unsafe
+                Password = PasswordHasher.Encrypt(userAuthenticationMinimal.Password),
                 Role = "casual",
                 Source = "sss"
             };
