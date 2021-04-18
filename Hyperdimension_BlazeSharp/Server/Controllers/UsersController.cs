@@ -111,6 +111,32 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return await Task.FromResult(user);
         }
 
+        [HttpPost("registeruser")]
+        public async Task<ActionResult<UserAuthenticationMinimal>> RegisterUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        {
+            //unsafe
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
+
+            if(user is not null)
+            {
+                return BadRequest("User exists"); //tmp solution
+            }
+
+            Users newAccount = new()
+            {
+                Id = Guid.NewGuid(),
+                Email = userAuthenticationMinimal.Email,
+                Password = userAuthenticationMinimal.Password, //unsafe
+                Role = "casual",
+                Source = "sss"
+            };
+
+            _db.Users.Add(newAccount);
+            await _db.SaveChangesAsync();
+
+            return await Task.FromResult(userAuthenticationMinimal);
+        }
+
         [HttpGet("logoutuser")]
         public async Task<ActionResult<string>> LogoutUser()
         {

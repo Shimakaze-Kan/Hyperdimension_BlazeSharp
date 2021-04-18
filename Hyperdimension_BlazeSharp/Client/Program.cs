@@ -36,6 +36,8 @@ namespace Hyperdimension_BlazeSharp.Client
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient<ILoginViewModel, LoginViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<IRegisterViewModel, RegisterViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 

@@ -1,0 +1,41 @@
+﻿@page "/register"
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject IRegisterViewModel _registerViewModel
+@inject ILoginViewModel _loginViewModel
+@inject NavigationManager NavigationManager
+
+<h3>Register</h3>
+
+<EditForm Model="_registerViewModel">
+    <div class="col-6">
+        <ValidationMessage For="() => _registerViewModel.Email"/>
+        <InputText type="text" @bind-Value="_registerViewModel.Email" class="form-control" placeholder="email address"></InputText>
+    </div>
+    <br />
+    <div class="col-6">
+        <ValidationMessage For="() => _registerViewModel.Password" />
+        <InputText type="password" @bind-Value="_registerViewModel.Password" class="form-control" placeholder="password"></InputText>
+    </div>
+    <br />
+    <div class="col-6">
+        <button class="btn btn-outline-orange" type="submit" disabled="@isSubmiting" @onclick="RegisterUser">Register</button>
+    </div>
+
+    <DataAnnotationsValidator/>
+</EditForm>
+
+
+@code {
+    bool isSubmiting;
+
+    public async Task RegisterUser()
+    {
+        isSubmiting = true;
+
+        await _registerViewModel.RegisterUser();
+        _loginViewModel.Email = _registerViewModel.Email;
+        _loginViewModel.Password = _registerViewModel.Password;
+        await _loginViewModel.LoginUser();
+        NavigationManager.NavigateTo("/", true);
+    }
+}

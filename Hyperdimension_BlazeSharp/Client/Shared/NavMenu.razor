@@ -57,6 +57,7 @@
                     <NotAuthorized>
                         <div>
                             <button class="btn btn-outline-orange" @onclick="Login">Login</button>
+                            <button class="btn btn-outline-light" @onclick="Register">Register</button>
                         </div>
                     </NotAuthorized>                    
                 </AuthorizeView>
@@ -86,6 +87,11 @@
 
     private void Login()
     {
-        NavigationManager.NavigateTo("login", true);
+        NavigationManager.NavigateTo("login");
+    }
+
+    private void Register()
+    {
+        NavigationManager.NavigateTo("register");
     }
 }
