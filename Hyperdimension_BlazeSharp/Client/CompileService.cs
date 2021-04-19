@@ -164,7 +164,7 @@ namespace Hyperdimension_BlazeSharp.Client
         //        }
 
 
-        public async Task<string> CompileAndRun(string code)
+        public async Task<Tuple<bool, string>> CompileAndRun(string code)
         {
             await Init();
 
@@ -174,7 +174,7 @@ namespace Hyperdimension_BlazeSharp.Client
                 var type = assemby.GetExportedTypes().FirstOrDefault();
                 var methodInfo = type.GetMethod("Run");
                 var instance = Activator.CreateInstance(type);
-                return (string)methodInfo.Invoke(instance, null);
+                return (Tuple<bool, string>)methodInfo.Invoke(instance, null);
             }
 
             return null;

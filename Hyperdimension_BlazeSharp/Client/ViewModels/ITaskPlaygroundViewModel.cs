@@ -22,7 +22,8 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public MonacoEditor Editor { get; set; }
         public int? Points { get; set; }
         public bool IsPreviousVersion { get; set; }
-        
+        public bool IsPassed { get; set; }
+
 
         public Task Execute();
         public void ChangeEditorPosition();

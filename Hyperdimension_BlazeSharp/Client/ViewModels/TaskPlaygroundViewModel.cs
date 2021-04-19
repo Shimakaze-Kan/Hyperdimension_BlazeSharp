@@ -18,6 +18,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private string _compileText;        
         private int? _points;
         private bool _isPreviousVersion = false;
+        private bool _isPassed;
         private string _instruction;
         private Mode _mode = 0;
         private string _editorPosition = "col-md-6";
@@ -70,6 +71,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         { 
             get => _isPreviousVersion; 
             set => OnPropertyChanged(ref _isPreviousVersion, value); 
+        }
+        public bool IsPassed
+        {
+            get => _isPassed;
+            set => OnPropertyChanged(ref _isPassed, value);
         }
         public TaskDataPlayground TaskDataPlayground { get; set; }
 
@@ -125,7 +131,18 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
                 code = code.Insert(0, "using System.Text;using System.IO;");
                 #endregion
 
-                Output = await _compileService.CompileAndRun(code);                
+                var tmp = await _compileService.CompileAndRun(code);
+                Output = tmp.Item2;
+                IsPassed = tmp.Item1;
+
+                if (IsPassed)
+                {
+                    Output += Environment.NewLine + @"<span class=""text-success"">[Task Passed!]</span>";
+                }
+                else
+                {
+                    Output += Environment.NewLine + @"<span class=""text-danger"">[Failure]</span>";
+                }
             }
             catch (Exception e)
             {

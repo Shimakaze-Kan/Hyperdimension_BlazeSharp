@@ -45,7 +45,7 @@
                 <div class="row w-100">                    
                     <p>Output:</p>
                     <div class="col border-top">
-                        <button type="button" class="btn btn-outline-orange float-right" disabled="@CantSubmit" @onclick="SubmitTask">Submit</button>
+                        <button type="button" class="btn btn-outline-orange float-right" disabled="@(CantSubmit || !_taskPlaygroundViewModel.IsPassed)" @onclick="SubmitTask">Submit</button>
                         @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
                         {
 
