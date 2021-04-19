@@ -6,6 +6,8 @@
 
 <h3>Register</h3>
 
+<h4 class="text-danger">@ErrorMessage</h4>
+
 <EditForm Model="_registerViewModel">
     <div class="col-6">
         <ValidationMessage For="() => _registerViewModel.Email"/>
@@ -26,16 +28,24 @@
 
 
 @code {
+    public string ErrorMessage { get; set; }
     bool isSubmiting;
 
     public async Task RegisterUser()
     {
         isSubmiting = true;
 
-        await _registerViewModel.RegisterUser();
-        _loginViewModel.Email = _registerViewModel.Email;
-        _loginViewModel.Password = _registerViewModel.Password;
-        await _loginViewModel.LoginUser();
-        NavigationManager.NavigateTo("/", true);
+        var response = await _registerViewModel.RegisterUser();
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            ErrorMessage = await response.Content.ReadAsStringAsync();
+        }
+
+        isSubmiting = false;
     }
 }

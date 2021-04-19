@@ -120,13 +120,13 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost("registeruser")]
-        public async Task<ActionResult<UserAuthenticationMinimal>> RegisterUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        public async Task<IActionResult> RegisterUser(UserAuthenticationMinimal userAuthenticationMinimal)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
 
             if (user is not null)
             {
-                return BadRequest("User exists"); //tmp solution
+                return BadRequest("There is already a user with this email"); //tmp solution
             }
 
             Users newAccount = new()
@@ -141,7 +141,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             _db.Users.Add(newAccount);
             await _db.SaveChangesAsync();
 
-            return await Task.FromResult(userAuthenticationMinimal);
+            return await LoginUser(userAuthenticationMinimal);
         }
 
         [HttpGet("logoutuser")]
