@@ -57,5 +57,51 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return history;
         }
+
+        [HttpPost("history/submittask")]
+        public async Task<ActionResult<bool>> SubmitTask(SubmitTaskData submitTaskData)
+        {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return BadRequest();
+            }            
+
+            var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
+            var user = await _db.Users.Where(x => x.Email == User.Identity.Name).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+
+            if(task is null || user is null)
+            {
+                return false;
+            }
+
+            var previousAttempt = await _db.UserTaskHistory.Where(x => x.UserId == user.Id && x.TaskId == task.Id).FirstOrDefaultAsync();
+
+            if (previousAttempt is null)
+            {
+                user.UsersDetails.Points += (int)task.Points;
+
+                UserTaskHistory userTaskHistory = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Solution = submitTaskData.Solution,
+                    IsTaskPassed = submitTaskData.IsTaskPassed,
+                    SubmittedAt = DateTime.Now,
+                    User = user,
+                    Task = task
+                };
+
+                await _db.UserTaskHistory.AddAsync(userTaskHistory);                
+            }
+            else
+            {                
+                previousAttempt.Solution = submitTaskData.Solution;
+                previousAttempt.SubmittedAt = DateTime.Now;
+                previousAttempt.IsTaskPassed = submitTaskData.IsTaskPassed;
+            }
+
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

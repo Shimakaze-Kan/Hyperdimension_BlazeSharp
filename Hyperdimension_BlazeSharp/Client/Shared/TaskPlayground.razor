@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ITaskPlaygroundViewModel _taskPlaygroundViewModel
+@inject HttpClient HttpClient
 
 
 <PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">
@@ -41,9 +42,10 @@
                         <MonacoEditor Id="monaco-editor" @ref="_taskPlaygroundViewModel.Editor" ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
                     </div>
                 </div>
-                <div class="row w-100">
+                <div class="row w-100">                    
                     <p>Output:</p>
                     <div class="col border-top">
+                        <button type="button" class="btn btn-outline-orange position-absolute mr-auto" disabled="@CantSubmit" @onclick="SubmitTask">Submit</button>
                         @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
                         {
 

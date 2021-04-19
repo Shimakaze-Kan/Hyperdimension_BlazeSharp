@@ -131,7 +131,8 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 Email = userAuthenticationMinimal.Email,
                 Password = PasswordHasher.Encrypt(userAuthenticationMinimal.Password),
                 Role = "casual",
-                Source = "sss"
+                Source = "sss",
+                UsersDetails = new()
             };
 
             _db.Users.Add(newAccount);
