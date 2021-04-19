@@ -5,6 +5,8 @@
 
 <h3>Login</h3>
 
+<h4 class="text-danger">@ErrorMessage</h4>
+
 <div class="col-6">
     <input type="text" @bind="_loginViewModel.Email" class="form-control" placeholder="email address">
 </div>
@@ -18,9 +20,19 @@
 </div>
 
 @code {
+    public string ErrorMessage { get; set; }
+
     public async Task LoginUser()
     {
-        await _loginViewModel.LoginUser();
-        NavigationManager.NavigateTo("/", true);
+        var response = await _loginViewModel.LoginUser();
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            ErrorMessage = await response.Content.ReadAsStringAsync();
+        }
     }
 }

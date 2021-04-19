@@ -21,9 +21,9 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _httpClient = httpClient;
         }
 
-        public async Task LoginUser()
+        public async Task<HttpResponseMessage> LoginUser()
         {
-            await _httpClient.PostAsJsonAsync<UserAuthenticationMinimal>("users/loginuser", this);
+            return await _httpClient.PostAsJsonAsync<UserAuthenticationMinimal>("users/loginuser", this);
         }
 
         private void LoadCurrentObject(LoginViewModel loginViewModel)

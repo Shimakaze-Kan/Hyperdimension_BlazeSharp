@@ -16,7 +16,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        List<Tuple<string,int>> list = new() { new("user1", 12), new("user1212", 122), new("user1000", 4) };
+        List<Tuple<string, int>> list = new() { new("user1", 12), new("user1212", 122), new("user1000", 4) };
         private readonly HblazesharpContext _db;
 
         public UsersController(HblazesharpContext db)
@@ -40,11 +40,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet("test")]
-        public async Task<ActionResult<Tuple<string,string>>> GetName()
+        public async Task<ActionResult<Tuple<string, string>>> GetName()
         {
             var oldDate = await _db.Users.Where(x => x.Email == "Test@tesat.test122").FirstOrDefaultAsync();
 
-            if(oldDate is not null)
+            if (oldDate is not null)
             {
                 _db.Users.Remove(oldDate);
             }
@@ -77,13 +77,13 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 .Include(x => x.UsersDetails)
                 .Include(x => x.UserTaskHistory)
                 .ThenInclude(x => x.Task)
-                .Select(user => new UserProfile(user.Email, user.UsersDetails.Points, 
-                    user.UsersDetails.AvatarUrl, user.UsersDetails.About, 
+                .Select(user => new UserProfile(user.Email, user.UsersDetails.Points,
+                    user.UsersDetails.AvatarUrl, user.UsersDetails.About,
                     user.UserTaskHistory
                         .Select(x => new TaskMinimalWithSubmissionDate(x.TaskId, x.Task.Title, x.SubmittedAt))))
                 .FirstOrDefaultAsync();
 
-            if(user is null)
+            if (user is null)
             {
                 return NotFound();
             }
@@ -92,27 +92,31 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost("loginuser")]
-        public async Task<ActionResult<UserAuthenticationMinimal>> LoginUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        public async Task<IActionResult> LoginUser(UserAuthenticationMinimal userAuthenticationMinimal)
         {
             var user = await _db.Users.Where(x => x.Email == userAuthenticationMinimal.Email)
                 .Select(x => new UserAuthenticationMinimal(x.Email, x.Password))
                 .FirstOrDefaultAsync();
 
-            if(PasswordHasher.Verify(userAuthenticationMinimal.Password, user.Password) is false)
+            if (user is null)
             {
-                return BadRequest();
+                return BadRequest("Incorrect email");
             }
 
-            if(user is not null)
+            if (PasswordHasher.Verify(userAuthenticationMinimal.Password, user.Password) is false)
             {
-                var claims = new Claim(ClaimTypes.Name, user.Email);
-                var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                await HttpContext.SignInAsync(claimsPrincipal);
+                return BadRequest("Incorrect password");
             }
 
-            return await Task.FromResult(user);
+
+            var claims = new Claim(ClaimTypes.Name, user.Email);
+            var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            await HttpContext.SignInAsync(claimsPrincipal);
+
+
+            return Ok();
         }
 
         [HttpPost("registeruser")]
@@ -120,7 +124,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
 
-            if(user is not null)
+            if (user is not null)
             {
                 return BadRequest("User exists"); //tmp solution
             }
@@ -146,14 +150,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             await HttpContext.SignOutAsync();
             return "done";
         }
-         
+
         [HttpGet("getcurrentuser")]
         public async Task<ActionResult<UserGuidEmail>> GetCurrentuser()
         {
             UserGuidEmail userGuidEmail = new(default, null);
 
             if (User.Identity.IsAuthenticated)
-            {                
+            {
                 var userEmail = User.FindFirstValue(ClaimTypes.Name);
                 userGuidEmail = await _db.Users.Where(x => x.Email == userEmail).Select(x => new UserGuidEmail(x.Id, x.Email)).FirstOrDefaultAsync();
             }
