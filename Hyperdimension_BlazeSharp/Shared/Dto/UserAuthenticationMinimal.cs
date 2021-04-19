@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Shared.Dto
 {
-    public record UserAuthenticationMinimal
+    public class UserAuthenticationMinimal
     {
-        //[Required, MaxLength(255), EmailAddress]
-        public string Password { get; init; }
-        //[Required, MaxLength(255), MinLength(5)]
+        [Required, MaxLength(255), MinLength(5)]
+        public string Password { get; init; }        
+        [Required, MaxLength(255), EmailAddress]
         public string Email { get; init; }
 
         public UserAuthenticationMinimal(string email, string password)

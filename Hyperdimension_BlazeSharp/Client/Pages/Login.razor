@@ -5,22 +5,44 @@
 
 <h3>Login</h3>
 
-<div class="col-6">
-    <input type="text" @bind="_loginViewModel.Email" class="form-control" placeholder="email address">
-</div>
-<br />
-<div class="col-6">
-    <input type="password" @bind="_loginViewModel.Password" class="form-control" placeholder="password">
-</div>
-<br />
-<div class="col-6">
-    <button class="btn btn-outline-orange" @onclick="LoginUser">Login</button>
-</div>
+<h4 class="text-danger">@ErrorMessage</h4>
+
+<EditForm Model="_loginViewModel" OnValidSubmit="LoginUser">
+    <div class="col-6">
+        <ValidationMessage For="() => _loginViewModel.Email" />
+        <InputText type="text" @bind-Value="_loginViewModel.Email" class="form-control" placeholder="email address"/>
+    </div>
+    <br />
+    <div class="col-6">
+        <ValidationMessage For="() => _loginViewModel.Password" />
+        <InputText type="password" @bind-Value="_loginViewModel.Password" class="form-control" placeholder="password"/>
+    </div>
+    <br />
+    <div class="col-6">
+        <button class="btn btn-outline-orange" type="submit" disabled="@isSubmitting">Login</button>
+    </div>
+
+    <DataAnnotationsValidator/>
+</EditForm>
 
 @code {
+    public string ErrorMessage { get; set; }
+    bool isSubmitting;
+
     public async Task LoginUser()
     {
-        await _loginViewModel.LoginUser();
-        NavigationManager.NavigateTo("/", true);
+        isSubmitting = true;
+        var response = await _loginViewModel.LoginUser();
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            ErrorMessage = await response.Content.ReadAsStringAsync();
+        }
+
+        isSubmitting = false;
     }
 }

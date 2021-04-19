@@ -22,9 +22,9 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _httpClient = httpClient;
         }
 
-        public async Task RegisterUser()
+        public async Task<HttpResponseMessage> RegisterUser()
         {
-            await _httpClient.PostAsJsonAsync<UserAuthenticationMinimal>("users/registeruser", this);
+            return await _httpClient.PostAsJsonAsync<UserAuthenticationMinimal>("users/registeruser", this);
         }
 
         public static implicit operator UserAuthenticationMinimal(RegisterViewModel registerViewModel)

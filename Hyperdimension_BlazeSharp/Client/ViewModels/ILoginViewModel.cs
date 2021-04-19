@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Client.ViewModels
@@ -10,6 +11,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public Task LoginUser();
+        public Task<HttpResponseMessage> LoginUser();
     }
 }
