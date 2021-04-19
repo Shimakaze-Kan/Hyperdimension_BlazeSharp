@@ -8,7 +8,10 @@
 <div class="d-flex flex-column px-4">
     <div class="p-2 d-flex flex-column flex-sm-row">
         <img src="@(_profileViewModel.UserProfile?.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
-        <h4 class="p-2 ml-2 bg-lightergrey rounded my-auto text-center">@(_profileViewModel.UserProfile?.Email)</h4>
+        <div class="p-2 ml-2">
+            <span class="badge bg-dark text-white bol">Points: @_profileViewModel.UserProfile?.Points</span>
+            <h4 class="bg-lightergrey rounded p-2 my-auto text-center">@(_profileViewModel.UserProfile?.Email)</h4>
+        </div>
     </div>
 
     @if (_profileViewModel.UserProfile?.About is not null)

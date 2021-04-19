@@ -40,8 +40,9 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
                 TaskId = Guid
             };
 
-            var tmp = await HttpClient.PostAsJsonAsync<SubmitTaskData>("tasks/history/submittask", submitTaskData);
+            await HttpClient.PostAsJsonAsync<SubmitTaskData>("tasks/history/submittask", submitTaskData);
 
+            _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
         }
     }
