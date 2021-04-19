@@ -1,14 +1,13 @@
 ﻿@page "/register"
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject IRegisterViewModel _registerViewModel
-@inject ILoginViewModel _loginViewModel
 @inject NavigationManager NavigationManager
 
 <h3>Register</h3>
 
 <h4 class="text-danger">@ErrorMessage</h4>
 
-<EditForm Model="_registerViewModel">
+<EditForm Model="_registerViewModel" OnValidSubmit="RegisterUser">
     <div class="col-6">
         <ValidationMessage For="() => _registerViewModel.Email"/>
         <InputText type="text" @bind-Value="_registerViewModel.Email" class="form-control" placeholder="email address"></InputText>
@@ -20,7 +19,7 @@
     </div>
     <br />
     <div class="col-6">
-        <button class="btn btn-outline-orange" type="submit" disabled="@isSubmiting" @onclick="RegisterUser">Register</button>
+        <button class="btn btn-outline-orange" type="submit" disabled="@isSubmitting">Register</button>
     </div>
 
     <DataAnnotationsValidator/>
@@ -29,11 +28,11 @@
 
 @code {
     public string ErrorMessage { get; set; }
-    bool isSubmiting;
+    bool isSubmitting;
 
     public async Task RegisterUser()
     {
-        isSubmiting = true;
+        isSubmitting = true;
 
         var response = await _registerViewModel.RegisterUser();
 
@@ -46,6 +45,6 @@
             ErrorMessage = await response.Content.ReadAsStringAsync();
         }
 
-        isSubmiting = false;
+        isSubmitting = false;
     }
 }
