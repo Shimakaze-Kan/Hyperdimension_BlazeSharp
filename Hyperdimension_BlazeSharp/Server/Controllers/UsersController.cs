@@ -129,6 +129,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return BadRequest("There is already a user with this email"); //tmp solution
             }
 
+            UsersDetails usersDetails = new() { About = "test" };
             Users newAccount = new()
             {
                 Id = Guid.NewGuid(),
@@ -136,7 +137,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 Password = PasswordHasher.Encrypt(userAuthenticationMinimal.Password),
                 Role = "casual",
                 Source = "sss",
-                UsersDetails = new()
+                UsersDetails = usersDetails
             };
 
             _db.Users.Add(newAccount);
