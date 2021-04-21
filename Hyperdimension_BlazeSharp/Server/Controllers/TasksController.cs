@@ -26,6 +26,13 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return await _db.Tasks.ToListAsync();
         }
 
+        /// <summary>
+        /// Receives task by id
+        /// </summary>
+        /// 
+        /// <param name="id">Task id</param>
+        /// <returns>TaskDataPlayground object</returns>
+        /// <response code="401">If task doesn't exist</response>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<TaskDataPlayground>> GetSpecyficTask(Guid id)
         {
