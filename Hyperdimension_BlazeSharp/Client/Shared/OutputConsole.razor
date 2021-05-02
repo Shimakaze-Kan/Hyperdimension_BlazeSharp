@@ -1,0 +1,21 @@
+﻿<p>Output:</p>
+<div class="col border-top">
+    @if (CompileText.Contains("error"))
+    {
+        <span class="text-danger">
+            <MarkupPanel Text="@CompileText" />
+        </span>
+    }
+    else
+    {
+        <MarkupPanel Text="@Output" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Output { get; set; }
+
+    [Parameter]
+    public string CompileText { get; set; }
+}

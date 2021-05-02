@@ -18,31 +18,28 @@
                 <div class="row mb-2">
                     <SelectEditorTheme OnChange="@_taskPlaygroundViewModel.ChangeTheme" />
 
-                    <TaskManagerPanel TaskId="_taskPlaygroundViewModel.TaskId" 
-                                      OnExecute="_taskPlaygroundViewModel.Execute" 
-                                      OnChangeEditorPosition="_taskPlaygroundViewModel.ChangeEditorPosition" 
+                    <TaskManagerPanel TaskId="_taskPlaygroundViewModel.TaskId"
+                                      OnExecute="_taskPlaygroundViewModel.Execute"
+                                      OnChangeEditorPosition="_taskPlaygroundViewModel.ChangeEditorPosition"
                                       OnRestorePreviousVersion="_taskPlaygroundViewModel.RestorePreviousVersion" />
                 </div>
                 <div class="row">
                     <div class="col">
-                        <MonacoEditor Id="monaco-editor" @ref="_taskPlaygroundViewModel.Editor" ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
+                        <MonacoEditor Id="monaco-editor"
+                                      @ref="_taskPlaygroundViewModel.Editor"
+                                      ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
                     </div>
                 </div>
-                <div class="row w-100">                    
-                    <p>Output:</p>
-                    <div class="col border-top">
-                        <button type="button" class="btn btn-outline-orange float-right" disabled="@(CantSubmit || !_taskPlaygroundViewModel.IsPassed)" @onclick="SubmitTask">Submit</button>
-                        @if (_taskPlaygroundViewModel.CompileText is not null && _taskPlaygroundViewModel.CompileText.Contains("error"))
-                        {
+                <div class="row w-100">
+                    <button type="button"
+                            class="btn btn-outline-orange"
+                            disabled="@(CantSubmit || !_taskPlaygroundViewModel.IsPassed)"
+                            @onclick="SubmitTask">
+                        Submit
+                    </button>
 
-                            <span class="text-danger">@((MarkupString) _taskPlaygroundViewModel.CompileText)</span>
-
-                        }
-                        else
-                        {
-                            @((MarkupString)(_taskPlaygroundViewModel.Output ?? string.Empty))
-                        }
-                    </div>
+                    <OutputConsole CompileText="@(_taskPlaygroundViewModel.CompileText ?? string.Empty)"
+                                   Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)" />
                 </div>
             </div>
         </div>
