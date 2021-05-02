@@ -1,0 +1,9 @@
+﻿.outputConsole {
+    min-height: 50px;
+}
+
+.submitButton {
+    position: fixed;
+    right: 0.5rem;
+    bottom: 2rem;
+}

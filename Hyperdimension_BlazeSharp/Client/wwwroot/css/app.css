@@ -79,6 +79,8 @@ a, .btn-link {
 
 #monaco-editor {
     height: 400px;
+    resize: vertical;
+    overflow: hidden;
 }
 
 .bg-banner {

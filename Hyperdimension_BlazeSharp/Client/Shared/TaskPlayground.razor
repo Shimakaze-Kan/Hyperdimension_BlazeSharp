@@ -5,7 +5,7 @@
 
 
 <PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">
-    <div class="overflow-hidden">
+    <div class="overflow-hidden mb-5">
 
         <h4>@(_taskPlaygroundViewModel.Title ?? string.Empty)</h4>
 
@@ -30,21 +30,21 @@
                                       ConstructionOptions="_taskPlaygroundViewModel.EditorConstructionOptions" />
                     </div>
                 </div>
-                <div class="row w-100">
-                    <button type="button"
-                            class="btn btn-outline-orange"
-                            disabled="@(CantSubmit || !_taskPlaygroundViewModel.IsPassed)"
-                            @onclick="SubmitTask">
-                        Submit
-                    </button>
-
+                <div class="row w-100 outputConsole">
                     <OutputConsole CompileText="@(_taskPlaygroundViewModel.CompileText ?? string.Empty)"
                                    Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)" />
                 </div>
             </div>
         </div>
 
-        <BottomTaskBar Mode="_taskPlaygroundViewModel.Mode" 
+        <button type="button"
+                class="btn btn-outline-orange submitButton"
+                disabled="@(CantSubmit || !_taskPlaygroundViewModel.IsPassed)"
+                @onclick="SubmitTask">
+            Submit
+        </button>
+
+        <BottomTaskBar Mode="_taskPlaygroundViewModel.Mode"
                        Points="_taskPlaygroundViewModel.Points" />
     </div>
 </PropertyHasChangedListener>
