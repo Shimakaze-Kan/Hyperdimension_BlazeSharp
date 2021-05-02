@@ -200,7 +200,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             return new()
             {
                 TaskId = taskDataPlayground.Guid,
-                Instruction = Markdig.Markdown.ToHtml(taskDataPlayground.Description),
+                Instruction = taskDataPlayground.Description,
                 Title = taskDataPlayground.Title,
                 //Mode = taskDataPlayground.Mode
                 Points = taskDataPlayground.Points,

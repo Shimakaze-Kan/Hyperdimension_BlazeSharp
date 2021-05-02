@@ -1,0 +1,12 @@
+﻿@((MarkupString)Text)
+
+@code {
+    string _text = string.Empty;
+
+    [Parameter]
+    public string Text
+    {
+        get => _text;
+        set => _text = Markdig.Markdown.ToHtml(value);
+    }
+}

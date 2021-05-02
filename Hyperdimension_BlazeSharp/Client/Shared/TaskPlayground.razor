@@ -6,17 +6,14 @@
 
 <PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">
     <div class="overflow-hidden">
-        @if (_taskPlaygroundViewModel.Title is not null)
-        {
-            <h4>@_taskPlaygroundViewModel.Title</h4>
-        }
+
+        <h4>@(_taskPlaygroundViewModel.Title ?? string.Empty)</h4>
 
         <div class="row">
             <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
-
-                @((MarkupString)(_taskPlaygroundViewModel.Instruction ?? string.Empty))
-
+                <MarkupPanel Text="@(_taskPlaygroundViewModel.Instruction ?? "Loading...")" />
             </div>
+
             <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
                 <div class="row mb-2">
                     <div class="col">
