@@ -25,8 +25,7 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
             CantSubmit = !(await authenticationState).User.Identity.IsAuthenticated;
 
             _taskPlaygroundViewModel.TaskId = Guid;
-            await _taskPlaygroundViewModel.GetTask();
-            _taskPlaygroundViewModel.CheckIfDraftExists();
+            await _taskPlaygroundViewModel.GetTask();            
         }
 
         public async Task SubmitTask()

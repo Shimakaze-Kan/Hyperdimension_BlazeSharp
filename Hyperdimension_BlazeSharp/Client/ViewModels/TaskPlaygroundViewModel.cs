@@ -17,7 +17,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private string _output;
         private string _compileText;        
         private int? _points;
-        private bool _isPreviousVersion = false;
         private bool _isPassed;
         private string _instruction;
         private Mode _mode = 0;
@@ -67,11 +66,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             get => _points; 
             set => OnPropertyChanged(ref _points, value); 
         }
-        public bool IsPreviousVersion 
-        { 
-            get => _isPreviousVersion; 
-            set => OnPropertyChanged(ref _isPreviousVersion, value); 
-        }
         public bool IsPassed
         {
             get => _isPassed;
@@ -117,8 +111,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public async Task Execute()
         {
             var code = await GetValue();
-            _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
-            IsPreviousVersion = false;
+            _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));            
 
             try
             {
@@ -163,8 +156,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task RestorePreviousVersion()
         {
-            await SetValue(_tasksHistoryDraft.GetDraftCode(TaskId));
-            IsPreviousVersion = false;
+            await SetValue(_tasksHistoryDraft.GetDraftCode(TaskId));            
         }
 
         public async Task SetValue(string value)
@@ -178,11 +170,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             if(task is not null)
             LoadCurrentObject(task);
             await SetValue(_initialCode);
-        }
-
-        public void CheckIfDraftExists()
-        {
-            IsPreviousVersion = _tasksHistoryDraft.CheckIfDraftExists(TaskId);
         }
 
         private void LoadCurrentObject(TaskPlaygroundViewModel taskPlaygroundViewModel)

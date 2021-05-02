@@ -20,8 +20,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public string EditorPosition { get; set; }
         public string Title { get; set; }
         public MonacoEditor Editor { get; set; }
-        public int? Points { get; set; }
-        public bool IsPreviousVersion { get; set; }
+        public int? Points { get; set; }        
         public bool IsPassed { get; set; }
 
 
@@ -32,8 +31,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Task<string> GetValue();
         public Task SetValue(string value);
         public Task RestorePreviousVersion();
-        public Task GetTask();
-        public void CheckIfDraftExists();
+        public Task GetTask();        
     }
 
     public enum Mode

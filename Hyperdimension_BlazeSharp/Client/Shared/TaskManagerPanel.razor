@@ -1,0 +1,28 @@
+﻿<div class="col">
+    <button type="button" class="btn btn-outline-orange float-right" @onclick="OnExecute">Execute</button>
+    <button type="button" class="btn btn-outline-orange float-right d-md-block d-none mr-1" @onclick="OnChangeEditorPosition">Change Position</button>
+
+    <button type="button" class="btn btn-outline-orange float-right mr-1"
+            title="Restore last executed version"
+            hidden="@(!TasksHistoryDraft.CheckIfDraftExists(TaskId))"
+            @onclick="OnRestorePreviousVersion">
+        Restore
+    </button>
+</div>
+
+@code {
+    [CascadingParameter(Name = "_tasksHistoryDraft")]
+    public TasksHistoryDraft TasksHistoryDraft { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnExecute { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnChangeEditorPosition { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnRestorePreviousVersion { get; set; }
+
+    [Parameter]
+    public Guid TaskId { get; set; }
+}
