@@ -1,0 +1,17 @@
+﻿<div class="fixed-bottom d-flex text-white" style="background-color: @(Mode == 0 ? "#3A66A7" : "#FF9912")">
+    <label class="mr-auto pl-2 mb-0">
+        @Mode mode
+    </label>
+
+    <label class="ml-auto pr-2 mb-0" hidden="@(Points is null)">
+        Points: @Points
+    </label>
+</div>
+
+@code {
+    [Parameter]
+    public Mode Mode { get; set; }    
+
+    [Parameter]
+    public int? Points { get; set; }
+}

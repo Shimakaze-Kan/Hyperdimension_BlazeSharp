@@ -44,16 +44,7 @@
             </div>
         </div>
 
-        <div class="fixed-bottom d-flex" style="background-color: @(_taskPlaygroundViewModel.Mode == 0 ? "#3A66A7" : "#FF9912"); color: white">
-            <label class="mr-auto pl-2 mb-0">
-                @_taskPlaygroundViewModel.Mode.ToString() mode
-            </label>
-            @if (_taskPlaygroundViewModel.Points is not null)
-            {
-                <label class="ml-auto pr-2 mb-0">
-                    Points: @_taskPlaygroundViewModel.Points
-                </label>
-            }
-        </div>
+        <BottomTaskBar Mode="_taskPlaygroundViewModel.Mode" 
+                       Points="_taskPlaygroundViewModel.Points" />
     </div>
 </PropertyHasChangedListener>

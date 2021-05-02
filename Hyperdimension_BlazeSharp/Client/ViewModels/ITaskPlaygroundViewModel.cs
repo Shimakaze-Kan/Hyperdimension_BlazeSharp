@@ -33,10 +33,4 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Task RestorePreviousVersion();
         public Task GetTask();        
     }
-
-    public enum Mode
-    {
-        Tutorial,
-        Adventure
-    }
 }
