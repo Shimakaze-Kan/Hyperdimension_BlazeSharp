@@ -3,6 +3,8 @@
 @layout NoPaddingLayout
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject IProfileViewModel _profileViewModel
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
 <div class="bg-banner" style="background-image: url('../img/@_profileViewModel.Banner')" />
 <div class="d-flex flex-column px-4">
@@ -22,23 +24,33 @@
         </div>
     }
 
-
-    <div class="list-group mt-4">
-        <a href="#" class="list-group-item list-group-item-action active">
-            User's history
-        </a>
-        @if (_profileViewModel.UserProfile?.Tasks is not null)
-        {
-            @foreach (var task in _profileViewModel.UserProfile.Tasks)
-            {
-                <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
-            }
-        }
-        else
-        {
-            <text>Loading...</text>
-        }
-    </div>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">History</button>
+            <button class="nav-link" id="nav-test-tab" @onclick="@(() => ChangeTab("nav-test-tab"))" type="button" role="tab">Test</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane show active" id="nav-task-history" role="tabpanel">
+            <div class="list-group mt-4">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    User's history
+                </a>
+                @if (_profileViewModel.UserProfile?.Tasks is not null)
+                {
+                    @foreach (var task in _profileViewModel.UserProfile.Tasks)
+                    {
+                        <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
+                    }
+                }
+                else
+                {
+                    <text>Loading...</text>
+                }
+            </div>
+        </div>
+        <div class="tab-pane" id="nav-test" role="tabpanel">...</div>
+    </div>    
 
 </div>
 
@@ -51,21 +63,39 @@
     [CascadingParameter]
     public Task<AuthenticationState> authenticationState { get; set; }
 
+    private Task<IJSObjectReference> _module;
+    private Task<IJSObjectReference> Module => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/show-profile-tab.js").AsTask();
+
     protected override async Task OnInitializedAsync()
     {
         var user = (await authenticationState).User;
 
         if(UserId == Guid.Empty && user.Identity.IsAuthenticated)
         {
-            var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);            
-            _profileViewModel.UserId = Guid.Parse(claim?.Value);            
+            var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+            _profileViewModel.UserId = Guid.Parse(claim?.Value);
         }
         else if(UserId != Guid.Empty)
         {
-            _profileViewModel.UserId = UserId;           
+            _profileViewModel.UserId = UserId;
         }
-        
+
         await _profileViewModel.GetProfileData();
         await _profileViewModel.GetBanner();
+    }
+
+    async Task ChangeTab(string tabNavId)
+    {
+        var module = await Module;
+        await module.InvokeVoidAsync("showProfileTab", tabNavId, tabNavId.Remove(tabNavId.Length - 4));
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null)
+        {
+            var module = await _module;
+            await module.DisposeAsync();
+        }
     }
 }
