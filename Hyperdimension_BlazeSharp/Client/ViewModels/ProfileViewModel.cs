@@ -13,6 +13,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Guid UserId { get; set; }
         public UserProfile UserProfile { get; set; }
         public string Banner { get; set; }
+        public UserPreferences UserPreferences { get; set; }
         private readonly HttpClient _httpClient;
 
         public ProfileViewModel() { }                
@@ -28,6 +29,18 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         {
             var userProfile = await _httpClient.GetFromJsonAsync<UserProfile>($"users/profile/{UserId}");
             LoadCurrentObject(userProfile);
+        }
+
+        public async Task<HttpResponseMessage> UpdatePreferences()
+        {
+            var result = await _httpClient.PostAsJsonAsync<UserPreferences>($"users/changeuserpreferences", UserPreferences);
+
+            if(result.IsSuccessStatusCode)
+            {
+                UserProfile = UserProfile with { About = UserPreferences.About };
+            }
+
+            return result;
         }
 
         private void LoadCurrentObject(ProfileViewModel profileViewModel)

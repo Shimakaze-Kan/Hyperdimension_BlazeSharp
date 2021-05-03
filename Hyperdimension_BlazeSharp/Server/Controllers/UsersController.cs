@@ -166,5 +166,31 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return await Task.FromResult(userGuidEmail);
         }
+
+        [HttpPost("changeuserpreferences")]
+        public async Task<IActionResult> ChangeUserPreferences(UserPreferences userPreferences)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest();
+            }
+
+            var preferences = await _db.Users.Where(x => x.Email == User.Identity.Name).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+
+            if(preferences is null)
+            {
+                return BadRequest();
+            }
+
+            if (userPreferences.ThemeId is not null)
+            {
+                preferences.UserPreferencesId = (int)userPreferences.ThemeId;
+            }
+
+            preferences.UsersDetails.About = userPreferences.About;
+
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

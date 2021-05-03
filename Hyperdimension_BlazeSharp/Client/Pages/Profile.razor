@@ -23,7 +23,7 @@
             <span>@_profileViewModel.UserProfile?.About</span>
         </div>
     }
-
+    <button @onclick="UpdatePreferences">update</button>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">History</button>
@@ -73,6 +73,27 @@
     {
         var module = await Module;
         await module.InvokeVoidAsync("showProfileTab", tabNavId, tabNavId.Remove(tabNavId.Length - 4));
+    }
+
+    async Task UpdatePreferences()
+    {
+        _profileViewModel.UserPreferences = new UserPreferences()
+        {
+            About = "123"
+        };
+
+        var response = await _profileViewModel.UpdatePreferences();
+
+        if(response.IsSuccessStatusCode)
+        {
+            //TODO
+            Console.WriteLine("success");
+        }
+        else
+        {
+            //TODO
+            Console.WriteLine("error");
+        }
     }
 
     public async ValueTask DisposeAsync()
