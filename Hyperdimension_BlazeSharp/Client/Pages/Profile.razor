@@ -32,22 +32,7 @@
     </nav>
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane show active" id="nav-task-history" role="tabpanel">
-            <div class="list-group mt-4">
-                <a href="#" class="list-group-item list-group-item-action active">
-                    User's history
-                </a>
-                @if (_profileViewModel.UserProfile?.Tasks is not null)
-                {
-                    @foreach (var task in _profileViewModel.UserProfile.Tasks)
-                    {
-                        <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
-                    }
-                }
-                else
-                {
-                    <text>Loading...</text>
-                }
-            </div>
+            <ClickableList Tasks="@_profileViewModel.UserProfile?.Tasks" />
         </div>
         <div class="tab-pane" id="nav-test" role="tabpanel">...</div>
     </div>    

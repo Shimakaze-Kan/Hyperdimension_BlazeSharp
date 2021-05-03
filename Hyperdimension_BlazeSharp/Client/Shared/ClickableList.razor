@@ -1,0 +1,20 @@
+﻿<div class="list-group mt-4">
+    @if (Tasks is not null)
+    {
+        @foreach (var task in Tasks)
+        {
+            <a href="@($"taskcontainer/{task.Guid}")" class="list-group-item list-group-item-action">@task.Title @task.SubmittedAt</a>
+        }
+    }
+    else
+    {
+        <text>Loading...</text>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<TaskMinimalWithSubmissionDate> Tasks { get; set; }
+
+}
