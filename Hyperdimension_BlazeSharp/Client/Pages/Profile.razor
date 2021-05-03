@@ -14,6 +14,13 @@
             <span class="badge bg-dark text-white bol">Points: @_profileViewModel.UserProfile?.Points</span>
             <h4 class="bg-lightergrey rounded p-2 my-auto text-center">@(_profileViewModel.UserProfile?.Email)</h4>
         </div>
+
+        <button type="button" class="btn btn-outline-secondary ml-auto h-25" 
+                @onclick="OpenUpdatePreferencesDialog"
+                hidden="@(!isOwner)">
+            <span class="oi oi-cog" /> Options
+        </button>
+        
     </div>
 
     @if (_profileViewModel.UserProfile?.About is not null)
@@ -23,7 +30,7 @@
             <span>@_profileViewModel.UserProfile?.About</span>
         </div>
     }
-    <button @onclick="OpenUpdatePreferencesDialog">update</button>
+
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">History</button>
@@ -57,6 +64,7 @@
     private Task<IJSObjectReference> _module;
     private Task<IJSObjectReference> Module => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/show-profile-tab.js").AsTask();
     private bool isShowingUpdatePreferencesDialog = false;
+    private bool isOwner = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,10 +74,12 @@
         {
             var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
             _profileViewModel.UserId = Guid.Parse(claim?.Value);
+            isOwner = true;
         }
         else if (UserId != Guid.Empty)
         {
             _profileViewModel.UserId = UserId;
+            isOwner = UserId == Guid.Parse(user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
         }
 
         await _profileViewModel.GetProfileData();
