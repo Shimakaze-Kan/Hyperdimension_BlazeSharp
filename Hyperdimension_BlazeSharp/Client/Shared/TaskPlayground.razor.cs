@@ -20,7 +20,7 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
         public bool CantSubmit { get; set; }
 
-        protected async override Task OnInitializedAsync()
+        protected async override Task OnParametersSetAsync()
         {
             CantSubmit = !(await authenticationState).User.Identity.IsAuthenticated;
 
