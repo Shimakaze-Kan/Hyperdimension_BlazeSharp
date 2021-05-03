@@ -4,6 +4,7 @@
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject IProfileViewModel _profileViewModel
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
 <div class="bg-banner" style="background-image: url('../img/@_profileViewModel.Banner')" />
@@ -66,7 +67,7 @@
     private bool isShowingUpdatePreferencesDialog = false;
     private bool isOwner = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         var user = (await authenticationState).User;
 
@@ -75,14 +76,19 @@
             var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
             _profileViewModel.UserId = Guid.Parse(claim?.Value);
             isOwner = true;
+            await _profileViewModel.GetProfileData();
         }
         else if (UserId != Guid.Empty)
         {
             _profileViewModel.UserId = UserId;
-            isOwner = UserId == Guid.Parse(user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            isOwner = UserId == Guid.Parse(user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+            await _profileViewModel.GetProfileData();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
         }
 
-        await _profileViewModel.GetProfileData();
         await _profileViewModel.GetBanner();
     }
 
