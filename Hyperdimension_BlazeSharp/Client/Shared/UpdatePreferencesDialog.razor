@@ -1,0 +1,27 @@
+﻿<div class="dialog-container">
+    <div class="dialog">
+        <EditForm Model="UserPreferences">
+            <div class="form-group p-2">
+                <ValidationMessage For="() => UserPreferences.About" />
+                <h5>About</h5>
+                <InputTextArea class="form-control" @bind-Value="UserPreferences.About" rows="3" />
+            </div>
+            <DataAnnotationsValidator />
+        </EditForm>
+        <div class="dialog-buttons">
+            <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
+            <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
+        </div>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public UserPreferences UserPreferences { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+}

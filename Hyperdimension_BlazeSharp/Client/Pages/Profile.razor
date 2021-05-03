@@ -23,7 +23,7 @@
             <span>@_profileViewModel.UserProfile?.About</span>
         </div>
     }
-    <button @onclick="UpdatePreferences">update</button>
+    <button @onclick="OpenUpdatePreferencesDialog">update</button>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">History</button>
@@ -35,9 +35,15 @@
             <ClickableList Tasks="@_profileViewModel.UserProfile?.Tasks" />
         </div>
         <div class="tab-pane" id="nav-test" role="tabpanel">...</div>
-    </div>    
+    </div>
 
 </div>
+@if (isShowingUpdatePreferencesDialog)
+{
+    <UpdatePreferencesDialog UserPreferences="_profileViewModel.UserPreferences"
+                             OnConfirm="ConfirmUpdatePreferencesDialog"
+                             OnCancel="CancelUpdatePreferencesDialog" />
+}
 
 
 @code {
@@ -50,17 +56,18 @@
 
     private Task<IJSObjectReference> _module;
     private Task<IJSObjectReference> Module => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/show-profile-tab.js").AsTask();
+    private bool isShowingUpdatePreferencesDialog = false;
 
     protected override async Task OnInitializedAsync()
     {
         var user = (await authenticationState).User;
 
-        if(UserId == Guid.Empty && user.Identity.IsAuthenticated)
+        if (UserId == Guid.Empty && user.Identity.IsAuthenticated)
         {
             var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
             _profileViewModel.UserId = Guid.Parse(claim?.Value);
         }
-        else if(UserId != Guid.Empty)
+        else if (UserId != Guid.Empty)
         {
             _profileViewModel.UserId = UserId;
         }
@@ -75,16 +82,19 @@
         await module.InvokeVoidAsync("showProfileTab", tabNavId, tabNavId.Remove(tabNavId.Length - 4));
     }
 
-    async Task UpdatePreferences()
+    void OpenUpdatePreferencesDialog()
     {
-        _profileViewModel.UserPreferences = new UserPreferences()
-        {
-            About = "123"
-        };
+        _profileViewModel.UserPreferences = new() { About = _profileViewModel.UserProfile.About };
+        isShowingUpdatePreferencesDialog = true;
+    }
+
+    async Task ConfirmUpdatePreferencesDialog()
+    {
+        isShowingUpdatePreferencesDialog = false;
 
         var response = await _profileViewModel.UpdatePreferences();
 
-        if(response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
             //TODO
             Console.WriteLine("success");
@@ -94,6 +104,11 @@
             //TODO
             Console.WriteLine("error");
         }
+    }
+
+    void CancelUpdatePreferencesDialog()
+    {
+        isShowingUpdatePreferencesDialog = false;
     }
 
     public async ValueTask DisposeAsync()
