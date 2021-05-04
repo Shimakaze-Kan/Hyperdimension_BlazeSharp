@@ -1,6 +1,10 @@
 ﻿<p>Output:</p>
 <div class="col border-top">
-    @if (CompileText.Contains("error"))
+    @if (IsWaiting)
+    {
+        <Spinner />
+    }
+    else if (CompileText.Contains("error"))
     {
         <span class="text-danger">
             <MarkupPanel Text="@CompileText" />
@@ -18,4 +22,7 @@
 
     [Parameter]
     public string CompileText { get; set; }
+
+    [Parameter]
+    public bool IsWaiting { get; set; }
 }

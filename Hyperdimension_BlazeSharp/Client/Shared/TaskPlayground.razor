@@ -33,7 +33,8 @@
                 </div>
                 <div class="row w-100 outputConsole">
                     <OutputConsole CompileText="@(_taskPlaygroundViewModel.CompileText ?? string.Empty)"
-                                   Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)" />
+                                   Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)" 
+                                   IsWaiting="@_taskPlaygroundViewModel.IsExecuting" />
                 </div>
             </div>
         </div>

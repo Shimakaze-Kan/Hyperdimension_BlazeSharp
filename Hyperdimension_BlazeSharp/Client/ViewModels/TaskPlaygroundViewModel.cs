@@ -118,7 +118,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         {
             var code = await GetValue();
             _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
-            _isExecuting = true;
+            IsExecuting = true;
 
             try
             {
@@ -153,7 +153,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             finally
             {
                 CompileText = string.Join("<br />", _compileService.CompileLog);
-                _isExecuting = false;
+                IsExecuting = false;
             }
         }
 
