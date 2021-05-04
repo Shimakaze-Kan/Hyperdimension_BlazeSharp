@@ -1,12 +1,13 @@
 ﻿.spinner-container {
-    background-color: rgba(0,0,0,0.1);
     width: 100%;
     height: 100%;
     position: absolute;
 }
 
 .lds-spinner {
-    color: official;
+    scale: 0.6;
+    -webkit-filter: invert(100%);
+    filter: invert(100%);
     display: inline-block;
     position: relative;
     width: 80px;
