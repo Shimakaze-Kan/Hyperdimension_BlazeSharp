@@ -18,6 +18,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private string _compileText;        
         private int? _points;
         private bool _isPassed;
+        private bool _isExecuting;
         private string _instruction;
         private Mode _mode = 0;
         private string _editorPosition = "col-md-6";
@@ -71,6 +72,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             get => _isPassed;
             set => OnPropertyChanged(ref _isPassed, value);
         }
+        public bool IsExecuting 
+        { 
+            get => _isExecuting; 
+            set => OnPropertyChanged(ref _isExecuting, value); 
+        }
         public TaskDataPlayground TaskDataPlayground { get; set; }
 
         private readonly TasksHistoryDraft _tasksHistoryDraft;
@@ -111,7 +117,8 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public async Task Execute()
         {
             var code = await GetValue();
-            _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));            
+            _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
+            _isExecuting = true;
 
             try
             {
@@ -145,7 +152,8 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             }
             finally
             {
-                CompileText = string.Join("<br />", _compileService.CompileLog);                
+                CompileText = string.Join("<br />", _compileService.CompileLog);
+                _isExecuting = false;
             }
         }
 

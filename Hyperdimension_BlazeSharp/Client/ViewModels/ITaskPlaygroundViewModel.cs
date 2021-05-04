@@ -22,6 +22,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public MonacoEditor Editor { get; set; }
         public int? Points { get; set; }        
         public bool IsPassed { get; set; }
+        public bool IsExecuting { get; set; }
 
 
         public Task Execute();
