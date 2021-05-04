@@ -2,6 +2,7 @@
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ITaskPlaygroundViewModel _taskPlaygroundViewModel
 @inject HttpClient HttpClient
+@implements IDisposable
 
 
 <PropertyHasChangedListener ViewModel="_taskPlaygroundViewModel">

@@ -1,6 +1,7 @@
 ﻿using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,19 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
         public bool CantSubmit { get; set; }
 
-        protected async override Task OnParametersSetAsync()
+        protected async override Task OnInitializedAsync()
         {
             CantSubmit = !(await authenticationState).User.Identity.IsAuthenticated;
-
             _taskPlaygroundViewModel.TaskId = Guid;
-            await _taskPlaygroundViewModel.GetTask();            
+            await _taskPlaygroundViewModel.GetTask();
+
+            NavigationManager.LocationChanged += LocationChanged;
+        }
+
+        async void LocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            _taskPlaygroundViewModel.TaskId = Guid;
+            await _taskPlaygroundViewModel.GetTask();
         }
 
         public async Task SubmitTask()
@@ -43,6 +51,11 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
             _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
+        }
+
+        void IDisposable.Dispose()
+        {
+            NavigationManager.LocationChanged -= LocationChanged;
         }
     }
 }

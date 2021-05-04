@@ -176,6 +176,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         {
             Instruction = taskPlaygroundViewModel.Instruction;
             Title = taskPlaygroundViewModel.Title;
+            Output = taskPlaygroundViewModel.Output;
             //Mode = taskDataPlayground.Mode
             Points = taskPlaygroundViewModel.Points;
             _testCode = taskPlaygroundViewModel._testCode;
@@ -189,6 +190,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
                 TaskId = taskDataPlayground.Guid,
                 Instruction = taskDataPlayground.Description,
                 Title = taskDataPlayground.Title,
+                Output = string.Empty,
                 //Mode = taskDataPlayground.Mode
                 Points = taskDataPlayground.Points,
                 _testCode = taskDataPlayground.TestCode,
