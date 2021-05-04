@@ -24,11 +24,11 @@
         
     </div>
 
-    @if (_profileViewModel.UserProfile?.About is not null)
+    @if (!string.IsNullOrEmpty(_profileViewModel.UserProfile?.About))
     {
         <div class="container-fluid py-2 my-3 rounded bg-lightergrey">
             <span class="pb-2 h3">About</span><br />
-            <span>@_profileViewModel.UserProfile?.About</span>
+            <span>@_profileViewModel.UserProfile.About</span>
         </div>
     }
 
