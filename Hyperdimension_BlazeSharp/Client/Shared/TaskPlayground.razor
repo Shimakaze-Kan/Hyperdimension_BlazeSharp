@@ -15,7 +15,7 @@
                 <MarkupPanel Text="@(_taskPlaygroundViewModel.Instruction ?? "Loading...")" />
             </div>
 
-            <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
+            <div class="@_taskPlaygroundViewModel.EditorPosition col-12 ease-animation">
                 <div class="row mb-2">
                     <SelectEditorTheme OnChange="@_taskPlaygroundViewModel.ChangeTheme" />
 
