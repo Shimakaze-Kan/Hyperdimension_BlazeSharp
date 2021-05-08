@@ -9,6 +9,8 @@
             @onclick="OnRestorePreviousVersion">
         Restore
     </button>
+
+    <span class="@(IsFullscreen ? "oi oi-fullscreen-exit" : "oi oi-fullscreen-enter") cursor-pointer" @onclick="OnFullscreenChange"></span>
 </div>
 
 @code {
@@ -25,8 +27,14 @@
     public EventCallback<MouseEventArgs> OnRestorePreviousVersion { get; set; }
 
     [Parameter]
+    public EventCallback<MouseEventArgs> OnFullscreenChange { get; set; }
+
+    [Parameter]
     public Guid TaskId { get; set; }
 
     [Parameter]
     public bool IsExecuting { get; set; }
+
+    [Parameter]
+    public bool IsFullscreen { get; set; }
 }

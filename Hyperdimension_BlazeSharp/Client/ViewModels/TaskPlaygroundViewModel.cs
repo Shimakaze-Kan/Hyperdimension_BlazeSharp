@@ -20,8 +20,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private bool _isPassed;
         private bool _isExecuting;
         private string _instruction;
-        private Mode _mode = 0;
-        private string _editorPosition = "col-md-6";
+        private Mode _mode = 0;        
         private string _title;
         private MonacoEditor _editor;
 
@@ -46,11 +45,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         { 
             get => _mode; 
             set => OnPropertyChanged(ref _mode, value); 
-        }
-        public string EditorPosition 
-        { 
-            get => _editorPosition;
-            set => OnPropertyChanged(ref _editorPosition, value); 
         }
         public string Title 
         { 
@@ -92,11 +86,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _httpClient = httpClient;
             _tasksHistoryDraft = tasksHistoryDraft;
             _compileService = compileService;
-        }
-
-        public void ChangeEditorPosition()
-        {
-            EditorPosition = EditorPosition == "col-md-6" ? "col-md-12" : "col-md-6";
         }
 
         public async Task ChangeTheme(ChangeEventArgs e)

@@ -11,19 +11,21 @@
         <h4>@(_taskPlaygroundViewModel.Title ?? string.Empty)</h4>
 
         <div class="row">
-            <div class="@_taskPlaygroundViewModel.EditorPosition col-12">
+            <div class="@EditorPosition col-12">
                 <MarkupPanel Text="@(_taskPlaygroundViewModel.Instruction ?? "Loading...")" />
             </div>
 
-            <div class="@_taskPlaygroundViewModel.EditorPosition col-12 ease-animation">
+            <div class="@EditorPosition col-12 @(IsFullscreen ? "fullscreen" : "") ease-animation">
                 <div class="row mb-2">
                     <SelectEditorTheme OnChange="@_taskPlaygroundViewModel.ChangeTheme" />
 
                     <TaskManagerPanel TaskId="_taskPlaygroundViewModel.TaskId"
                                       OnExecute="_taskPlaygroundViewModel.Execute"
-                                      OnChangeEditorPosition="_taskPlaygroundViewModel.ChangeEditorPosition"
+                                      OnChangeEditorPosition="ChangeEditorPosition"
                                       OnRestorePreviousVersion="_taskPlaygroundViewModel.RestorePreviousVersion" 
-                                      IsExecuting="_taskPlaygroundViewModel.IsExecuting" />
+                                      IsExecuting="_taskPlaygroundViewModel.IsExecuting" 
+                                      OnFullscreenChange="SwitchFullscreen" 
+                                      IsFullscreen="IsFullscreen" />
                 </div>
                 <div class="row">
                     <div class="col overflow-visible">
