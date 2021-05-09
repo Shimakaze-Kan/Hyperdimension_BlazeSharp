@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 using Hyperdimension_BlazeSharp.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
 {
