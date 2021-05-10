@@ -8,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Client.ViewModels
 {
-    public class ProfileViewModel : IProfileViewModel
+    public class ProfileViewModel : ObservableObject, IProfileViewModel
     {
-        public Guid UserId { get; set; }
-        public UserProfile UserProfile { get; set; }
-        public string Banner { get; set; }
-        public UserPreferences UserPreferences { get; set; }
+        private UserProfile _userProfile;
+        private UserPreferences _userPreferences;
+        private string _banner;
         private readonly HttpClient _httpClient;
 
-        public ProfileViewModel() { }                
-        public ProfileViewModel(HttpClient httpClient) => _httpClient = httpClient;                 
+        public Guid UserId { get; set; }
+        public UserProfile UserProfile { get => _userProfile; set => OnPropertyChanged(ref _userProfile, value); }
+        public string Banner { get => _banner; set => OnPropertyChanged(ref _banner, value); }
+        public UserPreferences UserPreferences { get => _userPreferences; set => OnPropertyChanged(ref _userPreferences, value); }
+
+        
+        public ProfileViewModel(HttpClient httpClient) => _httpClient = httpClient;  
+        
 
         public async Task GetBanner()
         {
@@ -27,8 +32,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task GetProfileData()
         {
-            var userProfile = await _httpClient.GetFromJsonAsync<UserProfile>($"users/profile/{UserId}");
-            LoadCurrentObject(userProfile);
+            UserProfile = await _httpClient.GetFromJsonAsync<UserProfile>($"users/profile/{UserId}");
         }
 
         public async Task<HttpResponseMessage> UpdatePreferences()
@@ -41,22 +45,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             }
 
             return result;
-        }
-
-        private void LoadCurrentObject(ProfileViewModel profileViewModel)
-        {
-            this.UserProfile = profileViewModel.UserProfile;
-            this.Banner = profileViewModel.Banner;
-        }
-
-        public static implicit operator ProfileViewModel(UserProfile userProfile)
-        {
-            return new() { UserProfile = userProfile };
-        }
-
-        public static implicit operator ProfileViewModel(string banner)
-        {
-            return new() { Banner = banner };
         }
     }
 }

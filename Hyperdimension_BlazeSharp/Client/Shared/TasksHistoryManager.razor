@@ -17,7 +17,7 @@
                     <a href="@($"taskcontainer/{draft.Key}")" class="ms-2 me-auto">
                         @draft.Value.Title
                     </a>
-                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(_ => _tasksHistoryDraft.RemoveDraft(draft.Key))">Remove</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(async _ => await _tasksHistoryDraft.RemoveDraft(draft.Key))">Remove</button>
                 </li>
             }
         </ol>
