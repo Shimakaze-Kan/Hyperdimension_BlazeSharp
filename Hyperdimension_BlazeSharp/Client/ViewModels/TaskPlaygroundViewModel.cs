@@ -117,7 +117,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public async Task Execute()
         {
             var code = await GetValue();
-            _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
+            await _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
             IsExecuting = true;
 
             try
