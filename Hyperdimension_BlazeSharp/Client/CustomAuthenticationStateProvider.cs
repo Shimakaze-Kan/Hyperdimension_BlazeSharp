@@ -60,7 +60,7 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public void NotifyUserAuthentication(string jwtEncodedString)
         {
-            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
+            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString[7..]);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
 

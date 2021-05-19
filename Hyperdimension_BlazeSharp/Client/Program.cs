@@ -20,7 +20,9 @@ namespace Hyperdimension_BlazeSharp.Client
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddOptions();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
             builder.Services.AddSingleton<CompileService>();
             builder.Services.AddSingleton<ILocalStorageService, LocalStorageService>();
@@ -39,8 +41,7 @@ namespace Hyperdimension_BlazeSharp.Client
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient<IRegisterViewModel, RegisterViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-
-            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            
 
             await builder.Build().RunAsync();
         }
