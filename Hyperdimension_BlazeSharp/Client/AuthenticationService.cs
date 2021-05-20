@@ -35,7 +35,7 @@ namespace Hyperdimension_BlazeSharp.Client
                 new("password", userAuthRequest.Password)
             });
 
-            var result = await _httpClient.PostAsync("/token", data); //token only for testing purposes
+            var result = await _httpClient.PostAsync("/users/loginuser", data); //token only for testing purposes
             var resultContent = await result.Content.ReadAsStringAsync();
 
             if (!result.IsSuccessStatusCode)

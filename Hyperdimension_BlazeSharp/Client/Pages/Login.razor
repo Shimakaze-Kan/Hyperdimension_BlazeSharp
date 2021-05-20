@@ -2,6 +2,7 @@
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject ILoginViewModel _loginViewModel
 @inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService
 
 <h3>Login</h3>
 
@@ -32,15 +33,16 @@
     public async Task LoginUser()
     {
         isSubmitting = true;
-        var response = await _loginViewModel.LoginUser();
+        var tmp = new UserAuthRequest() { Email = _loginViewModel.Email, Password = _loginViewModel.Password };
+        var response = await AuthenticationService.Login(tmp);
 
-        if (response.IsSuccessStatusCode)
+        if (response is not null)
         {
             NavigationManager.NavigateTo("/", true);
         }
         else
         {
-            ErrorMessage = await response.Content.ReadAsStringAsync();
+            //ErrorMessage = await response.Content.ReadAsStringAsync();
         }
 
         isSubmitting = false;

@@ -16,12 +16,13 @@ namespace Hyperdimension_BlazeSharp.Client
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
-        private readonly AuthenticationState _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        private readonly AuthenticationState _anonymous;
 
         public CustomAuthenticationStateProvider(HttpClient httpClient, ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;
+            _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -60,7 +61,7 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public void NotifyUserAuthentication(string jwtEncodedString)
         {
-            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString[7..]);
+            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
 

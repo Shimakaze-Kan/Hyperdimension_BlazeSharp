@@ -18,10 +18,12 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     {
         List<Tuple<string, int>> list = new() { new("user1", 12), new("user1212", 122), new("user1000", 4) };
         private readonly HblazesharpContext _db;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public UsersController(HblazesharpContext db)
+        public UsersController(HblazesharpContext db, IJwtTokenService jwtTokenService)
         {
             _db = db;
+            _jwtTokenService = jwtTokenService;
         }
 
         [HttpGet]
@@ -92,9 +94,9 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost("loginuser")]
-        public async Task<IActionResult> LoginUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        public async Task<ActionResult<UserAuthResult>> LoginUser([FromForm] UserAuthRequest userAuthRequest)
         {
-            var user = await _db.Users.Where(x => x.Email == userAuthenticationMinimal.Email)
+            var user = await _db.Users.Where(x => x.Email == userAuthRequest.Email)
                 .Select(x => new UserAuthenticationMinimal(x.Email, x.Password))
                 .FirstOrDefaultAsync();
 
@@ -103,20 +105,20 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return BadRequest("Incorrect email");
             }
 
-            if (PasswordHasher.Verify(userAuthenticationMinimal.Password, user.Password) is false)
+            if (PasswordHasher.Verify(userAuthRequest.Password, user.Password) is false)
             {
                 return BadRequest("Incorrect password");
             }
 
 
-            var claims = new Claim(ClaimTypes.Name, user.Email);
-            var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            //var claims = new Claim(ClaimTypes.Name, user.Email);
+            //var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
+            //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            await HttpContext.SignInAsync(claimsPrincipal);
+            //await HttpContext.SignInAsync(claimsPrincipal);
 
 
-            return Ok();
+            return new UserAuthResult() { Email = userAuthRequest.Email, Token = _jwtTokenService.BuildToken(userAuthRequest.Email) };
         }
 
         [HttpPost("registeruser")]
@@ -143,7 +145,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             _db.Users.Add(newAccount);
             await _db.SaveChangesAsync();
 
-            return await LoginUser(userAuthenticationMinimal);
+            return Ok();// await LoginUser(userAuthenticationMinimal);
         }
 
         [HttpGet("logoutuser")]
