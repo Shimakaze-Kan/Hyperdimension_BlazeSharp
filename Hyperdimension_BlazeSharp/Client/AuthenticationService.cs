@@ -58,7 +58,7 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public async Task Logout()
         {
-            await _localStorageService.RemoveItem("hbs");
+            await _localStorageService.RemoveItem("hbsToken");
             (_customAuthenticationState as CustomAuthenticationStateProvider).NotifyUserLogout();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }

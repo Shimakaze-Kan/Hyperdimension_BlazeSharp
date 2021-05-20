@@ -21,11 +21,11 @@ namespace Hyperdimension_BlazeSharp.Client
 
             builder.Services.AddOptions();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddSingleton<ILocalStorageService, LocalStorageService>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
-            builder.Services.AddSingleton<CompileService>();
-            builder.Services.AddSingleton<ILocalStorageService, LocalStorageService>();
+            builder.Services.AddSingleton<CompileService>();            
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             
             builder.Services.AddScoped<TasksHistoryDraft>();
