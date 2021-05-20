@@ -63,7 +63,7 @@
     public Guid UserId { get; set; } = Guid.Empty;
 
     [CascadingParameter]
-    public Task<AuthenticationState> authenticationState { get; set; }
+    public Task<AuthenticationState> AuthenticationState { get; set; }
 
     private Task<IJSObjectReference> _module;
     private Task<IJSObjectReference> Module => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/show-profile-tab.js").AsTask();
@@ -72,11 +72,11 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var user = (await authenticationState).User;
+        var user = (await AuthenticationState).User;
 
         if (UserId == Guid.Empty && user.Identity.IsAuthenticated)
         {
-            var claim = user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+            var claim = user.FindFirst("nameid");
             _profileViewModel.UserId = Guid.Parse(claim?.Value);
             isOwner = true;
             await _profileViewModel.GetProfileData();
@@ -84,7 +84,7 @@
         else if (UserId != Guid.Empty)
         {
             _profileViewModel.UserId = UserId;
-            isOwner = UserId == Guid.Parse(user.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+            isOwner = UserId == Guid.Parse(user.FindFirst("nameid")?.Value ?? Guid.Empty.ToString());
             await _profileViewModel.GetProfileData();
         }
         else

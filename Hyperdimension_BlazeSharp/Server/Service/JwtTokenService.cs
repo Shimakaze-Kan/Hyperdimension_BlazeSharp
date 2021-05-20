@@ -20,11 +20,12 @@ namespace Hyperdimension_BlazeSharp.Server.Service
         }
 
 
-        public string BuildToken(string email)
+        public string BuildToken(string email, Guid guid)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.Name, email),
+                new Claim(JwtRegisteredClaimNames.NameId, guid.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

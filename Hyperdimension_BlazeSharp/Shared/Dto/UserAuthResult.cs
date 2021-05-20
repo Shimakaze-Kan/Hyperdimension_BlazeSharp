@@ -10,5 +10,6 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
     {
         public string Token { get; set; }
         public string Email { get; set; }
+        public Guid Guid { get; set; }
     }
 }

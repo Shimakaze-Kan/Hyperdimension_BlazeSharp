@@ -50,7 +50,7 @@
                 <AuthorizeView>
                     <Authorized>
                         <div>
-                            <span class="mr-2 text-dark">@context.User.Identity.Name</span>
+                            <span class="mr-2 text-dark">@context.User.FindFirst("Name").Value</span>
                             <button class="btn btn-outline-orange" @onclick="Logout">Logout</button>
                         </div>
                     </Authorized>

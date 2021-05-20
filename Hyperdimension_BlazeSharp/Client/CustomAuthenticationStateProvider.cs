@@ -36,9 +36,11 @@ namespace Hyperdimension_BlazeSharp.Client
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", jwtEncodedString);
 
-            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(jwtEncodedString);
+            var tokenS = jsonToken as JwtSecurityToken;            
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType")));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity((List<Claim>)tokenS.Claims, "jwtAuthType")));
 
             //return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Jwt)))
 
@@ -61,8 +63,11 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public void NotifyUserAuthentication(string jwtEncodedString)
         {
-            var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(jwtEncodedString);
+            var tokenS = jsonToken as JwtSecurityToken;
+
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity((List<Claim>)tokenS.Claims, "jwtAuthType"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
 
             NotifyAuthenticationStateChanged(authState);

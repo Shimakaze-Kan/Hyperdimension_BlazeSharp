@@ -97,7 +97,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         public async Task<ActionResult<UserAuthResult>> LoginUser([FromForm] UserAuthRequest userAuthRequest)
         {
             var user = await _db.Users.Where(x => x.Email == userAuthRequest.Email)
-                .Select(x => new UserAuthenticationMinimal(x.Email, x.Password))
+                .Select(x => new { Email = x.Email, Password = x.Password, Guid = x.Id })
                 .FirstOrDefaultAsync();
 
             if (user is null)
@@ -118,7 +118,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             //await HttpContext.SignInAsync(claimsPrincipal);
 
 
-            return new UserAuthResult() { Email = userAuthRequest.Email, Token = _jwtTokenService.BuildToken(userAuthRequest.Email) };
+            return new UserAuthResult() 
+            { 
+                Email = user.Email, 
+                Token = _jwtTokenService.BuildToken(user.Email, user.Guid)
+            };
         }
 
         [HttpPost("registeruser")]
