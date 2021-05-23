@@ -7,6 +7,7 @@ using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 using Hyperdimension_BlazeSharp.Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
 {
@@ -66,16 +67,17 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return history;
         }
 
+        [Authorize]
         [HttpPost("history/submittask")]
         public async Task<ActionResult<bool>> SubmitTask(SubmitTaskData submitTaskData)
         {
-            if(!User.Identity.IsAuthenticated)
-            {
-                return BadRequest();
-            }            
+            //if(!User.Identity.IsAuthenticated)
+            //{
+            //    return BadRequest();
+            //}            
 
             var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
-            var user = await _db.Users.Where(x => x.Email == User.Identity.Name).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            var user = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirst("Name").Value).Include(x => x.UsersDetails).FirstOrDefaultAsync();
 
             if(task is null || user is null)
             {

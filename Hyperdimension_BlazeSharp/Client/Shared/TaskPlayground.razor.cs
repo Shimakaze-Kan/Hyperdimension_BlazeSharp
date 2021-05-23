@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
         [CascadingParameter(Name = "_tasksHistoryDraft")]
         TasksHistoryDraft _tasksHistoryDraft { get; set; }
         [Parameter] public Guid Guid { get; set; }
+        [Inject] public ILocalStorageService localStorageService { get; set; }
 
         public bool CantSubmit { get; set; }
 
@@ -47,9 +49,15 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
                 TaskId = Guid
             };
 
-            await HttpClient.PostAsJsonAsync<SubmitTaskData>("tasks/history/submittask", submitTaskData);
+            var request = new HttpRequestMessage(HttpMethod.Post, "tasks/history/submittask")
+            {
+                Content = JsonContent.Create(submitTaskData)
+            };
+            //await HttpClient.PostAsJsonAsync<SubmitTaskData>("tasks/history/submittask", submitTaskData);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItem<string>("hbsToken"));
+            await HttpClient.SendAsync(request);
 
-            _tasksHistoryDraft.RemoveDraft(Guid);
+            await _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
         }
 

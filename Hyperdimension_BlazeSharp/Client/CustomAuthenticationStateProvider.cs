@@ -34,7 +34,7 @@ namespace Hyperdimension_BlazeSharp.Client
                 return _anonymous;
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", jwtEncodedString);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtEncodedString);
 
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(jwtEncodedString);
