@@ -13,10 +13,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Guid UserId { get; set; }
         public UserProfile UserProfile { get; set; }
         public string Banner { get; set; }
-        public UserPreferences UserPreferences { get; set; }
+        public UserPreferencesForce UserPreferences { get; set; }
 
         public Task GetProfileData();
         public Task GetBanner();
         public Task<HttpResponseMessage> UpdatePreferences();
+        public Task<HttpResponseMessage> UpdatePreferencesForce();
     }
 }

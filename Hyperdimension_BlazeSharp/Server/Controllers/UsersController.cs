@@ -98,7 +98,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         public async Task<ActionResult<UserAuthResult>> LoginUser([FromForm] UserAuthRequest userAuthRequest)
         {
             var user = await _db.Users.Where(x => x.Email == userAuthRequest.Email)
-                .Select(x => new { Email = x.Email, Password = x.Password, Guid = x.Id })
+                .Select(x => new { Email = x.Email, Password = x.Password, Guid = x.Id, Role = x.Role })
                 .FirstOrDefaultAsync();
 
             if (user is null)
@@ -122,7 +122,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return new UserAuthResult() 
             { 
                 Email = user.Email, 
-                Token = _jwtTokenService.BuildToken(user.Email, user.Guid)
+                Token = _jwtTokenService.BuildToken(user.Email, user.Guid, user.Role)
             };
         }
 
@@ -153,7 +153,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return new UserAuthResult()
             {
                 Email = newAccount.Email,
-                Token = _jwtTokenService.BuildToken(newAccount.Email, newAccount.Id)
+                Token = _jwtTokenService.BuildToken(newAccount.Email, newAccount.Id, newAccount.Role)
             };
         }
 
@@ -180,7 +180,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
         [Authorize]
         [HttpPost("changeuserpreferences")]
-        public async Task<IActionResult> ChangeUserPreferences(UserPreferences userPreferences)
+        public async Task<IActionResult> ChangeUserPreferences(UserPreferencesForce userPreferences)
         {
             var preferences = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirstValue("name")).Include(x => x.UsersDetails).FirstOrDefaultAsync();
 
@@ -195,6 +195,28 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             }
 
             preferences.UsersDetails.About = userPreferences.About;
+
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost("changeUserPreferencesForce")]
+        public async Task<IActionResult> ChangeUserPreferencesForce(UserPreferencesForce userPreferencesForce)
+        {
+            var preferences = await _db.Users.Where(x => x.Id == userPreferencesForce.UserId).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+
+            if(preferences is null)
+            {
+                return BadRequest();
+            }
+
+            if (userPreferencesForce.ThemeId is not null)
+            {
+                preferences.UserPreferencesId = (int)userPreferencesForce.ThemeId;
+            }
+
+            preferences.UsersDetails.About = userPreferencesForce.About;
 
             await _db.SaveChangesAsync();
             return Ok();

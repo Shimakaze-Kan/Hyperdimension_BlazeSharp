@@ -84,7 +84,7 @@
         else if (UserId != Guid.Empty)
         {
             _profileViewModel.UserId = UserId;
-            isOwner = UserId == Guid.Parse(user.FindFirst("nameid")?.Value ?? Guid.Empty.ToString());
+            isOwner = (UserId == Guid.Parse(user.FindFirst("nameid")?.Value ?? Guid.Empty.ToString())) || (user.IsInRole("admin"));
             await _profileViewModel.GetProfileData();
         }
         else
@@ -103,7 +103,7 @@
 
     void OpenUpdatePreferencesDialog()
     {
-        _profileViewModel.UserPreferences = new() { About = _profileViewModel.UserProfile.About };
+        _profileViewModel.UserPreferences = new() { UserId = _profileViewModel.UserId, About = _profileViewModel.UserProfile.About };
         isShowingUpdatePreferencesDialog = true;
     }
 
@@ -111,7 +111,18 @@
     {
         isShowingUpdatePreferencesDialog = false;
 
-        var response = await _profileViewModel.UpdatePreferences();
+        var user = (await AuthenticationState).User;
+
+        HttpResponseMessage response;
+
+        if(user.IsInRole("admin"))
+        {
+            response = await _profileViewModel.UpdatePreferencesForce();
+        }
+        else
+        {
+            response = await _profileViewModel.UpdatePreferences();
+        }
 
         if (response.IsSuccessStatusCode)
         {
