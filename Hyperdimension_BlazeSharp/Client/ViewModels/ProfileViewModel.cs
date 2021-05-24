@@ -14,6 +14,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private UserPreferences _userPreferences;
         private string _banner;
         private readonly HttpClient _httpClient;
+        private readonly ILocalStorageService _localStorageService;
 
         public Guid UserId { get; set; }
         public UserProfile UserProfile { get => _userProfile; set => OnPropertyChanged(ref _userProfile, value); }
@@ -21,8 +22,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public UserPreferences UserPreferences { get => _userPreferences; set => OnPropertyChanged(ref _userPreferences, value); }
 
         
-        public ProfileViewModel(HttpClient httpClient) => _httpClient = httpClient;  
-        
+        public ProfileViewModel(HttpClient httpClient, ILocalStorageService localStorageService)
+        {
+            _httpClient = httpClient;
+            _localStorageService = localStorageService;
+        }
 
         public async Task GetBanner()
         {

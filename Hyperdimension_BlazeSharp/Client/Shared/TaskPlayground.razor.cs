@@ -1,4 +1,5 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Dto;
+﻿using Hyperdimension_BlazeSharp.Client.ExtensionMethods;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
@@ -49,13 +50,7 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
                 TaskId = Guid
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "tasks/history/submittask")
-            {
-                Content = JsonContent.Create(submitTaskData)
-            };
-            //await HttpClient.PostAsJsonAsync<SubmitTaskData>("tasks/history/submittask", submitTaskData);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItem<string>("hbsToken"));
-            await HttpClient.SendAsync(request);
+            await HttpClient.PostAsJsonAsyncJwtHeader(localStorageService, submitTaskData, "tasks/history/submittask");
 
             await _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
