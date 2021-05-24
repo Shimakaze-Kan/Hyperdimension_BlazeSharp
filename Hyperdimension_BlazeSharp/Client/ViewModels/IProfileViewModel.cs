@@ -10,7 +10,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 {
     public interface IProfileViewModel : INotifyPropertyChanged
     {
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public UserProfile UserProfile { get; set; }
         public string Banner { get; set; }
         public UserPreferencesForce UserPreferences { get; set; }

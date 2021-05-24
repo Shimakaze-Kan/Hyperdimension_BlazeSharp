@@ -17,7 +17,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
 
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public UserProfile UserProfile { get => _userProfile; set => OnPropertyChanged(ref _userProfile, value); }
         public string Banner { get => _banner; set => OnPropertyChanged(ref _banner, value); }
         public UserPreferencesForce UserPreferences { get => _userPreferences; set => OnPropertyChanged(ref _userPreferences, value); }

@@ -72,27 +72,30 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var user = (await AuthenticationState).User;
+        if (UserId != _profileViewModel.UserId)
+        {
+            var user = (await AuthenticationState).User;
 
-        if (UserId == Guid.Empty && user.Identity.IsAuthenticated)
-        {
-            var claim = user.FindFirst("nameid");
-            _profileViewModel.UserId = Guid.Parse(claim?.Value);
-            isOwner = true;
-            await _profileViewModel.GetProfileData();
-        }
-        else if (UserId != Guid.Empty)
-        {
-            _profileViewModel.UserId = UserId;
-            isOwner = (UserId == Guid.Parse(user.FindFirst("nameid")?.Value ?? Guid.Empty.ToString())) || (user.IsInRole("admin"));
-            await _profileViewModel.GetProfileData();
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/");
-        }
+            if (UserId == Guid.Empty && user.Identity.IsAuthenticated)
+            {
+                var claim = user.FindFirst("nameid");
+                _profileViewModel.UserId = Guid.Parse(claim?.Value);
+                isOwner = true;
+                await _profileViewModel.GetProfileData();
+            }
+            else if (UserId != Guid.Empty)
+            {
+                _profileViewModel.UserId = UserId;
+                isOwner = (UserId == Guid.Parse(user.FindFirst("nameid")?.Value ?? Guid.Empty.ToString())) || (user.IsInRole("admin"));
+                await _profileViewModel.GetProfileData();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
 
-        await _profileViewModel.GetBanner();
+            await _profileViewModel.GetBanner();
+        }
     }
 
     async Task ChangeTab(string tabNavId)
@@ -103,7 +106,7 @@
 
     void OpenUpdatePreferencesDialog()
     {
-        _profileViewModel.UserPreferences = new() { UserId = _profileViewModel.UserId, About = _profileViewModel.UserProfile.About };
+        _profileViewModel.UserPreferences = new() { UserId = _profileViewModel.UserId.GetValueOrDefault(), About = _profileViewModel.UserProfile.About };
         isShowingUpdatePreferencesDialog = true;
     }
 
@@ -115,7 +118,7 @@
 
         HttpResponseMessage response;
 
-        if(user.IsInRole("admin"))
+        if (user.IsInRole("admin"))
         {
             response = await _profileViewModel.UpdatePreferencesForce();
         }
