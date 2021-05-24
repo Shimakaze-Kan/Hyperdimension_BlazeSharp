@@ -2,6 +2,7 @@
 @using Hyperdimension_BlazeSharp.Client.ViewModels
 @inject IRegisterViewModel _registerViewModel
 @inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService
 
 <h3>Register</h3>
 
@@ -38,7 +39,9 @@
 
         if (response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/", true);
+            var tmp = new UserAuthRequest() { Email = _registerViewModel.Email, Password = _registerViewModel.Password };
+            await AuthenticationService.Login(tmp);
+            NavigationManager.NavigateTo("/");
         }
         else
         {

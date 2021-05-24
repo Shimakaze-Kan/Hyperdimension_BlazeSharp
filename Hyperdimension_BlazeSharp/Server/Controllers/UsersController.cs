@@ -127,7 +127,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost("registeruser")]
-        public async Task<IActionResult> RegisterUser(UserAuthenticationMinimal userAuthenticationMinimal)
+        public async Task<ActionResult<UserAuthResult>> RegisterUser(UserAuthRequest userAuthenticationMinimal)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
 
@@ -150,7 +150,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             _db.Users.Add(newAccount);
             await _db.SaveChangesAsync();
 
-            return Ok();// await LoginUser(userAuthenticationMinimal);
+            return new UserAuthResult()
+            {
+                Email = newAccount.Email,
+                Token = _jwtTokenService.BuildToken(newAccount.Email, newAccount.Id)
+            };
         }
 
         [HttpGet("logoutuser")]
