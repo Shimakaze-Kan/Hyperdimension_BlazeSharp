@@ -1,6 +1,7 @@
 ﻿@inject TasksHistoryDraft TasksHistoryDraft
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
+@inject IAuthenticationService AuthenticationService
 
 <nav class="navbar navbar-expand-lg navbar-light navbar-bg-light border border-secondary">
     <a class="navbar-brand" href="">Hyperdimension BlazeSharp</a>
@@ -81,8 +82,8 @@
 
     private async Task Logout()
     {
-        await HttpClient.GetAsync("users/logoutuser");
-        NavigationManager.NavigateTo("/", true);
+        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/");
     }
 
     private void Login()
