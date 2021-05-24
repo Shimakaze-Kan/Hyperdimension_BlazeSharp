@@ -1,4 +1,5 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Dto;
+﻿using Hyperdimension_BlazeSharp.Client.ExtensionMethods;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,8 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task<HttpResponseMessage> UpdatePreferences()
         {
-            var result = await _httpClient.PostAsJsonAsync<UserPreferences>($"users/changeuserpreferences", UserPreferences);
+            var result = await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService,UserPreferences,$"users/changeuserpreferences");
+
 
             if(result.IsSuccessStatusCode)
             {

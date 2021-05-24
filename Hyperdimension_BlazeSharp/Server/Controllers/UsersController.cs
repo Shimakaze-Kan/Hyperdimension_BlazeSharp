@@ -2,6 +2,7 @@
 using Hyperdimension_BlazeSharp.Shared;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -173,15 +174,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return await Task.FromResult(userGuidEmail);
         }
 
+        [Authorize]
         [HttpPost("changeuserpreferences")]
         public async Task<IActionResult> ChangeUserPreferences(UserPreferences userPreferences)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return BadRequest();
-            }
-
-            var preferences = await _db.Users.Where(x => x.Email == User.Identity.Name).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            var preferences = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirstValue("name")).Include(x => x.UsersDetails).FirstOrDefaultAsync();
 
             if(preferences is null)
             {
