@@ -23,7 +23,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FolkStory>>> GetFolks()
         {
-            var result = await _db.FolkStories
+            return await _db.FolkStories
                 .Select(x => new FolkStory()
                 {
                     ImgUrl = x.ImageUrl,
@@ -31,16 +31,9 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                     Title = x.Title
                 })
                 .ToListAsync();
-
-            if(result is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result);
         }
 
-        [HttpGet("/{id:guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<FolkStory>> GetFolk(Guid id)
         {
             var result = await _db.FolkStories
@@ -60,5 +53,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return Ok(result);
         }
+
     }
 }

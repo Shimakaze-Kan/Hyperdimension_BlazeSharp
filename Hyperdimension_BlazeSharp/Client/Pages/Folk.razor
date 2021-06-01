@@ -1,0 +1,25 @@
+﻿@page "/folk/{id:guid}"
+@inject HttpClient HttpClient
+
+
+<div class="container">
+    <h3>@FolkStory?.Title</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <img src="@(FolkStory?.ImgUrl)" />
+            <p>@((MarkupString)FolkStory?.Story.Replace("\n","<br>"))</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    public FolkStory FolkStory { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        FolkStory = await HttpClient.GetFromJsonAsync<FolkStory>($"/folks/{Id}");
+    }
+}
