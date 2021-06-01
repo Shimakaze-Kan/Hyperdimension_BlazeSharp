@@ -11,8 +11,9 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
         public string AvatarUrl { get; init; }
         public string About { get; init; }
         public IEnumerable<TaskMinimalWithSubmissionDate> Tasks { get; init; }
+        public IEnumerable<FolkStory> AchievedStories { get; set; }
 
         public UserProfile(string email, int points, string avatarUrl, string about, IEnumerable<TaskMinimalWithSubmissionDate> tasks)
-            : base(email, points) => (AvatarUrl, About, Tasks) = (avatarUrl, about, tasks);
+            : base(email, points) => (AvatarUrl, About, Tasks, AchievedStories) = (avatarUrl, about, tasks, AchievedStories);
     }
 }

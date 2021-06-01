@@ -91,7 +91,21 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return NotFound();
             }
 
-            return user;
+            if (!user.Tasks.Any())
+                return user;
+
+            var folk = await _db.Tasks.Where(x => x.Id == user.Tasks.First().Guid)
+                .Include(x => x.Module)
+                .ThenInclude(x => x.FolkStory)
+                .Select(x => new FolkStory
+                {
+                    ImgUrl = x.Module.FolkStory.ImageUrl,                    
+                    Title = x.Module.FolkStory.Title,
+                    StoryId = x.Module.FolkStory.Id
+                })
+                .ToListAsync();
+
+            return user with { AchievedStories = folk };
         }
 
         [HttpPost("loginuser")]

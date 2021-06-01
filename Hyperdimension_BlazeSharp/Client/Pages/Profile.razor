@@ -8,13 +8,17 @@
 @implements IAsyncDisposable
 
 
-<PropertyHasChangedListener ViewModel="_profileViewModel">
+<PropertyHasChangedListener ViewModel="_profileViewModel">    
     <div class="bg-banner" style="background-image: url('../img/@_profileViewModel.Banner')" />
     <div class="d-flex flex-column px-4">
         <div class="p-2 d-flex flex-column flex-sm-row">
             <img src="@(_profileViewModel.UserProfile?.AvatarUrl)" class="rounded mx-sm-0 mx-auto avatar" alt="...">
             <div class="p-2 ml-2">
                 <span class="badge bg-dark text-white bol">Points: @_profileViewModel.UserProfile?.Points</span>
+                @if (showBadges)
+                {
+                    <a href="@("folk/" + _profileViewModel.UserProfile?.AchievedStories.First().StoryId)" class="badge bg-info text-dark">@_profileViewModel.UserProfile?.AchievedStories.First().Title</a>
+                }
                 <h4 class="bg-lightergrey rounded p-2 my-auto text-center">@(_profileViewModel.UserProfile?.Email)</h4>
             </div>
 
@@ -69,6 +73,7 @@
     private Task<IJSObjectReference> Module => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/show-profile-tab.js").AsTask();
     private bool isShowingUpdatePreferencesDialog = false;
     private bool isOwner = false;
+    private bool showBadges = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -95,6 +100,8 @@
             }
 
             await _profileViewModel.GetBanner();
+
+            showBadges = _profileViewModel.UserProfile?.AchievedStories?.Any() ?? false;
         }
     }
 

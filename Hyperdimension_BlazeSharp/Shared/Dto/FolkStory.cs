@@ -11,5 +11,6 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
         public string Title { get; set; }
         public string Story { get; set; }
         public string ImgUrl { get; set; }
+        public Guid StoryId { get; set; }
     }
 }
