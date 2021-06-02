@@ -2,9 +2,15 @@
     <div class="dialog">
         <EditForm Model="UserPreferences">
             <div class="form-group p-2">
-                <ValidationMessage For="() => UserPreferences.About" />
-                <h5>About</h5>
-                <InputTextArea class="form-control" @bind-Value="UserPreferences.About" rows="3" />
+                <div class="mb-2">
+                    <h5>Avatar</h5>
+                    <InputFile OnChange="@OnInputFileChange" multiple="false" />
+                </div>
+                <div>
+                    <ValidationMessage For="() => UserPreferences.About" />
+                    <h5>About</h5>
+                    <InputTextArea class="form-control" @bind-Value="UserPreferences.About" rows="3" />
+                </div>
             </div>
             <DataAnnotationsValidator />
         </EditForm>
@@ -24,4 +30,7 @@
 
     [Parameter]
     public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback<InputFileChangeEventArgs> OnInputFileChange { get; set; }
 }

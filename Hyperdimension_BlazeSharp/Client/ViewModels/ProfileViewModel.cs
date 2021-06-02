@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Client.ExtensionMethods;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,12 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private UserPreferencesForce _userPreferences;
         private string _banner;
         private readonly HttpClient _httpClient;
-        private readonly ILocalStorageService _localStorageService;
+        private readonly ILocalStorageService _localStorageService;                
 
         public Guid? UserId { get; set; }
         public UserProfile UserProfile { get => _userProfile; set => OnPropertyChanged(ref _userProfile, value); }
         public string Banner { get => _banner; set => OnPropertyChanged(ref _banner, value); }
         public UserPreferencesForce UserPreferences { get => _userPreferences; set => OnPropertyChanged(ref _userPreferences, value); }
-
 
         public ProfileViewModel(HttpClient httpClient, ILocalStorageService localStorageService)
         {
@@ -47,7 +47,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
             if(result.IsSuccessStatusCode)
             {
-                UserProfile = UserProfile with { About = UserPreferences.About };
+                UserProfile = UserProfile with { About = UserPreferences.About, AvatarUrl = UserPreferences.AvatarUrl };
             }
 
             return result;
@@ -63,6 +63,16 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             }
 
             return result;
+        }
+
+        public async Task OnInputFileChange(InputFileChangeEventArgs e)
+        {
+            var file = e.File;
+            var buffer = new byte[file.Size];
+
+            await file.OpenReadStream().ReadAsync(buffer);
+
+            UserPreferences.AvatarUrl = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
         }
     }
 }

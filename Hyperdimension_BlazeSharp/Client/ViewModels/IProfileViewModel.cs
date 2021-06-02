@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Hyperdimension_BlazeSharp.Client.ViewModels
 {
@@ -19,5 +20,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Task GetBanner();
         public Task<HttpResponseMessage> UpdatePreferences();
         public Task<HttpResponseMessage> UpdatePreferencesForce();
+        public Task OnInputFileChange(InputFileChangeEventArgs e);
     }
 }

@@ -11,6 +11,7 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
     {
         [MaxLength(255)]
         public string About { get; set; }
+        public string AvatarUrl { get; set; }
         public int? ThemeId { get; private set; } = null;
 
         public void SetTheme(string websiteTheme, string editorTheme)
