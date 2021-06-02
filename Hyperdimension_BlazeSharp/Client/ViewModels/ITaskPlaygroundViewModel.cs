@@ -16,8 +16,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public string CompileText { get; set; }
         public string Instruction { get; set; }
         public TaskDataPlayground TaskDataPlayground { get; set; }
-        public Mode Mode { get; set; }
-        public string EditorPosition { get; set; }
+        public Mode Mode { get; set; }        
         public string Title { get; set; }
         public MonacoEditor Editor { get; set; }
         public int? Points { get; set; }        
@@ -25,8 +24,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public bool IsExecuting { get; set; }
 
 
-        public Task Execute();
-        public void ChangeEditorPosition();
+        public Task Execute();        
         public StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor);
         public Task ChangeTheme(ChangeEventArgs e);
         public Task<string> GetValue();

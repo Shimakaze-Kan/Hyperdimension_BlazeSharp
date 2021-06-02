@@ -23,6 +23,8 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
         [Inject] public ILocalStorageService localStorageService { get; set; }
 
         public bool CantSubmit { get; set; }
+        public bool IsFullscreen { get; set; }
+        public string EditorPosition { get; set; } = "col-md-6";
 
         protected async override Task OnInitializedAsync()
         {
@@ -55,6 +57,14 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
             await _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
         }
+
+        public void SwitchFullscreen()
+        {
+            IsFullscreen = !IsFullscreen;
+            EditorPosition = IsFullscreen ? "col-md-12" : "col-md-6";
+        }
+
+        public void ChangeEditorPosition() => EditorPosition = EditorPosition == "col-md-6" ? "col-md-12" : "col-md-6";
 
         void IDisposable.Dispose()
         {
