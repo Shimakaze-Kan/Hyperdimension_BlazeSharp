@@ -237,6 +237,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             preferences.UsersDetails.About = userPreferencesForce.About;
 
+            if (!string.IsNullOrEmpty(userPreferencesForce.AvatarUrl))
+            {
+                preferences.UsersDetails.AvatarUrl = userPreferencesForce.AvatarUrl;
+            }
+
             await _db.SaveChangesAsync();
             return Ok();
         }

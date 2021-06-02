@@ -47,7 +47,14 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
             if(result.IsSuccessStatusCode)
             {
-                UserProfile = UserProfile with { About = UserPreferences.About, AvatarUrl = UserPreferences.AvatarUrl };
+                if (!string.IsNullOrEmpty(UserPreferences.AvatarUrl))
+                {
+                    UserProfile = UserProfile with { About = UserPreferences.About, AvatarUrl = UserPreferences.AvatarUrl };
+                }
+                else
+                {
+                    UserProfile = UserProfile with { About = UserPreferences.About };
+                }
             }
 
             return result;
@@ -59,7 +66,14 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
             if (result.IsSuccessStatusCode)
             {
-                UserProfile = UserProfile with { About = UserPreferences.About };
+                if (!string.IsNullOrEmpty(UserPreferences.AvatarUrl))
+                {
+                    UserProfile = UserProfile with { About = UserPreferences.About, AvatarUrl = UserPreferences.AvatarUrl };
+                }
+                else
+                {
+                    UserProfile = UserProfile with { About = UserPreferences.About };
+                }
             }
 
             return result;
