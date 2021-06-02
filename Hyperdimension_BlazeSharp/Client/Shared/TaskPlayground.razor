@@ -15,8 +15,8 @@
                 <MarkupPanel Text="@(_taskPlaygroundViewModel.Instruction ?? "Loading...")" />
             </div>
 
-            <div class="@EditorPosition col-12 @(IsFullscreen ? "fullscreen" : "") ease-animation">
-                <div class="row mb-2">
+            <div class="@EditorPosition col-12 @(IsFullscreen ? "fullscreen" : "")">
+                <div class="row mb-2 pl-4">
                     <SelectEditorTheme OnChange="@_taskPlaygroundViewModel.ChangeTheme" />
 
                     <TaskManagerPanel TaskId="_taskPlaygroundViewModel.TaskId"
