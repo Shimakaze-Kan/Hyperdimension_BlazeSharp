@@ -114,10 +114,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
                 _compileService.CompileLog = new List<string>();
 
                 #region tmp solution
-                var index = code.IndexOf("class Program");
+                //var index = code.IndexOf("class Program");
 
-                code = code.Insert(code.IndexOf('{', index) + 1, _testCode);
-                code = code.Insert(0, "using System.Text;using System.IO;");
+                //code = code.Insert(code.IndexOf('{', index) + 1, _testCode);
+                //code = code.Insert(0, "using System.Text;using System.IO;");
+                code += _testCode;
                 #endregion
 
                 var tmp = await _compileService.CompileAndRun(code);

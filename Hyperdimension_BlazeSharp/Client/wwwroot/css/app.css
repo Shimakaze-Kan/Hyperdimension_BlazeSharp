@@ -177,3 +177,7 @@ a, .btn-link {
     background-color: #eee;
     padding: 0 1rem;
 }
+
+.list-item-border-orange-bg {
+    border-color: #C65938;
+}
