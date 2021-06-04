@@ -51,6 +51,32 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return task;
         }
 
+        [HttpPost]
+        public async Task<ActionResult> CreateTask(TaskCreateRequest taskCreateRequest)
+        {
+            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == taskCreateRequest.ModuleId);
+
+            if(module is null)
+            {
+                return NotFound();
+            }
+
+            await _db.Tasks.AddAsync(new()
+            {
+                Id = Guid.NewGuid(),
+                Title = taskCreateRequest.Title,
+                Description = taskCreateRequest.Description,
+                InitialCode = taskCreateRequest.InitialCode,
+                ModuleId = taskCreateRequest.ModuleId,
+                TestCode = taskCreateRequest.TestCode,
+                Points = taskCreateRequest.Points
+            });
+
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpGet("history/{userId:guid}")]
         public async Task<ActionResult<IEnumerable<UserTaskHistory>>> GetUserTaskHistory(Guid userId)
         {
