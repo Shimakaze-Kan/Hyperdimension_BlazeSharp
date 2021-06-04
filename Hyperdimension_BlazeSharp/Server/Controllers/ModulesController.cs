@@ -36,5 +36,27 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                     .Select(task => 
                         new TaskMinimalWithPoints(task.Id, task.Title, task.Points)))).ToListAsync();       
         }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
+        {
+            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Title == customModuleCreateRequest.Title);
+
+            if(module is not null)
+            {
+                return BadRequest();
+            }
+
+            await _db.Modules.AddAsync(new()
+            {
+                Id = Guid.NewGuid(),
+                Title = customModuleCreateRequest.Title,
+                Mode = customModuleCreateRequest.Mode
+            });
+
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
