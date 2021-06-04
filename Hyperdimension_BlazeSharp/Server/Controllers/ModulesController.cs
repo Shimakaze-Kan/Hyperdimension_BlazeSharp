@@ -38,7 +38,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
+        public async Task<ActionResult<Guid>> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
         {
             var module = await _db.Modules.SingleOrDefaultAsync(x => x.Title == customModuleCreateRequest.Title);
 
@@ -47,15 +47,31 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return BadRequest();
             }
 
-            await _db.Modules.AddAsync(new()
-            {
-                Id = Guid.NewGuid(),
-                Title = customModuleCreateRequest.Title,
-                Mode = customModuleCreateRequest.Mode
-            });
+            module = new();
+            module.Id = Guid.NewGuid();
+            module.Title = customModuleCreateRequest.Title;
+            module.Mode = customModuleCreateRequest.Mode;
+
+            await _db.Modules.AddAsync(module);                        
 
             await _db.SaveChangesAsync();
 
+            return Ok(module.Id);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult> DeleteModule(Guid id)
+        {
+            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == id);
+
+            if(module is null)
+            {
+                return NotFound();
+            }
+
+            _db.Modules.Remove(module);
+            await _db.SaveChangesAsync();
+            
             return Ok();
         }
     }
