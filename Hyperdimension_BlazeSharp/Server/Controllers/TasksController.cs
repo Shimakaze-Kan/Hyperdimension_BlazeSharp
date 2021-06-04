@@ -77,6 +77,22 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        public async Task<ActionResult> DeleteTask(Guid id)
+        {
+            var task = await _db.Tasks.SingleOrDefaultAsync(x => x.Id == id);
+
+            if(task is null)
+            {
+                return BadRequest();
+            }
+
+            _db.Tasks.Remove(task);
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpGet("history/{userId:guid}")]
         public async Task<ActionResult<IEnumerable<UserTaskHistory>>> GetUserTaskHistory(Guid userId)
         {
