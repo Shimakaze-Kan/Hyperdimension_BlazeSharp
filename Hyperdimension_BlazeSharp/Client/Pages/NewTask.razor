@@ -1,31 +1,47 @@
 ﻿@page "/newtask"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
 @inject ViewModels.ICustomTaskViewModel CustomTaskViewModel
+@inject NavigationManager NavigationManager
 
-<h4>Modules</h4>
-@if(CustomTaskViewModel.Modules is not null)
-{
-    @foreach (var item in CustomTaskViewModel.Modules)
-    {
-        <span>@($"Id: {item.Id}, Title: {item.Title}, Mode: {item.Mode}")</span>
-    }
-}
 
-<h4>New Task</h4>
-<EditForm Model="CustomTaskViewModel">
-    <h2>Title</h2>
+<h2>New Task</h2>
+<EditForm Model="CustomTaskViewModel.TaskCreateRequest" OnValidSubmit="Submit">
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.Title" />
+    <h5 class="mt-3">Title</h5>
     <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.Title" class="form-control" placeholder="Title"></InputText>
-    <h2>Module Id</h2>
-    <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.StringToModuleId" class="form-control" placeholder="Module ID"></InputText>
-    <h2>Points</h2>
+
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.ModuleId" />
+    <h5 class="mt-3">Module</h5>
+    <InputSelect class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.StringToModuleId">
+        <option value=""></option>
+        @if (CustomTaskViewModel.Modules is not null)
+        {
+            @foreach (var item in CustomTaskViewModel.Modules)
+            {
+                <option value="@item.Id">@($"{item.Title} (mode:{(Mode)item.Mode})")</option>
+            }
+        }
+    </InputSelect>
+
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.Points" />
+    <h5 class="mt-3">Points</h5>
     <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.StringToPoints" class="form-control" placeholder="Points"></InputText>
-    <h2>Description</h2>
+
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.Description" />
+    <h5 class="mt-3">Description</h5>
     <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.Description" rows="3" />
-    <h2>Initial Code</h2>
+
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.InitialCode" />
+    <h5 class="mt-3">Initial Code</h5>
     <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.InitialCode" rows="3" />
-    <h2>Test Code</h2>
+
+    <ValidationMessage For="() => CustomTaskViewModel.TaskCreateRequest.TestCode" />
+    <h5 class="mt-3">Test Code</h5>
     <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.TestCode" rows="3" />
-    <button @onclick="CustomTaskViewModel.CreateTask">Submit</button>
+
+    <button class="btn btn-outline-orange mt-4 mb-4" type="submit" disabled="@isSubmitting">Submit</button>
+
+    <DataAnnotationsValidator />
 </EditForm>
 
 
@@ -33,8 +49,24 @@
     public IEnumerable<ModuleWithTasks> Modules { get; set; }
     public int Mode { get; set; }
 
+    bool isSubmitting = false;
+
     protected override async Task OnInitializedAsync()
     {
         await CustomTaskViewModel.GetModules();
+    }
+
+    public async Task Submit()
+    {
+        isSubmitting = true;
+        var result = await CustomTaskViewModel.CreateTask();
+
+        if (result.IsSuccessStatusCode)
+        {
+            var mode = CustomTaskViewModel.Modules.First(x => x.Id == CustomTaskViewModel.TaskCreateRequest.ModuleId).Mode;
+            NavigationManager.NavigateTo(mode == 0 ? "/tutorial" : "/adventure");
+        }
+
+        isSubmitting = false;
     }
 }

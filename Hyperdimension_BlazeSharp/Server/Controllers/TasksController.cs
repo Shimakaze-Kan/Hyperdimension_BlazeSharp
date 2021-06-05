@@ -52,6 +52,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> CreateTask(TaskCreateRequest taskCreateRequest)
         {
             var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == taskCreateRequest.ModuleId);

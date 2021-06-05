@@ -23,9 +23,9 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _localStorageService = localStorageService;
         }
 
-        public async Task CreateTask()
+        public async Task<HttpResponseMessage> CreateTask()
         {
-            await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, TaskCreateRequest, "tasks");
+            return await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, TaskCreateRequest, "tasks");
         }
 
         public async Task GetModules()
