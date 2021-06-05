@@ -1,0 +1,24 @@
+﻿@inject ViewModels.ICustomTaskViewModel CustomTaskViewModel
+
+<div class="dialog-container">
+    <div class="dialog">
+        @if (CustomTaskViewModel.Modules is not null)
+        {
+            @foreach (var item in CustomTaskViewModel.Modules)
+            {
+                <span>@item.Title</span>
+            }
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Mode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CustomTaskViewModel.GetModules(Mode);
+    }
+}

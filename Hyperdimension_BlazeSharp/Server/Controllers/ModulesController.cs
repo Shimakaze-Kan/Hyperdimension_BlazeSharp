@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Models;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -38,6 +39,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Guid>> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
         {
             var module = await _db.Modules.SingleOrDefaultAsync(x => x.Title == customModuleCreateRequest.Title);
