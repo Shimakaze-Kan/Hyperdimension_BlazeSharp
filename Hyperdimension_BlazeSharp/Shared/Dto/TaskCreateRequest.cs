@@ -14,5 +14,19 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
         public string InitialCode { get; set; }
         public string TestCode { get; set; }
         public int? Points { get; set; }
+
+        #region dumb converters
+        public string StringToModuleId
+        {
+            set => ModuleId = Guid.Parse(value);
+            get => ModuleId.ToString();
+        }
+
+        public string StringToPoints
+        {
+            set => Points = Convert.ToInt32(value);
+            get => Points.ToString();
+        }
+        #endregion
     }
 }

@@ -28,6 +28,15 @@
                 </NavLink>
             </li>
             <li class="nav-item">
+                <AuthorizeView Roles="admin">
+                    <Authorized>
+                        <NavLink class="nav-link" href="newtask">
+                            Create Task
+                        </NavLink>
+                    </Authorized>
+                </AuthorizeView>
+            </li>
+            <li class="nav-item">
                 <AuthorizeView>
                     <Authorized>
                         <NavLink class="nav-link" href="profile">

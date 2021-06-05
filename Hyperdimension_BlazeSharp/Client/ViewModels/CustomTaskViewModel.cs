@@ -14,9 +14,8 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
 
-        public IEnumerable<ModuleWithTasks> Modules { get; set; }
-        public CustomModuleCreateRequest ModuleCreateRequest { get; set; }
-        public TaskCreateRequest TaskCreateRequest { get; set; }
+        public IEnumerable<ModuleItemMinimal> Modules { get; set; }
+        public TaskCreateRequest TaskCreateRequest { get; set; } = new();
 
         public CustomTaskViewModel(HttpClient httpClient, ILocalStorageService localStorageService)
         {
@@ -24,19 +23,14 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             _localStorageService = localStorageService;
         }
 
-        public async Task CreateModule()
+        public async Task CreateTask()
         {
-            await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, ModuleCreateRequest, "modules");
+            await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, TaskCreateRequest, "tasks");
         }
 
-        public Task CreateTask()
+        public async Task GetModules()
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task GetModules(int mode)
-        {
-            Modules = await _httpClient.GetFromJsonAsync<IEnumerable<ModuleWithTasks>>($"modules/mode/{mode}");
+            Modules = await _httpClient.GetFromJsonAsync<IEnumerable<ModuleItemMinimal>>("modules");
         }
     }
 }

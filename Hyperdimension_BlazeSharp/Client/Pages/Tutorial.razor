@@ -3,8 +3,6 @@
 @inject ILearningPathViewModel _learningPathViewModel
 
 
-<button @onclick="ChangeVisibleStateOfCreateCustomTaskDialog">Add</button>
-
 @if (_learningPathViewModel.ModulesWithTasks is null)
 {
     <h4>Loading...</h4>
@@ -27,22 +25,11 @@ else
     }
 }
 
-@if (isShowingCreateCustomTaskDialog)
-{
-    <UploadCustomTaskDialog Mode="0" />
-}
-
 @code {
-    private bool isShowingCreateCustomTaskDialog = false;
 
     protected override async Task OnInitializedAsync()
     {
         _learningPathViewModel.ModeNumber = 0;
         await _learningPathViewModel.GetModulesWithTasks();
-    }
-
-    private void ChangeVisibleStateOfCreateCustomTaskDialog()
-    {
-        isShowingCreateCustomTaskDialog = !isShowingCreateCustomTaskDialog;
     }
 }

@@ -1,0 +1,40 @@
+﻿@page "/newtask"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@inject ViewModels.ICustomTaskViewModel CustomTaskViewModel
+
+<h4>Modules</h4>
+@if(CustomTaskViewModel.Modules is not null)
+{
+    @foreach (var item in CustomTaskViewModel.Modules)
+    {
+        <span>@($"Id: {item.Id}, Title: {item.Title}, Mode: {item.Mode}")</span>
+    }
+}
+
+<h4>New Task</h4>
+<EditForm Model="CustomTaskViewModel">
+    <h2>Title</h2>
+    <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.Title" class="form-control" placeholder="Title"></InputText>
+    <h2>Module Id</h2>
+    <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.StringToModuleId" class="form-control" placeholder="Module ID"></InputText>
+    <h2>Points</h2>
+    <InputText type="text" @bind-Value="CustomTaskViewModel.TaskCreateRequest.StringToPoints" class="form-control" placeholder="Points"></InputText>
+    <h2>Description</h2>
+    <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.Description" rows="3" />
+    <h2>Initial Code</h2>
+    <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.InitialCode" rows="3" />
+    <h2>Test Code</h2>
+    <InputTextArea class="form-control" @bind-Value="CustomTaskViewModel.TaskCreateRequest.TestCode" rows="3" />
+    <button @onclick="CustomTaskViewModel.CreateTask">Submit</button>
+</EditForm>
+
+
+@code {
+    public IEnumerable<ModuleWithTasks> Modules { get; set; }
+    public int Mode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CustomTaskViewModel.GetModules();
+    }
+}

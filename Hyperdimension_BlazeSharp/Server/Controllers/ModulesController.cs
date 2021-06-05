@@ -22,9 +22,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Modules>>> GetModules()
+        public async Task<ActionResult<IEnumerable<ModuleItemMinimal>>> GetModules()
         {
-            return (await _db.Modules.ToListAsync()).OrderBy(x => x.Id).ToList();
+            return await _db.Modules.OrderBy(x => x.Id)
+                .Select(x => new ModuleItemMinimal() { Id = x.Id, Title = x.Title, Mode = x.Mode })
+                .ToListAsync();
         }
 
         [HttpGet("mode/{mode:int}")]
