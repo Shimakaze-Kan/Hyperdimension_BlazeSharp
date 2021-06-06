@@ -43,6 +43,8 @@ namespace Hyperdimension_BlazeSharp.Client
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient<ICustomTaskViewModel, CustomTaskViewModel>
                 ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<ICustomModuleViewModel, CustomModuleViewModel>
+                ("HyperdimensionBlazeSharp", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             
 
             await builder.Build().RunAsync();

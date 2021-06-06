@@ -1,0 +1,53 @@
+﻿@page "/newmodule"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@inject ViewModels.ICustomModuleViewModel CustomModuleViewModel
+@inject NavigationManager NavigationManager
+
+
+<h2>New Module</h2>
+<EditForm Model="CustomModuleViewModel.CreateRequest" OnValidSubmit="Submit">
+    <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.Title" />
+    <h5 class="mt-3">Title</h5>
+    <InputText type="text" @bind-Value="CustomModuleViewModel.CreateRequest.Title" class="form-control" placeholder="Title"></InputText>
+
+    <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.Mode" />
+    <h5 class="mt-3">Module</h5>
+    <InputSelect class="form-control" @bind-Value="CustomModuleViewModel.CreateRequest.StringToMode">
+        <option value="0">@((Mode)0)</option>
+        <option value="1">@((Mode)1)</option>
+    </InputSelect>
+
+    <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.FolkStoryTitle" />
+    <h5 class="mt-3">Folk Story Title</h5>
+    <InputText type="text" @bind-Value="CustomModuleViewModel.CreateRequest.FolkStoryTitle" class="form-control" placeholder="Title"></InputText>
+
+    <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.FolkStoryStory" />
+    <h5 class="mt-3">Description</h5>
+    <InputTextArea class="form-control" @bind-Value="CustomModuleViewModel.CreateRequest.FolkStoryStory" rows="3" />
+
+    <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.FolkStoryImageUrl" />
+    <h5 class="mt-3">Folk Story Title</h5>
+    <InputText type="text" @bind-Value="CustomModuleViewModel.CreateRequest.FolkStoryImageUrl" class="form-control" placeholder="Title"></InputText>
+
+
+    <button class="btn btn-outline-orange mt-4 mb-4" type="submit" disabled="@isSubmitting">Submit</button>
+
+    <DataAnnotationsValidator />
+</EditForm>
+
+@code {
+    bool isSubmitting = false;
+
+    public async Task Submit()
+    {
+        isSubmitting = true;
+        var result = await CustomModuleViewModel.CreateModule();
+
+        if(result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo(CustomModuleViewModel.CreateRequest.Mode == 0 ? "/tutorial" : "/adventure");
+        }
+
+        isSubmitting = false;
+    }
+}

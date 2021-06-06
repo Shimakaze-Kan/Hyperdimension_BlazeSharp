@@ -14,7 +14,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
 
-        public CustomModuleCreateRequest CreateRequest { get; set; }
+        public CustomModuleCreateRequest CreateRequest { get; set; } = new();
 
         public CustomModuleViewModel(HttpClient httpClient, ILocalStorageService localStorageService)
         {
