@@ -1,24 +1,35 @@
 ﻿@page "/adventure"
+@using Hyperdimension_BlazeSharp.Client.ViewModels
+@inject ILearningPathViewModel _learningPathViewModel
 
-<div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action active">
-        Parts
-    </a>
-    @if (tutorials.Count == 0)
+
+@if (_learningPathViewModel.ModulesWithTasks is null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    @foreach (var module in _learningPathViewModel.ModulesWithTasks)
     {
-        <h4>Loading...</h4>
+        <div class="list-group">
+            <div class="list-group-item list-item-border-orange-bg">
+                @module.Title
+            </div>
+
+            @foreach (var task in module.Tasks)
+            {
+                <a href="@("TaskContainer/" + task.Guid)" class="list-group-item list-group-item-action">@task.Title</a>
+            }
+
+        </div>
     }
-    else
-    {
-        foreach (var tutorial in tutorials)
-        {
-            <a href="@("TaskContainer/"+tutorial.Key)" class="list-group-item list-group-item-action">@tutorial.Value</a>
-        }
-    }
-</div>
+}
 
 @code {
-    List<KeyValuePair<int, string>> tutorials = new() { new(4, "one"), new(5, "two"), new(6, "3") };
 
-
+    protected override async Task OnInitializedAsync()
+    {
+        _learningPathViewModel.ModeNumber = 1;
+        await _learningPathViewModel.GetModulesWithTasks();
+    }
 }
