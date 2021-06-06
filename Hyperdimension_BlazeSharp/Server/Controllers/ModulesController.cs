@@ -49,12 +49,23 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             if(module is not null)
             {
                 return BadRequest();
-            }
+            }            
 
             module = new();
             module.Id = Guid.NewGuid();
             module.Title = customModuleCreateRequest.Title;
             module.Mode = customModuleCreateRequest.Mode;
+            
+            if(customModuleCreateRequest.IsFolkStory)
+            {
+                module.FolkStory = new()
+                {
+                    Id = Guid.NewGuid(),
+                    ImageUrl = customModuleCreateRequest.FolkStoryImageUrl,
+                    Story = customModuleCreateRequest.FolkStoryStory,
+                    Title = customModuleCreateRequest.Title
+                };
+            }
 
             await _db.Modules.AddAsync(module);                        
 
