@@ -38,9 +38,9 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<TaskDataPlayground>> GetSpecyficTask(Guid id)
         {
-            var task = await _db.Tasks.Where(x => x.Id == id)
+            var task = await _db.Tasks.Where(x => x.Id == id).Include(x => x.Module)
                 .Select(task => 
-                    new TaskDataPlayground(task.Id, task.Title, task.Points, task.Description, task.InitialCode, task.TestCode))
+                    new TaskDataPlayground(task.Id, task.Title, task.Points, task.Description, task.InitialCode, task.TestCode, task.Module.Mode))
                 .FirstOrDefaultAsync();
 
             if(task is null)
