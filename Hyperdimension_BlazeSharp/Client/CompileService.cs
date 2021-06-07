@@ -21,7 +21,7 @@ namespace Hyperdimension_BlazeSharp.Client
         private readonly HttpClient _http;
         private readonly NavigationManager _uriHelper;
         public List<string> CompileLog { get; set; }
-        private List<MetadataReference> references { get; set; }
+        private List<MetadataReference> References { get; set; }
 
 
         public CompileService(HttpClient http, NavigationManager uriHelper)
@@ -32,29 +32,9 @@ namespace Hyperdimension_BlazeSharp.Client
 
         public async Task Init()
         {
-            if (references == null)
+            if (References == null)
             {
-                references = new List<MetadataReference>();
-                //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                //{
-                //    if (assembly.IsDynamic)
-                //    {
-                //        continue;
-                //    }
-                //    var name = assembly.GetName().Name + ".dll";
-                //    if(name.Contains("crosoft.CodeAnalys"))
-                //    {
-                //        continue;
-                //    }
-                //    Console.WriteLine(name);
-                //    references.Add(
-                //        MetadataReference.CreateFromStream(
-                //            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/" + name)));
-                //}
-
-                //references.Add(
-                //        MetadataReference.CreateFromStream(
-                //            await this._http.GetStreamAsync(_uriHelper.BaseUri + "_framework/mscorlib.dll")));
+                References = new List<MetadataReference>();
 
                 var assemblies = new string[]
                     {"System.Private.CoreLib.dll",
@@ -95,15 +75,12 @@ namespace Hyperdimension_BlazeSharp.Client
 
                 foreach (var item in assemblies)
                 {
-                    references.Add(
+                    References.Add(
                             MetadataReference.CreateFromStream(
-                                await this._http.GetStreamAsync(_uriHelper.BaseUri + $"_framework/{item}")));
+                                await _http.GetStreamAsync(_uriHelper.BaseUri + $"_framework/{item}")));
                 }
             }
         }
-
-
-        
 
         public async Task<Assembly> Compile(string code)
         {
@@ -122,46 +99,27 @@ namespace Hyperdimension_BlazeSharp.Client
             }
 
             CSharpCompilation compilation = await Task.Run(() => CSharpCompilation.Create("BlazeSharpPlayground", new[] { syntaxTree },
-                references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)));
+                References, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)));
 
-            using (MemoryStream stream = new MemoryStream())
+            using MemoryStream stream = new MemoryStream();
+            EmitResult result = compilation.Emit(stream);
+
+            foreach (var diagnostic in result.Diagnostics)
             {
-                EmitResult result = compilation.Emit(stream);
-
-                foreach (var diagnostic in result.Diagnostics)
-                {
-                    CompileLog.Add(diagnostic.ToString());
-                }
-
-                if (!result.Success)
-                {
-                    CompileLog.Add("Compilation error");
-                    return null;
-                }
-
-                stream.Seek(0, SeekOrigin.Begin);
-
-                //                var context = new CollectibleAssemblyLoadContext();
-                Assembly assemby = AppDomain.CurrentDomain.Load(stream.ToArray());
-                return assemby;
+                CompileLog.Add(diagnostic.ToString());
             }
 
-            return null;
+            if (!result.Success)
+            {
+                CompileLog.Add("Compilation error");
+                return null;
+            }
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            Assembly assemby = AppDomain.CurrentDomain.Load(stream.ToArray());
+            return assemby;
         }
-
-
-        //        public class CollectibleAssemblyLoadContext : AssemblyLoadContext
-        //        {
-        //            public CollectibleAssemblyLoadContext() : base()
-        //            {
-        //            }
-        //
-        //
-        //            protected override Assembly Load(AssemblyName assemblyName)
-        //            {
-        //                return null;
-        //            }
-        //        }
 
 
         public async Task<Tuple<bool, string>> CompileAndRun(string code)

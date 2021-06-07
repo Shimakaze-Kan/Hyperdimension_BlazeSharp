@@ -29,12 +29,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             return await _httpClient.PostAsJsonAsync<UserAuthenticationMinimal>("users/loginuser", this);
         }
 
-        private void LoadCurrentObject(LoginViewModel loginViewModel)
-        {
-            this.Email = loginViewModel.Email;
-            this.Password = loginViewModel.Password;
-        }
-
         public static implicit operator LoginViewModel(UserAuthenticationMinimal userAuthenticationMinimal)
         {
             return new()

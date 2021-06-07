@@ -41,24 +41,6 @@ namespace Hyperdimension_BlazeSharp.Client
             var tokenS = jsonToken as JwtSecurityToken;            
 
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity((List<Claim>)tokenS.Claims, "jwtAuthType")));
-
-            //return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(Jwt)))
-
-            //var currentUser = await _httpClient.GetFromJsonAsync<UserGuidEmail>("users/getcurrentuser");
-
-            //if (currentUser is not null && !string.IsNullOrEmpty(currentUser.Email))
-            //{
-            //    var claimEmail = new Claim(ClaimTypes.Name, currentUser.Email);
-            //    var claimNameIdentifier = new Claim(ClaimTypes.NameIdentifier, Convert.ToString(currentUser.Guid));
-            //    var claimsIdentity = new ClaimsIdentity(new[] { claimEmail, claimNameIdentifier }, "ServerSideAuthentication");
-            //    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            //    return new AuthenticationState(claimsPrincipal);
-            //}
-            //else
-            //{
-            //    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            //}
         }
 
         public void NotifyUserAuthentication(string jwtEncodedString)
