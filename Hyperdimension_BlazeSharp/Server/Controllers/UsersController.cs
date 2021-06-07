@@ -17,7 +17,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        List<Tuple<string, int>> list = new() { new("user1", 12), new("user1212", 122), new("user1000", 4) };
         private readonly HblazesharpContext _db;
         private readonly IJwtTokenService _jwtTokenService;
 
@@ -40,37 +39,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return (await _db.Users.Include(x => x.UsersDetails)
                 .Select(x => new UserRankingRecord(x.Email, x.UsersDetails.Points, x.Id)).ToListAsync())
                 .OrderByDescending(m => m.Points).ToList();
-        }
-
-        [HttpGet("test")]
-        public async Task<ActionResult<Tuple<string, string>>> GetName()
-        {
-            var oldDate = await _db.Users.Where(x => x.Email == "Test@tesat.test122").FirstOrDefaultAsync();
-
-            if (oldDate is not null)
-            {
-                _db.Users.Remove(oldDate);
-            }
-
-            UsersDetails usersDetails = new() { About = "hi" };
-            Users user = new()
-            {
-                Id = Guid.NewGuid(),
-                Email = "Test@tesat.test122",
-                Password = "123",
-                Role = "casual",
-                Source = "qqq",
-                UsersDetails = usersDetails
-            };
-
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
-
-            var id = user.Id;
-
-            var ret = await _db.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
-
-            return new Tuple<string, string>(ret.Id.ToString(), ret.Email);
         }
 
         [HttpGet("profile/{id:guid}")]
@@ -125,14 +93,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return BadRequest("Incorrect password");
             }
 
-
-            //var claims = new Claim(ClaimTypes.Name, user.Email);
-            //var claimsIdentity = new ClaimsIdentity(new[] { claims }, "ServerSideAuthentication");
-            //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            //await HttpContext.SignInAsync(claimsPrincipal);
-
-
             return new UserAuthResult() 
             { 
                 Email = user.Email, 
@@ -169,13 +129,6 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 Email = newAccount.Email,
                 Token = _jwtTokenService.BuildToken(newAccount.Email, newAccount.Id, newAccount.Role)
             };
-        }
-
-        [HttpGet("logoutuser")]
-        public async Task<ActionResult<string>> LogoutUser()
-        {
-            await HttpContext.SignOutAsync();
-            return "done";
         }
 
         [HttpGet("getcurrentuser")]

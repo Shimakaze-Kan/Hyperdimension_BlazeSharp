@@ -75,6 +75,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteModule(Guid id)
         {
             var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == id);

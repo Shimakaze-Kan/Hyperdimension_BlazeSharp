@@ -79,6 +79,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteTask(Guid id)
         {
             var task = await _db.Tasks.SingleOrDefaultAsync(x => x.Id == id);
@@ -113,12 +114,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [Authorize]
         [HttpPost("history/submittask")]
         public async Task<ActionResult<bool>> SubmitTask(SubmitTaskData submitTaskData)
-        {
-            //if(!User.Identity.IsAuthenticated)
-            //{
-            //    return BadRequest();
-            //}            
-
+        {        
             var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
             var user = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirst("Name").Value).Include(x => x.UsersDetails).FirstOrDefaultAsync();
 
