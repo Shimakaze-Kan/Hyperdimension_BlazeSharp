@@ -1,4 +1,5 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Dto;
+﻿using Hyperdimension_BlazeSharp.Server.Repositories;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,39 +13,24 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class FolksController : Controller
     {
-        private readonly HblazesharpContext _db;
+        private readonly IFolkRepository _folkRepository;
 
-        public FolksController(HblazesharpContext db)
+        public FolksController(IFolkRepository folkRepository)
         {
-            _db = db;
+            _folkRepository = folkRepository;
         }
 
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FolkStory>>> GetFolks()
         {
-            return await _db.FolkStories
-                .Select(x => new FolkStory()
-                {
-                    ImgUrl = x.ImageUrl,
-                    Story = x.Story,
-                    Title = x.Title
-                })
-                .ToListAsync();
+            return Ok(await _folkRepository.GetAllFolkStories());
         }
 
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<FolkStory>> GetFolk(Guid id)
         {
-            var result = await _db.FolkStories
-                .Where(x => x.Id == id)
-                .Select(x => new FolkStory()
-                {
-                    ImgUrl = x.ImageUrl,
-                    Story = x.Story,
-                    Title = x.Title
-                })
-                .FirstOrDefaultAsync();
+            var result = await _folkRepository.GetSpecyficFolkStory(id);
 
             if(result is null)
             {

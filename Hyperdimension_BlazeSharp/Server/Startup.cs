@@ -1,4 +1,5 @@
 using Hyperdimension_BlazeSharp.Client;
+using Hyperdimension_BlazeSharp.Server.Repositories;
 using Hyperdimension_BlazeSharp.Server.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -84,6 +85,7 @@ namespace Hyperdimension_BlazeSharp.Server
                         .Build());
             });
 
+            services.AddScoped<IFolkRepository, FolkRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
