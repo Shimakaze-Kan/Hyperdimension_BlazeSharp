@@ -1,4 +1,5 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Models;
+using Hyperdimension_BlazeSharp.Server.Repositories;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,79 +15,51 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class ModulesController : Controller
     {
-        private readonly HblazesharpContext _db;
+        private readonly IModuleRepository _moduleRepository;
 
-        public ModulesController(HblazesharpContext db)
+        public ModulesController(IModuleRepository moduleRepository)
         {
-            _db = db;
+            _moduleRepository = moduleRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ModuleItemMinimal>>> GetModules()
         {
-            return await _db.Modules.OrderBy(x => x.Id)
-                .Select(x => new ModuleItemMinimal() { Id = x.Id, Title = x.Title, Mode = x.Mode })
-                .ToListAsync();
+            return Ok(await _moduleRepository.GetAllModules());
         }
 
         [HttpGet("mode/{mode:int}")]
         public async Task<ActionResult<IEnumerable<ModuleWithTasks>>> GetModulesWithTasks(int mode)
         {
-            return await _db.Modules.Where(x => x.Mode == mode)
-                .Include(m => m.Tasks)
-                .Select(module => 
-                    new ModuleWithTasks(module.Title, module.Tasks
-                    .Select(task => 
-                        new TaskMinimalWithPoints(task.Id, task.Title, task.Points)))).ToListAsync();       
+            return Ok(await _moduleRepository.GetModuleWithTasks(mode)); 
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<Guid>> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
         {
-            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Title == customModuleCreateRequest.Title);
+            var module = await _moduleRepository.TryGetModuleByTitle(customModuleCreateRequest.Title);
 
             if(module is not null)
             {
                 return BadRequest();
             }            
 
-            module = new();
-            module.Id = Guid.NewGuid();
-            module.Title = customModuleCreateRequest.Title;
-            module.Mode = customModuleCreateRequest.Mode;
-            
-            if(customModuleCreateRequest.IsFolkStory)
-            {
-                module.FolkStory = new()
-                {
-                    Id = Guid.NewGuid(),
-                    ImageUrl = customModuleCreateRequest.FolkStoryImageUrl,
-                    Story = customModuleCreateRequest.FolkStoryStory,
-                    Title = customModuleCreateRequest.Title
-                };
-            }
-
-            await _db.Modules.AddAsync(module);                        
-
-            await _db.SaveChangesAsync();
-
-            return Ok(module.Id);
+            return Ok(_moduleRepository.CreateModuleWithFolkStory(customModuleCreateRequest));
         }
 
         [HttpDelete("{id:Guid}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteModule(Guid id)
         {
-            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == id);
+            var module = await _moduleRepository.TryGetModuleById(id);
 
             if(module is null)
             {
                 return NotFound();
             }
 
-            _db.Modules.Remove(module);
-            await _db.SaveChangesAsync();
+            await _moduleRepository.DeleteModule(module);
             
             return Ok();
         }
