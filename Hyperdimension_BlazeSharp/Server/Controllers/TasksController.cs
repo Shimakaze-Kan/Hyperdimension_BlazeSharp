@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Hyperdimension_BlazeSharp.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Hyperdimension_BlazeSharp.Server.Repositories;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
 {
@@ -15,17 +16,19 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class TasksController : Controller
     {
-        private readonly HblazesharpContext _db;
+        private readonly ITaskRepository _taskRepository;
+        private readonly IModuleRepository _moduleRepository;
 
-        public TasksController(HblazesharpContext db)
+        public TasksController(ITaskRepository taskRepository, IModuleRepository moduleRepository)
         {
-            _db = db;
+            _taskRepository = taskRepository;
+            _moduleRepository = moduleRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Tasks>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<Tasks>>> GetTasks()
         {
-            return await _db.Tasks.ToListAsync();
+            return Ok(await _taskRepository.GetTasks());
         }
 
         /// <summary>
@@ -38,10 +41,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<TaskDataPlayground>> GetSpecyficTask(Guid id)
         {
-            var task = await _db.Tasks.Where(x => x.Id == id).Include(x => x.Module)
-                .Select(task => 
-                    new TaskDataPlayground(task.Id, task.Title, task.Points, task.Description, task.InitialCode, task.TestCode, task.Module.Mode))
-                .FirstOrDefaultAsync();
+            var task = await _taskRepository.GetSpecyficTask(id);
 
             if(task is null)
             {
@@ -55,25 +55,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> CreateTask(TaskCreateRequest taskCreateRequest)
         {
-            var module = await _db.Modules.SingleOrDefaultAsync(x => x.Id == taskCreateRequest.ModuleId);
+            var module = await _moduleRepository.TryGetModuleById(taskCreateRequest.ModuleId);
 
             if(module is null)
             {
                 return NotFound();
             }
 
-            await _db.Tasks.AddAsync(new()
-            {
-                Id = Guid.NewGuid(),
-                Title = taskCreateRequest.Title,
-                Description = taskCreateRequest.Description,
-                InitialCode = taskCreateRequest.InitialCode,
-                ModuleId = taskCreateRequest.ModuleId,
-                TestCode = taskCreateRequest.TestCode,
-                Points = taskCreateRequest.Points
-            });
-
-            await _db.SaveChangesAsync();
+            await _taskRepository.CreateTask(taskCreateRequest);
 
             return Ok();
         }
@@ -82,15 +71,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteTask(Guid id)
         {
-            var task = await _db.Tasks.SingleOrDefaultAsync(x => x.Id == id);
+            var task = await _taskRepository.TryGetTaskIfExist(id);
 
             if(task is null)
             {
                 return BadRequest();
             }
 
-            _db.Tasks.Remove(task);
-            await _db.SaveChangesAsync();
+            await _taskRepository.DeleteTask(task);
 
             return Ok();
         }
@@ -98,57 +86,54 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpGet("history/{userId:guid}")]
         public async Task<ActionResult<IEnumerable<UserTaskHistory>>> GetUserTaskHistory(Guid userId)
         {
-            var history = await _db.UserTaskHistory.Where(x => x.UserId == userId)
-                                            .Where(x => x.IsTaskPassed == 1)
-                                            .Include(x => x.Task)                                            
-                                            .ToListAsync();
+            var history = await _taskRepository.GetUserTaskHistory(userId);
 
             if(history is null)
             {
                 return NotFound();
             }
 
-            return history;
+            return Ok(history);
         }
 
         [Authorize]
         [HttpPost("history/submittask")]
         public async Task<ActionResult<bool>> SubmitTask(SubmitTaskData submitTaskData)
         {        
-            var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
-            var user = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirst("Name").Value).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            //var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
+            //var user = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirst("Name").Value).Include(x => x.UsersDetails).FirstOrDefaultAsync();
 
-            if(task is null || user is null)
-            {
-                return false;
-            }
+            //if(task is null || user is null)
+            //{
+            //    return false;
+            //}
 
-            var previousAttempt = await _db.UserTaskHistory.Where(x => x.UserId == user.Id && x.TaskId == task.Id).FirstOrDefaultAsync();
+            //var previousAttempt = await _db.UserTaskHistory.Where(x => x.UserId == user.Id && x.TaskId == task.Id).FirstOrDefaultAsync();
 
-            if (previousAttempt is null)
-            {
-                user.UsersDetails.Points += (int)task.Points;
+            //if (previousAttempt is null)
+            //{
+            //    user.UsersDetails.Points += (int)task.Points;
 
-                UserTaskHistory userTaskHistory = new()
-                {
-                    Id = Guid.NewGuid(),
-                    Solution = submitTaskData.Solution,
-                    IsTaskPassed = submitTaskData.IsTaskPassed,
-                    SubmittedAt = DateTime.Now,
-                    User = user,
-                    Task = task
-                };
+            //    UserTaskHistory userTaskHistory = new()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        Solution = submitTaskData.Solution,
+            //        IsTaskPassed = submitTaskData.IsTaskPassed,
+            //        SubmittedAt = DateTime.Now,
+            //        User = user,
+            //        Task = task
+            //    };
 
-                await _db.UserTaskHistory.AddAsync(userTaskHistory);                
-            }
-            else
-            {                
-                previousAttempt.Solution = submitTaskData.Solution;
-                previousAttempt.SubmittedAt = DateTime.Now;
-                previousAttempt.IsTaskPassed = submitTaskData.IsTaskPassed;
-            }
+            //    await _db.UserTaskHistory.AddAsync(userTaskHistory);                
+            //}
+            //else
+            //{                
+            //    previousAttempt.Solution = submitTaskData.Solution;
+            //    previousAttempt.SubmittedAt = DateTime.Now;
+            //    previousAttempt.IsTaskPassed = submitTaskData.IsTaskPassed;
+            //}
 
-            await _db.SaveChangesAsync();
+            //await _db.SaveChangesAsync();
 
             return true;
         }
