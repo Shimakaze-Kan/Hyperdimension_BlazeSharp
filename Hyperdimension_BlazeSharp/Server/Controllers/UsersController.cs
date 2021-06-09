@@ -52,7 +52,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             if (!user.Tasks.Any())
                 return user;
 
-            var folk = await _userRepository.GetUsersFolkStories(id);
+            var folk = await _userRepository.GetUsersFolkStories(user.Tasks.First().Guid);
 
             return user with { AchievedStories = folk };
         }
