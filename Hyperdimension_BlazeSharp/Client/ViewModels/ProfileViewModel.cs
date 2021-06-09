@@ -42,7 +42,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task<HttpResponseMessage> UpdatePreferences()
         {
-            var result = await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService,UserPreferences,$"users/changeuserpreferences");
+            var result = await _httpClient.PutAsJsonAsyncJwtHeader(_localStorageService,UserPreferences,$"users/changeuserpreferences");
 
 
             if(result.IsSuccessStatusCode)
@@ -62,7 +62,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public async Task<HttpResponseMessage> UpdatePreferencesForce()
         {
-            var result = await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, UserPreferences, $"users/changeuserpreferencesforce");
+            var result = await _httpClient.PutAsJsonAsyncJwtHeader(_localStorageService, UserPreferences, $"users/changeuserpreferencesforce");
 
             if (result.IsSuccessStatusCode)
             {

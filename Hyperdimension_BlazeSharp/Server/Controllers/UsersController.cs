@@ -99,7 +99,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [Authorize]
-        [HttpPost("changeuserpreferences")]
+        [HttpPut("changeuserpreferences")]
         public async Task<IActionResult> ChangeUserPreferences(UserPreferencesForce userPreferences)
         {
             var preferences = await _userRepository.GetUserPreferences(HttpContext.User.FindFirstValue("name"));
@@ -114,7 +114,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [HttpPost("changeUserPreferencesForce")]
+        [HttpPut("changeUserPreferencesForce")]
         public async Task<IActionResult> ChangeUserPreferencesForce(UserPreferencesForce userPreferencesForce)
         {
             var preferences = await _userRepository.GetPreferencesById(userPreferencesForce.UserId);
