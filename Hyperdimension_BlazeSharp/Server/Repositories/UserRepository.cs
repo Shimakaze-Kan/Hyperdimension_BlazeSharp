@@ -64,7 +64,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
         public async Task<Users> GetUserByName(string name)
         {
-            return await _hblazesharpContext.Users.SingleOrDefaultAsync(x => x.Email == name);
+            return await _hblazesharpContext.Users.Where(x => x.Email == name).Include(x => x.UsersDetails).SingleOrDefaultAsync();
         }
 
         public async Task<Users> GetUserPreferences(string name)
