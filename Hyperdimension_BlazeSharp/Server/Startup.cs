@@ -88,7 +88,7 @@ namespace Hyperdimension_BlazeSharp.Server
             services.AddScoped<IFolkRepository, FolkRepository>();
             services.AddScoped<IModuleRepository, ModuleRepository>();
             services.AddScoped<ITaskRepository, TaskRepository>();
-            services.AddScoped<IUserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

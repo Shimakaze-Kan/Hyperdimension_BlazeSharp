@@ -57,15 +57,8 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                                             .ToListAsync();
         }
 
-        public async Task SubmitTask(SubmitTaskData submitTaskData, Users user)
+        public async Task SubmitTask(SubmitTaskData submitTaskData, Users user, Tasks task)
         {
-            var task = await _hblazesharpContext.Tasks.SingleOrDefaultAsync(x => x.Id == submitTaskData.TaskId);         
-
-            if (task is null || user is null)
-            {
-                return;
-            }
-
             var previousAttempt = await _hblazesharpContext.UserTaskHistory.SingleOrDefaultAsync(x => x.UserId == user.Id && x.TaskId == task.Id);
 
             if (previousAttempt is null)

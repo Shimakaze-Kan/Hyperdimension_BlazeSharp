@@ -1,4 +1,5 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Models;
+using Hyperdimension_BlazeSharp.Server.Repositories;
 using Hyperdimension_BlazeSharp.Shared;
 using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.AspNetCore.Authentication;
@@ -17,42 +18,31 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly HblazesharpContext _db;
+        private readonly IUserRepository _userRepository;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public UsersController(HblazesharpContext db, IJwtTokenService jwtTokenService)
+        public UsersController(IUserRepository userRepository, IJwtTokenService jwtTokenService)
         {
-            _db = db;
+            _userRepository = userRepository;
             _jwtTokenService = jwtTokenService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UsersMinimal>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UsersMinimal>>> GetUsers()
         {
-            return await _db.Users.Include(x => x.UsersDetails)
-                .Select(x => new UsersMinimal { Id = x.Id, Email = x.Email, Points = x.UsersDetails.Points }).ToListAsync();
+            return Ok(await _userRepository.GetUsers());
         }
 
         [HttpGet("ranking")]
         public async Task<ActionResult<IEnumerable<UserRankingRecord>>> GetRanking()
         {
-            return (await _db.Users.Include(x => x.UsersDetails)
-                .Select(x => new UserRankingRecord(x.Email, x.UsersDetails.Points, x.Id)).ToListAsync())
-                .OrderByDescending(m => m.Points).ToList();
+            return Ok(await _userRepository.GetRanking());
         }
 
         [HttpGet("profile/{id:guid}")]
         public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
         {
-            var user = await _db.Users.Where(user => user.Id == id)
-                .Include(x => x.UsersDetails)
-                .Include(x => x.UserTaskHistory)
-                .ThenInclude(x => x.Task)
-                .Select(user => new UserProfile(user.Email, user.UsersDetails.Points,
-                    user.UsersDetails.AvatarUrl, user.UsersDetails.About,
-                    user.UserTaskHistory
-                        .Select(x => new TaskMinimalWithSubmissionDate(x.TaskId, x.Task.Title, x.SubmittedAt))))
-                .FirstOrDefaultAsync();
+            var user = await _userRepository.GetUserProfile(id);
 
             if (user is null)
             {
@@ -62,16 +52,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             if (!user.Tasks.Any())
                 return user;
 
-            var folk = await _db.Tasks.Where(x => x.Id == user.Tasks.First().Guid)
-                .Include(x => x.Module)
-                .ThenInclude(x => x.FolkStory)
-                .Select(x => new FolkStory
-                {
-                    ImgUrl = x.Module.FolkStory.ImageUrl,                    
-                    Title = x.Module.FolkStory.Title,
-                    StoryId = x.Module.FolkStory.Id
-                })
-                .ToListAsync();
+            var folk = await _userRepository.GetUsersFolkStories(id);
 
             return user with { AchievedStories = folk };
         }
@@ -79,9 +60,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpPost("loginuser")]
         public async Task<ActionResult<UserAuthResult>> LoginUser([FromForm] UserAuthRequest userAuthRequest)
         {
-            var user = await _db.Users.Where(x => x.Email == userAuthRequest.Email)
-                .Select(x => new { Email = x.Email, Password = x.Password, Guid = x.Id, Role = x.Role })
-                .FirstOrDefaultAsync();
+            var user = await _userRepository.GetUserByName(userAuthRequest.Email);
 
             if (user is null)
             {
@@ -96,33 +75,21 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return new UserAuthResult() 
             { 
                 Email = user.Email, 
-                Token = _jwtTokenService.BuildToken(user.Email, user.Guid, user.Role)
+                Token = _jwtTokenService.BuildToken(user.Email, user.Id, user.Role)
             };
         }
 
         [HttpPost("registeruser")]
         public async Task<ActionResult<UserAuthResult>> RegisterUser(UserAuthRequest userAuthenticationMinimal)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userAuthenticationMinimal.Email);
+            var user = await _userRepository.GetUserByName(userAuthenticationMinimal.Email);
 
             if (user is not null)
             {
-                return BadRequest("There is already a user with this email"); //tmp solution
+                return BadRequest("There is already a user with this email");
             }
 
-            UsersDetails usersDetails = new() { About = "test" };
-            Users newAccount = new()
-            {
-                Id = Guid.NewGuid(),
-                Email = userAuthenticationMinimal.Email,
-                Password = PasswordHasher.Encrypt(userAuthenticationMinimal.Password),
-                Role = "casual",
-                Source = "sss",
-                UsersDetails = usersDetails
-            };
-
-            _db.Users.Add(newAccount);
-            await _db.SaveChangesAsync();
+            var newAccount = await _userRepository.RegisterUser(userAuthenticationMinimal);
 
             return new UserAuthResult()
             {
@@ -131,44 +98,18 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             };
         }
 
-        [HttpGet("getcurrentuser")]
-        public async Task<ActionResult<UserGuidEmail>> GetCurrentuser()
-        {
-            UserGuidEmail userGuidEmail = new(default, null);
-
-            if (User.Identity.IsAuthenticated)
-            {
-                var userEmail = User.FindFirstValue(ClaimTypes.Name);
-                userGuidEmail = await _db.Users.Where(x => x.Email == userEmail).Select(x => new UserGuidEmail(x.Id, x.Email)).FirstOrDefaultAsync();
-            }
-
-            return await Task.FromResult(userGuidEmail);
-        }
-
         [Authorize]
         [HttpPost("changeuserpreferences")]
         public async Task<IActionResult> ChangeUserPreferences(UserPreferencesForce userPreferences)
         {
-            var preferences = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirstValue("name")).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            var preferences = await _userRepository.GetUserPreferences(HttpContext.User.FindFirstValue("name"));
 
             if(preferences is null)
             {
                 return BadRequest();
             }
 
-            if (userPreferences.ThemeId is not null)
-            {
-                preferences.UserPreferencesId = (int)userPreferences.ThemeId;
-            }
-
-            preferences.UsersDetails.About = userPreferences.About;
-
-            if (!string.IsNullOrEmpty(userPreferences.AvatarUrl))
-            {
-                preferences.UsersDetails.AvatarUrl = userPreferences.AvatarUrl;
-            }
-
-            await _db.SaveChangesAsync();
+            await _userRepository.ChangeUserPreferences(userPreferences, preferences);
             return Ok();
         }
 
@@ -176,26 +117,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [HttpPost("changeUserPreferencesForce")]
         public async Task<IActionResult> ChangeUserPreferencesForce(UserPreferencesForce userPreferencesForce)
         {
-            var preferences = await _db.Users.Where(x => x.Id == userPreferencesForce.UserId).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+            var preferences = await _userRepository.GetPreferencesById(userPreferencesForce.UserId);
 
             if(preferences is null)
             {
                 return BadRequest();
             }
 
-            if (userPreferencesForce.ThemeId is not null)
-            {
-                preferences.UserPreferencesId = (int)userPreferencesForce.ThemeId;
-            }
-
-            preferences.UsersDetails.About = userPreferencesForce.About;
-
-            if (!string.IsNullOrEmpty(userPreferencesForce.AvatarUrl))
-            {
-                preferences.UsersDetails.AvatarUrl = userPreferencesForce.AvatarUrl;
-            }
-
-            await _db.SaveChangesAsync();
+            await _userRepository.ChangeUserPreferencesForce(userPreferencesForce, preferences);
             return Ok();
         }
     }

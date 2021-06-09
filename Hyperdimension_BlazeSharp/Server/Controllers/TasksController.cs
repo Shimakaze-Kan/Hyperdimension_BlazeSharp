@@ -112,7 +112,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return false;
             }
 
-            await _taskRepository.SubmitTask(submitTaskData, user);
+            await _taskRepository.SubmitTask(submitTaskData, user, task);
 
             return true;
         }

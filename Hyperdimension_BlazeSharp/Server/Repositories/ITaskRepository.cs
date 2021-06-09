@@ -14,7 +14,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
         public Task CreateTask(TaskCreateRequest taskCreateRequest);
         public Task DeleteTask(Tasks task);
         public Task<IEnumerable<UserTaskHistory>> GetUserTaskHistory(Guid userId);
-        public Task SubmitTask(SubmitTaskData submitTaskData, Users user);
+        public Task SubmitTask(SubmitTaskData submitTaskData, Users user, Tasks task);
         public Task<Tasks> TryGetTaskIfExist(Guid id);
     }
 }
