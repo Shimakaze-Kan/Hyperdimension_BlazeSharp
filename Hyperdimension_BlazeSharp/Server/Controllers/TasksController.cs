@@ -18,11 +18,15 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IModuleRepository _moduleRepository;
+        private readonly IUserRepository _userRepository;
 
-        public TasksController(ITaskRepository taskRepository, IModuleRepository moduleRepository)
+        public TasksController(ITaskRepository taskRepository,
+            IModuleRepository moduleRepository,
+            IUserRepository userRepository)
         {
             _taskRepository = taskRepository;
             _moduleRepository = moduleRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -99,41 +103,16 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         [Authorize]
         [HttpPost("history/submittask")]
         public async Task<ActionResult<bool>> SubmitTask(SubmitTaskData submitTaskData)
-        {        
-            //var task = await _db.Tasks.Where(x => x.Id == submitTaskData.TaskId).FirstOrDefaultAsync();
-            //var user = await _db.Users.Where(x => x.Email == HttpContext.User.FindFirst("Name").Value).Include(x => x.UsersDetails).FirstOrDefaultAsync();
+        {
+            var task = await _taskRepository.TryGetTaskIfExist(submitTaskData.TaskId);
+            var user = await _userRepository.GetUserByName(HttpContext.User.FindFirst("Name").Value);
 
-            //if(task is null || user is null)
-            //{
-            //    return false;
-            //}
+            if (task is null || user is null)
+            {
+                return false;
+            }
 
-            //var previousAttempt = await _db.UserTaskHistory.Where(x => x.UserId == user.Id && x.TaskId == task.Id).FirstOrDefaultAsync();
-
-            //if (previousAttempt is null)
-            //{
-            //    user.UsersDetails.Points += (int)task.Points;
-
-            //    UserTaskHistory userTaskHistory = new()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Solution = submitTaskData.Solution,
-            //        IsTaskPassed = submitTaskData.IsTaskPassed,
-            //        SubmittedAt = DateTime.Now,
-            //        User = user,
-            //        Task = task
-            //    };
-
-            //    await _db.UserTaskHistory.AddAsync(userTaskHistory);                
-            //}
-            //else
-            //{                
-            //    previousAttempt.Solution = submitTaskData.Solution;
-            //    previousAttempt.SubmittedAt = DateTime.Now;
-            //    previousAttempt.IsTaskPassed = submitTaskData.IsTaskPassed;
-            //}
-
-            //await _db.SaveChangesAsync();
+            await _taskRepository.SubmitTask(submitTaskData, user);
 
             return true;
         }
