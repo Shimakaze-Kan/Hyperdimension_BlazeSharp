@@ -12,8 +12,9 @@ else
     @foreach (var module in _learningPathViewModel.ModulesWithTasks)
     {
         <div class="list-group">
-            <div class="list-group-item list-item-border-orange-bg">
-                @module.Title
+            <div class="list-group-item list-item-border-orange-bg d-flex">
+                <span>@module.Title</span>
+                <span class="oi oi-trash ml-auto cursor-pointer text-danger" hidden="@hideModuleTrashCan" @onclick="(() => _learningPathViewModel.DeleteModule(module.Id))"></span>
             </div>
 
             @foreach (var task in module.Tasks)
@@ -35,11 +36,13 @@ else
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
     private bool hideTrashCan = false;
+    private bool hideModuleTrashCan = false;
 
     protected override async Task OnInitializedAsync()
     {
         var user = (await AuthenticationState).User;
         hideTrashCan = !(user.IsInRole("admin") || user.IsInRole("taskmode"));
+        hideModuleTrashCan = !(user.IsInRole("admin") || user.IsInRole("modulemode"));
 
         _learningPathViewModel.ModeNumber = 1;
         await _learningPathViewModel.GetModulesWithTasks();
