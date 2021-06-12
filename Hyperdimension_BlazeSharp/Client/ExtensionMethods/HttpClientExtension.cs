@@ -47,5 +47,13 @@ namespace Hyperdimension_BlazeSharp.Client.ExtensionMethods
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItem<string>("hbsToken"));
             return await httpClient.SendAsync(request);
         }
+
+        public static async Task<HttpResponseMessage> DeleteAsyncJwtHeader(this HttpClient httpClient, ILocalStorageService localStorageService, string url)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItem<string>("hbsToken"));
+            return await httpClient.SendAsync(request);
+        }
     }
 }

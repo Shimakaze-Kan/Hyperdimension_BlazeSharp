@@ -18,7 +18,10 @@ else
 
             @foreach (var task in module.Tasks)
             {
-                <a href="@("TaskContainer/" + task.Guid)" class="list-group-item list-group-item-action">@task.Title</a>
+                <a href="@("TaskContainer/" + task.Guid)" class="list-group-item list-group-item-action">
+                    <span>@task.Title</span>
+                    <span class="oi oi-trash text-end cursor-pointer text-danger" hidden="@hideTrashCan" @onclick="(() => _learningPathViewModel.DeleteTask(task.Guid))"></span>
+                </a>
             }
 
         </div>
@@ -26,9 +29,16 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private bool hideTrashCan = false;
 
     protected override async Task OnInitializedAsync()
     {
+        var user = (await AuthenticationState).User;
+        hideTrashCan = !(user.IsInRole("admin") || user.IsInRole("taskmode"));
+
         _learningPathViewModel.ModeNumber = 0;
         await _learningPathViewModel.GetModulesWithTasks();
     }

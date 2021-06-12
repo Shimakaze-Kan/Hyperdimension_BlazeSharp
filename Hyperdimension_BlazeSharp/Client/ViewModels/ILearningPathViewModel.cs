@@ -12,5 +12,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public IEnumerable<ModuleWithTasks> ModulesWithTasks { get; set; }
 
         public Task GetModulesWithTasks();
+        public Task DeleteTask(Guid id);
     }
 }

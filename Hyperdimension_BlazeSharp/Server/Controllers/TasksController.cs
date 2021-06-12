@@ -71,13 +71,13 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:guid}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteTask(Guid id)
         {
             var task = await _taskRepository.TryGetTaskIfExist(id);
 
-            if(task is null)
+            if (task is null)
             {
                 return BadRequest();
             }
