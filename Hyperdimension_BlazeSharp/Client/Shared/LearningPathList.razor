@@ -1,0 +1,49 @@
+﻿@inject ViewModels.ILearningPathViewModel _learningPathViewModel
+
+
+@if (_learningPathViewModel.ModulesWithTasks is null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    @foreach (var module in _learningPathViewModel.ModulesWithTasks)
+    {
+        <div class="list-group">
+            <div class="list-group-item @(Mode == Mode.Tutorial ? "list-item-border-blue-bg" : "list-item-border-orange-bg") d-flex">
+                <span>@module.Title</span>
+                <AuthorizeView Roles="admin, modulemode">
+                    <Authorized>
+                        <span class="oi oi-trash ml-auto cursor-pointer text-danger" @onclick="(() => _learningPathViewModel.DeleteModule(module.Id))"></span>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+
+            @foreach (var task in module.Tasks)
+            {
+                <div class="list-group-item d-flex">
+                    <a href="@("TaskContainer/" + task.Guid)" class="list-group-item-action">
+                        <span>@task.Title</span>
+                    </a>
+                    <AuthorizeView Roles="admin, taskmode">
+                        <Authorized>
+                            <span class="oi oi-trash ml-auto cursor-pointer text-danger" @onclick="(() => _learningPathViewModel.DeleteTask(task.Guid))"></span>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+            }
+
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public Mode Mode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _learningPathViewModel.ModeNumber = (int)Mode;
+        await _learningPathViewModel.GetModulesWithTasks();
+    }
+}
