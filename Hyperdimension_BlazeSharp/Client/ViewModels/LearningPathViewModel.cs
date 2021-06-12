@@ -45,6 +45,16 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private void LoadCurrentObject(LearningPathViewModel learningPathViewModel) 
             => this.ModulesWithTasks = learningPathViewModel.ModulesWithTasks;
 
+        public async Task DeleteModule(Guid id)
+        {
+            var state = await _jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this module ? This operation is irreversible.");
+
+            if (state)
+            {
+                await _httpClient.DeleteAsyncJwtHeader(_localStorageService, $"modules/{id}");
+                await GetModulesWithTasks();
+            }
+        }
 
         public static implicit operator LearningPathViewModel(List<ModuleWithTasks> moduleWithTasks)
             => new() { ModulesWithTasks = moduleWithTasks};

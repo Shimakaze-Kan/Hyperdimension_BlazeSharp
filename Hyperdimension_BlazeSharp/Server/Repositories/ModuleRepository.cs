@@ -59,7 +59,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
             return await _hblazesharpContext.Modules.Where(x => x.Mode == mode)
                 .Include(m => m.Tasks)
                 .Select(module =>
-                    new ModuleWithTasks(module.Title, module.Tasks
+                    new ModuleWithTasks(module.Id, module.Title, module.Tasks
                     .Select(task =>
                         new TaskMinimalWithPoints(task.Id, task.Title, task.Points)))).ToListAsync();
         }

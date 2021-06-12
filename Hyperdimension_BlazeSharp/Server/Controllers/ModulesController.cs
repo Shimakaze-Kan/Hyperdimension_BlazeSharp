@@ -35,7 +35,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, modulemode")]
         public async Task<ActionResult<Guid>> CreateModule(CustomModuleCreateRequest customModuleCreateRequest)
         {
             var module = await _moduleRepository.TryGetModuleByTitle(customModuleCreateRequest.Title);
@@ -49,7 +49,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, modulemode")]
         public async Task<ActionResult> DeleteModule(Guid id)
         {
             var module = await _moduleRepository.TryGetModuleById(id);

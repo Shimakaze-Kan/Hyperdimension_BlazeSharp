@@ -1,5 +1,5 @@
 ﻿@page "/newmodule"
-@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin, modulemode")]
 @inject ViewModels.ICustomModuleViewModel CustomModuleViewModel
 @inject NavigationManager NavigationManager
 

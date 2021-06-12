@@ -9,8 +9,9 @@ namespace Hyperdimension_BlazeSharp.Shared.Dto
     public record ModuleWithTasks : ModuleMinimal
     {
         public IEnumerable<TaskMinimal> Tasks { get; init; }
+        public Guid Id { get; init; }
 
-        public ModuleWithTasks(string title, IEnumerable<TaskMinimal> tasks) 
-            : base(title) => Tasks = tasks;
+        public ModuleWithTasks(Guid id, string title, IEnumerable<TaskMinimal> tasks) 
+            : base(title) => (Id, Tasks) = (id, tasks);
     }
 }

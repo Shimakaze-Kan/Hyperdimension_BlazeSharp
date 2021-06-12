@@ -13,5 +13,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
         public Task GetModulesWithTasks();
         public Task DeleteTask(Guid id);
+        public Task DeleteModule(Guid id);
     }
 }
