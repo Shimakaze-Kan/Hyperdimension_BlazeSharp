@@ -56,7 +56,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, taskmode")]
         public async Task<ActionResult> CreateTask(TaskCreateRequest taskCreateRequest)
         {
             var module = await _moduleRepository.TryGetModuleById(taskCreateRequest.ModuleId);
@@ -72,7 +72,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, taskmode")]
         public async Task<ActionResult> DeleteTask(Guid id)
         {
             var task = await _taskRepository.TryGetTaskIfExist(id);

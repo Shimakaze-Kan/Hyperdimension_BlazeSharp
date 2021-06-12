@@ -1,5 +1,5 @@
 ﻿@page "/newtask"
-@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin")]
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "admin, taskmode")]
 @inject ViewModels.ICustomTaskViewModel CustomTaskViewModel
 @inject NavigationManager NavigationManager
 
