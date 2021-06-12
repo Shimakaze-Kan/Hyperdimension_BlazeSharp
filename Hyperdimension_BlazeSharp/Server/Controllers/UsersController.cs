@@ -49,10 +49,10 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
                 return NotFound();
             }
 
-            if (!user.Tasks.Any())
+            if (!user.TasksTutorial.Any())
                 return user;
 
-            var folk = await _userRepository.GetUsersFolkStories(user.Tasks.First().Guid);
+            var folk = await _userRepository.GetUsersFolkStories(user.TasksTutorial.First().Guid);
 
             return user with { AchievedStories = folk };
         }

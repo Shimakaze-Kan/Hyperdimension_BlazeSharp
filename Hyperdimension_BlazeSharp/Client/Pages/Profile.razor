@@ -40,15 +40,17 @@
 
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">History</button>
-                <button class="nav-link" id="nav-test-tab" @onclick="@(() => ChangeTab("nav-test-tab"))" type="button" role="tab">Test</button>
+                <button class="nav-link active" id="nav-task-history-tab" @onclick="@(() => ChangeTab("nav-task-history-tab"))" type="button" role="tab">Tutorial History</button>
+                <button class="nav-link" id="nav-test-tab" @onclick="@(() => ChangeTab("nav-test-tab"))" type="button" role="tab">Adventure History</button>
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane show active" id="nav-task-history" role="tabpanel">
-                <ClickableList Tasks="@_profileViewModel.UserProfile?.Tasks" />
+                <ClickableList Tasks="@_profileViewModel.UserProfile?.TasksTutorial" />
             </div>
-            <div class="tab-pane" id="nav-test" role="tabpanel">...</div>
+            <div class="tab-pane" id="nav-test" role="tabpanel">
+                <ClickableList Tasks="@_profileViewModel.UserProfile?.TasksAdventure" />
+            </div>
         </div>
 
     </div>

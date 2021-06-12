@@ -81,6 +81,10 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                 .Select(user => new UserProfile(user.Email, user.UsersDetails.Points,
                     user.UsersDetails.AvatarUrl, user.UsersDetails.About,
                     user.UserTaskHistory
+                        .Where(x => x.Task.Module.Mode == 0)
+                        .Select(x => new TaskMinimalWithSubmissionDate(x.TaskId, x.Task.Title, x.SubmittedAt)),
+                    user.UserTaskHistory
+                        .Where(x => x.Task.Module.Mode == 1)
                         .Select(x => new TaskMinimalWithSubmissionDate(x.TaskId, x.Task.Title, x.SubmittedAt))))
                 .SingleOrDefaultAsync();
         }
