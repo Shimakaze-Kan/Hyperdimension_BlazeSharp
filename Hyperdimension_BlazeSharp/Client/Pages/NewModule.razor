@@ -11,7 +11,7 @@
     <InputText type="text" @bind-Value="CustomModuleViewModel.CreateRequest.Title" class="form-control" placeholder="Title"></InputText>
 
     <ValidationMessage For="() => CustomModuleViewModel.CreateRequest.Mode" />
-    <h5 class="mt-3">Module</h5>
+    <h5 class="mt-3">Mode</h5>
     <InputSelect class="form-control" @bind-Value="CustomModuleViewModel.CreateRequest.StringToMode">
         <option value="0">@((Mode)0)</option>
         <option value="1">@((Mode)1)</option>
