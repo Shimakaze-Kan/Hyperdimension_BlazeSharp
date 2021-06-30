@@ -14,11 +14,12 @@
                     @Text
                 </p>
 
-                @if (IsSubcomment)
+                @if (!IsSubcomment)
                 {
                     <ul class="list-inline d-sm-flex my-0">
                         <li class="list-inline-item ml-auto">
                             <a class="btn-outline-orange" href="#!">
+                                Reply
                             </a>
                         </li>
                     </ul>
