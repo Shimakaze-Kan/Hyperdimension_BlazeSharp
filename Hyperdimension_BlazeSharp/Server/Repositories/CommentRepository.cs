@@ -25,7 +25,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                     Date = x.SubmittedAt.ToString(),
                     Text = x.Text,
                     UserName = x.User.Email,
-                    Subcomments = x.Subcomments.Where(x => x.CommentId == x.Id)
+                    Subcomments = x.Subcomments.Where(x => x.CommentId == x.Comment.Id)
                         .Select(x => new Subcomment()
                         {
                             AvatarUrl = x.User.UsersDetails.AvatarUrl,
@@ -34,7 +34,9 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                             Date = x.SubmittedAt.ToString(),
                             Text = x.Text
                         })
+                        .OrderBy(x => x.Date)
                 })
+                .OrderBy(x => x.Date)
                 .ToListAsync();
         }
 
