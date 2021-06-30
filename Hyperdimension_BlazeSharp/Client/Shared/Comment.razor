@@ -1,5 +1,5 @@
 ﻿<div class="row">
-    <div class="md-8">
+    <div class="md-8 w-100">
         <div class="media @(IsSubcomment ? "subcomment mb-5" : "mb-3")">
             <div class="media-body u-shadow-v18 g-bg-secondary p-2 avatar">
                 <div class="mb-1 row">
@@ -11,7 +11,7 @@
                 </div>
 
                 <p>
-                    @Text
+                    <MarkupPanel Text="@Text" />
                 </p>
 
                 @if (!IsSubcomment)

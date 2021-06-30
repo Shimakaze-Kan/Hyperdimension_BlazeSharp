@@ -1,28 +1,52 @@
 ﻿@page "/forum/{taskid:guid}"
 @inject NavigationManager NavigationManager
+@inject ViewModels.IForumViewModel ForumViewModel
 
 <h5 class="cursor-pointer" @onclick="GoBackToTaskPlayground"><span class="oi oi-arrow-left"></span> Back to task</h5>
 
 <div class="container mt-5">
-    <Comment AvatarUrl=""
-             UserName="Test"
-             CommentId="@Guid.NewGuid()"
-             Date="2021.06.30"
-             Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor mauris, hendrerit vestibulum tristique nec, ultrices nec elit. In non velit quis tellus pulvinar posuere. Curabitur ac laoreet dolor, a condimentum justo. Praesent molestie urna eget erat laoreet, in ultrices neque bibendum. Proin eget dui accumsan, condimentum mi a, consectetur elit. Aliquam erat volutpat. Nam non consectetur neque, vel tempor risus. In id dui orci. Phasellus non fringilla lectus, sed laoreet neque. Aliquam erat volutpat. Aliquam sed sollicitudin magna. Nulla eu euismod odio. Quisque porttitor tellus molestie turpis condimentum fringilla. "
-    />
 
-    <Comment AvatarUrl=""
-             UserName="Test subcomment"
-             CommentId="@Guid.NewGuid()"
-             Date="2021.06.30"
-             IsSubcomment="true"
-             Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor mauris, hendrerit vestibulum tristique nec, ultrices nec elit. In non velit quis tellus pulvinar posuere. Curabitur ac laoreet dolor, a condimentum justo. Praesent molestie urna eget erat laoreet, in ultrices neque bibendum. Proin eget dui accumsan, condimentum mi a, consectetur elit. Aliquam erat volutpat. Nam non consectetur neque, vel tempor risus. In id dui orci. Phasellus non fringilla lectus, sed laoreet neque. Aliquam erat volutpat. Aliquam sed sollicitudin magna. Nulla eu euismod odio. Quisque porttitor tellus molestie turpis condimentum fringilla. "
-    />
+    @if (Comments is not null)
+    {
+        @foreach (var comment in Comments)
+        {
+            <Comment AvatarUrl="@comment.AvatarUrl"
+                     UserName="@comment.UserName"
+                     CommentId="@comment.Id"
+                     Date="@comment.Date"
+                     Text="@comment.Text"
+                     IsSubcomment="false" />
+
+            @if (comment.Subcomments is not null)
+            {
+                @foreach (var subcomment in comment.Subcomments)
+                {
+                    <Comment AvatarUrl="@subcomment.AvatarUrl"
+                             UserName="@subcomment.UserName"
+                             CommentId="@subcomment.MainCommentId"
+                             Date="@subcomment.Date"
+                             Text="@subcomment.Text"
+                             IsSubcomment="true" />
+                }
+            }
+        }
+    }
+    else
+    {
+        <Spinner />
+    }
 </div>
 
 @code {
     [Parameter]
     public Guid TaskId { get; set; }
+
+    public IEnumerable<Hyperdimension_BlazeSharp.Shared.Dto.Comment> Comments { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Comments = await ForumViewModel.GetComments(TaskId);
+    }
 
     private void GoBackToTaskPlayground()
     {
