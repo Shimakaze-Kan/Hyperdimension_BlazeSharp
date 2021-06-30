@@ -1,6 +1,6 @@
 ﻿<div class="row">
     <div class="md-8 w-100">
-        <div class="media @(IsSubcomment ? "subcomment mb-5" : "mb-3")">
+        <div class="media @(IsSubcomment ? "subcomment" : "") mb-3">
             <div class="media-body u-shadow-v18 g-bg-secondary p-2 avatar">
                 <div class="mb-1 row">
                     <img class="d-flex width-50px height-50px rounded avatar mr-1 ml-3" src="@AvatarUrl" alt="avatar">
@@ -14,16 +14,13 @@
                     <MarkupPanel Text="@Text" />
                 </p>
 
-                @if (!IsSubcomment)
-                {
-                    <ul class="list-inline d-sm-flex my-0">
-                        <li class="list-inline-item ml-auto">
-                            <a class="btn-outline-orange" href="#!">
-                                Reply
-                            </a>
-                        </li>
-                    </ul>
-                }
+                <ul class="list-inline d-sm-flex my-0">
+                    <li class="list-inline-item ml-auto">
+                        <a class="btn-outline-orange" href="#!">
+                            Reply
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
