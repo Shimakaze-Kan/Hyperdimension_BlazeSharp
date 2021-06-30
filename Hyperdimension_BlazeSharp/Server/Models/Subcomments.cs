@@ -7,21 +7,15 @@ using System.Collections.Generic;
 
 namespace Hyperdimension_BlazeSharp.Server.Models
 {
-    public partial class Comments
+    public partial class Subcomments
     {
-        public Comments()
-        {
-            Subcomments = new HashSet<Subcomments>();
-        }
-
         public Guid Id { get; set; }
+        public Guid CommentId { get; set; }
         public Guid UserId { get; set; }
-        public Guid TaskId { get; set; }
         public string Text { get; set; }
         public DateTime SubmittedAt { get; set; }
 
-        public virtual Tasks Task { get; set; }
+        public virtual Comments Comment { get; set; }
         public virtual Users User { get; set; }
-        public virtual ICollection<Subcomments> Subcomments { get; set; }
     }
 }

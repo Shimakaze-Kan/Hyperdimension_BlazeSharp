@@ -18,6 +18,7 @@ namespace Hyperdimension_BlazeSharp.Server.Models
         public string Title { get; set; }
         public string Story { get; set; }
         public string ImageUrl { get; set; }
+        public string FolkStoriescol { get; set; }
 
         public virtual ICollection<Modules> Modules { get; set; }
     }

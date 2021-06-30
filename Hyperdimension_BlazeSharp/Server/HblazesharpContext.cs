@@ -1,7 +1,7 @@
 ﻿using System;
+using Hyperdimension_BlazeSharp.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Hyperdimension_BlazeSharp.Server.Models;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
 // If you have enabled NRTs for your project, then un-comment the following line:
@@ -23,6 +23,7 @@ namespace Hyperdimension_BlazeSharp.Server
         public virtual DbSet<Comments> Comments { get; set; }
         public virtual DbSet<FolkStories> FolkStories { get; set; }
         public virtual DbSet<Modules> Modules { get; set; }
+        public virtual DbSet<Subcomments> Subcomments { get; set; }
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<UserTaskHistory> UserTaskHistory { get; set; }
         public virtual DbSet<Users> Users { get; set; }
@@ -106,6 +107,12 @@ namespace Hyperdimension_BlazeSharp.Server
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
+                entity.Property(e => e.FolkStoriescol)
+                    .HasColumnName("folk_storiescol")
+                    .HasColumnType("varchar(45)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
                 entity.Property(e => e.ImageUrl)
                     .HasColumnName("image_url")
                     .HasColumnType("varchar(255)")
@@ -165,7 +172,60 @@ namespace Hyperdimension_BlazeSharp.Server
                 entity.HasOne(d => d.FolkStory)
                     .WithMany(p => p.Modules)
                     .HasForeignKey(d => d.FolkStoryId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("modules_folk_story_id");
+            });
+
+            modelBuilder.Entity<Subcomments>(entity =>
+            {
+                entity.ToTable("subcomments");
+
+                entity.HasIndex(e => e.CommentId)
+                    .HasName("comment_id_subcomment_idx");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("id_UNIQUE")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.UserId)
+                    .HasName("user_id_subcomments_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever()
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.CommentId)
+                    .HasColumnName("comment_id")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.SubmittedAt)
+                    .HasColumnName("submitted_at")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Text)
+                    .IsRequired()
+                    .HasColumnName("text")
+                    .HasColumnType("text")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(d => d.Comment)
+                    .WithMany(p => p.Subcomments)
+                    .HasForeignKey(d => d.CommentId)
+                    .HasConstraintName("comment_id_subcomment");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Subcomments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("user_id_subcomments");
             });
 
             modelBuilder.Entity<Tasks>(entity =>
@@ -221,7 +281,6 @@ namespace Hyperdimension_BlazeSharp.Server
                 entity.HasOne(d => d.Module)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.ModuleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("task_module_id");
             });
 
@@ -360,7 +419,7 @@ namespace Hyperdimension_BlazeSharp.Server
 
                 entity.Property(e => e.AvatarUrl)
                     .HasColumnName("avatar_url")
-                    .HasColumnType("varchar(255)")
+                    .HasColumnType("text")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 

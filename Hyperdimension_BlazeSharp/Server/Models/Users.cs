@@ -12,6 +12,7 @@ namespace Hyperdimension_BlazeSharp.Server.Models
         public Users()
         {
             Comments = new HashSet<Comments>();
+            Subcomments = new HashSet<Subcomments>();
             UserTaskHistory = new HashSet<UserTaskHistory>();
         }
 
@@ -25,6 +26,7 @@ namespace Hyperdimension_BlazeSharp.Server.Models
         public virtual UsersPreferences UserPreferences { get; set; }
         public virtual UsersDetails UsersDetails { get; set; }
         public virtual ICollection<Comments> Comments { get; set; }
+        public virtual ICollection<Subcomments> Subcomments { get; set; }
         public virtual ICollection<UserTaskHistory> UserTaskHistory { get; set; }
     }
 }
