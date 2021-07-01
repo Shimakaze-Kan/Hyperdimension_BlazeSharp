@@ -18,7 +18,8 @@
                      CommentId="@comment.Id"
                      Date="@comment.Date"
                      Text="@comment.Text"
-                     IsSubcomment="false" />
+                     IsSubcomment="false" 
+                     OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))"/>
 
             @if (comment.Subcomments is not null)
             {
@@ -45,7 +46,13 @@
 {
     <NewCommentDialog CommentCreateRequest="ForumViewModel.CommentCreateRequest"
                       OnCancel="ShowNewCommentDialog"
-                      OnConfirm="OnConfirm" />
+                      OnConfirm="OnConfirmNewComment" />
+}
+@if(showingNewSubcommentDialog)
+{
+    <NewSubcommentDialog SubcommentCreateRequest="ForumViewModel.SubcommentCreateRequest"
+                         OnCancel="ShowNewSubcommentDialog"
+                         OnConfirm="OnConfirmNewSubcomment" />
 }
 
 @code {
@@ -53,6 +60,7 @@
     public Guid TaskId { get; set; }
 
     bool showingNewCommentDialog = false;
+    bool showingNewSubcommentDialog = false;
 
 
     protected override async Task OnInitializedAsync()
@@ -71,9 +79,26 @@
         showingNewCommentDialog = !showingNewCommentDialog;
     }
 
-    private async Task OnConfirm()
+    private void ShowNewSubcommentDialog()
+    {
+        showingNewSubcommentDialog = !showingNewSubcommentDialog;
+    }
+
+    private async Task OnConfirmNewComment()
     {
         ShowNewCommentDialog();
         await ForumViewModel.CreateNewComment();
+    }
+
+    private async Task OnConfirmNewSubcomment()
+    {
+        ShowNewSubcommentDialog();
+        await ForumViewModel.CreateNewSubcomment();
+    }
+
+    private void SetMainCommentIdAndShowSubcommentDialog(Guid id)
+    {
+        ForumViewModel.SubcommentCreateRequest.MainCommentId = id;
+        ShowNewSubcommentDialog();
     }
 }

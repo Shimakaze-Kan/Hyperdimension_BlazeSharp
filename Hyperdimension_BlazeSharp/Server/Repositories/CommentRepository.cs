@@ -76,7 +76,8 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CommentId = subcommentCreateRequest.MainCommentId,
-                Text = subcommentCreateRequest.Text
+                Text = subcommentCreateRequest.Text,
+                SubmittedAt = DateTime.Now
             });
 
             if(result is null)

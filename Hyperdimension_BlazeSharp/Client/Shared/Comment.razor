@@ -16,9 +16,9 @@
 
                 <ul class="list-inline d-sm-flex my-0">
                     <li class="list-inline-item ml-auto">
-                        <a class="btn-outline-orange" href="#!">
+                        <div class="btn-outline-orange cursor-pointer" @onclick="OnReply">
                             Reply
-                        </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -44,4 +44,7 @@
 
     [Parameter]
     public bool IsSubcomment { get; set; }
+
+    [Parameter]
+    public EventCallback OnReply { get; set; }
 }

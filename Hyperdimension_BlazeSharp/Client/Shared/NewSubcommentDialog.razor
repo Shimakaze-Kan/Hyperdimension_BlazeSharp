@@ -1,0 +1,30 @@
+﻿<div class="dialog-container">
+    <div class="dialog">
+        <EditForm Model="SubcommentCreateRequest">
+            <div class="form-group p-2">
+                <div>
+                    <ValidationMessage For="() => SubcommentCreateRequest.Text" />
+                    <h5>Comment:</h5>
+                    <InputTextArea class="form-control" @bind-Value="SubcommentCreateRequest.Text" rows="3" />
+                </div>
+            </div>
+            <DataAnnotationsValidator />
+        </EditForm>
+        <div class="dialog-buttons">
+            <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
+            <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
+        </div>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public SubcommentCreateRequest SubcommentCreateRequest { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+}
