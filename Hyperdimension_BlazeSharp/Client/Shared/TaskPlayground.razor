@@ -22,9 +22,9 @@
                     <TaskManagerPanel TaskId="_taskPlaygroundViewModel.TaskId"
                                       OnExecute="_taskPlaygroundViewModel.Execute"
                                       OnChangeEditorPosition="ChangeEditorPosition"
-                                      OnRestorePreviousVersion="_taskPlaygroundViewModel.RestorePreviousVersion" 
-                                      IsExecuting="_taskPlaygroundViewModel.IsExecuting" 
-                                      OnFullscreenChange="SwitchFullscreen" 
+                                      OnRestorePreviousVersion="_taskPlaygroundViewModel.RestorePreviousVersion"
+                                      IsExecuting="_taskPlaygroundViewModel.IsExecuting"
+                                      OnFullscreenChange="SwitchFullscreen"
                                       IsFullscreen="IsFullscreen" />
                 </div>
                 <div class="row">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="row w-100 outputConsole">
                     <OutputConsole CompileText="@(_taskPlaygroundViewModel.CompileText ?? string.Empty)"
-                                   Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)" 
+                                   Output="@(_taskPlaygroundViewModel.Output ?? string.Empty)"
                                    IsWaiting="@_taskPlaygroundViewModel.IsExecuting" />
                 </div>
             </div>
@@ -48,6 +48,11 @@
                 @onclick="SubmitTask">
             Submit
         </button>
+
+        <div class="forumbutton row cursor-pointer" @onclick="@(() => GoToTaskForum(_taskPlaygroundViewModel.TaskId))">
+            <span class="oi oi-bullhorn"></span>
+            Forum
+        </div>
 
         <BottomTaskBar Mode="_taskPlaygroundViewModel.Mode"
                        Points="_taskPlaygroundViewModel.Points" />

@@ -66,6 +66,11 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
         public void ChangeEditorPosition() => EditorPosition = EditorPosition == "col-md-6" ? "col-md-12" : "col-md-6";
 
+        public void GoToTaskForum(Guid taskId)
+        {
+            NavigationManager.NavigateTo($"/forum/{taskId}");
+        }
+
         void IDisposable.Dispose()
         {
             NavigationManager.LocationChanged -= LocationChanged;

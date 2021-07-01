@@ -26,3 +26,12 @@
     background-color: white;
     padding: 1rem;
 }
+
+.forumbutton {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+}
