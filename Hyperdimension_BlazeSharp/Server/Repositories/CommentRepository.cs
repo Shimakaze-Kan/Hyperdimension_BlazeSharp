@@ -40,15 +40,33 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                 .ToListAsync();
         }
 
-        //public async Task<bool> CreateComment(Comment comment)
-        //{
-        //    await _hblazesharpContext.Comments.Add(new()
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        SubmittedAt = DateTime.Now,
-        //        TaskId = comment.Id,
-        //        UserId = comment.
-        //    })
-        //}
+        public async Task<bool> CreateComment(CommentCreateRequest commentCreateRequest, Guid userId)
+        {
+            var prevCode = string.Empty;
+
+            if(commentCreateRequest.AddLastSubmittedVersion)
+            {
+                var historyCode = await _hblazesharpContext.UserTaskHistory.FirstOrDefaultAsync(x => x.UserId == userId && x.TaskId == commentCreateRequest.TaskId);
+                prevCode = $"```{Environment.NewLine}{historyCode.Solution}{Environment.NewLine}```{Environment.NewLine}{Environment.NewLine}";
+            }
+
+            var result = await _hblazesharpContext.Comments.AddAsync(new()
+            {
+                Id = Guid.NewGuid(),
+                SubmittedAt = DateTime.Now,
+                TaskId = commentCreateRequest.TaskId,
+                UserId = userId,
+                Text = prevCode + commentCreateRequest.Text
+            });
+
+            if(result is null)
+            {
+                return false;
+            }
+
+            await _hblazesharpContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

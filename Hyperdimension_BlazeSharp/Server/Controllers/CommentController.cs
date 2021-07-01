@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Server.Controllers
@@ -13,16 +14,27 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentRepository _commentRepository;
+        private readonly IUserRepository _userRepository;
 
-        public CommentController(ICommentRepository commentRepository)
+        public CommentController(ICommentRepository commentRepository, IUserRepository userRepository)
         {
             _commentRepository = commentRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet("{taskId:guid}")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments(Guid taskId)
         {
             return Ok(await _commentRepository.GetCommentsWithSubcomments(taskId));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateComment(CommentCreateRequest commentCreateRequest)
+        {
+            var user = await _userRepository.GetUserByName(HttpContext.User.FindFirstValue("name"));
+            var result = await _commentRepository.CreateComment(commentCreateRequest, user.Id);
+
+            return result ? Ok() : BadRequest();
         }
     }
 }

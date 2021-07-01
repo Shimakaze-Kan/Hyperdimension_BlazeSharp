@@ -8,5 +8,6 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
     public interface ICommentRepository
     {
         Task<IEnumerable<Comment>> GetCommentsWithSubcomments(Guid taskId);
+        Task<bool> CreateComment(CommentCreateRequest commentCreateRequest, Guid userId);
     }
 }
