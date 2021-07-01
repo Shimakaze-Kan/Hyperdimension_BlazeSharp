@@ -12,6 +12,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
     public class ForumViewModel : IForumViewModel
     {
         public CommentCreateRequest CommentCreateRequest { get; set; } = new();
+        public SubcommentCreateRequest SubcommentCreateRequest { get; set; } = new();
         public IEnumerable<Comment> Comments { get; set; }
         public Guid TaskId { get; set; }
 
@@ -38,6 +39,20 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             {
                 await GetComments();
             }
+
+            CommentCreateRequest = new();
+        }
+
+        public async Task CreateNewSubcomment()
+        {
+            var result = await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, SubcommentCreateRequest, "/Comments/Subcomments");
+
+            if (result.IsSuccessStatusCode)
+            {
+                await GetComments();
+            }
+
+            SubcommentCreateRequest = new();
         }
     }
 }

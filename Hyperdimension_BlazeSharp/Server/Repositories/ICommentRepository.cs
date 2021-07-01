@@ -9,5 +9,6 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
     {
         Task<IEnumerable<Comment>> GetCommentsWithSubcomments(Guid taskId);
         Task<bool> CreateComment(CommentCreateRequest commentCreateRequest, Guid userId);
+        Task<bool> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest, Guid userId);
     }
 }

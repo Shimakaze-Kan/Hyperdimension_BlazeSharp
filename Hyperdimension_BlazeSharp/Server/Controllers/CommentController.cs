@@ -36,5 +36,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return result ? Ok() : BadRequest();
         }
+
+        [HttpPost("Subcomments")]
+        public async Task<ActionResult> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest)
+        {
+            var user = await _userRepository.GetUserByName(HttpContext.User.FindFirstValue("name"));
+            var result = await _commentRepository.CreateSubcomment(subcommentCreateRequest, user.Id);
+
+            return result ? Ok() : BadRequest();
+        }
     }
 }

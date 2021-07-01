@@ -68,5 +68,25 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
             return true;
         }
+
+        public async Task<bool> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest, Guid userId)
+        {
+            var result = await _hblazesharpContext.Subcomments.AddAsync(new()
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                CommentId = subcommentCreateRequest.MainCommentId,
+                Text = subcommentCreateRequest.Text
+            });
+
+            if(result is null)
+            {
+                return false;
+            }
+
+            await _hblazesharpContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

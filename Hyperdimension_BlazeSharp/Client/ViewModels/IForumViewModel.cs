@@ -12,6 +12,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         Guid TaskId { get; set; }
 
         Task CreateNewComment();
+        Task CreateNewSubcomment();
         Task GetComments();
     }
 }
