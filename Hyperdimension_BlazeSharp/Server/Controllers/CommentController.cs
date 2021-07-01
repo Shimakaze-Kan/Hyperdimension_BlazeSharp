@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Server.Repositories;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return Ok(await _commentRepository.GetCommentsWithSubcomments(taskId));
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreateComment(CommentCreateRequest commentCreateRequest)
         {
@@ -37,6 +39,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
             return result ? Ok() : BadRequest();
         }
 
+        [Authorize]
         [HttpPost("Subcomments")]
         public async Task<ActionResult> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest)
         {

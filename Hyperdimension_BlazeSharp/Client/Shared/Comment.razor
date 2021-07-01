@@ -16,7 +16,7 @@
 
                 <ul class="list-inline d-sm-flex my-0">
                     <li class="list-inline-item ml-auto">
-                        <div class="btn-outline-orange cursor-pointer" @onclick="OnReply">
+                        <div class="btn-outline-orange cursor-pointer" hidden="@(!CanReply)" @onclick="OnReply">
                             Reply
                         </div>
                     </li>
@@ -44,6 +44,9 @@
 
     [Parameter]
     public bool IsSubcomment { get; set; }
+
+    [Parameter]
+    public bool CanReply { get; set; }
 
     [Parameter]
     public EventCallback OnReply { get; set; }

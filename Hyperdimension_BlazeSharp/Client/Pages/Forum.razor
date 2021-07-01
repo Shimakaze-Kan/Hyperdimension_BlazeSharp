@@ -4,7 +4,7 @@
 
 <div class="row">
     <h5 class="cursor-pointer" @onclick="GoBackToTaskPlayground"><span class="oi oi-arrow-left"></span> Back to task</h5>
-    <button class="btn btn-outline-orange ml-auto" @onclick="ShowNewCommentDialog">New Comment</button>
+    <button class="btn btn-outline-orange ml-auto" disabled="@(!canSubmitComment)" @onclick="ShowNewCommentDialog">New Comment</button>
 </div>
 
 <div class="container mt-5">
@@ -19,6 +19,7 @@
                      Date="@comment.Date"
                      Text="@comment.Text"
                      IsSubcomment="false"
+                     CanReply="@canSubmitComment"
                      OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))" />
 
             @if (comment.Subcomments is not null)
@@ -31,6 +32,7 @@
                              Date="@subcomment.Date"
                              Text="@subcomment.Text"
                              IsSubcomment="true"
+                             CanReply="@canSubmitComment"
                              OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))" />
                 }
             }
@@ -60,14 +62,19 @@
     [Parameter]
     public Guid TaskId { get; set; }
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
     bool showingNewCommentDialog = false;
     bool showingNewSubcommentDialog = false;
+    bool canSubmitComment = false;
 
 
     protected override async Task OnInitializedAsync()
     {
         ForumViewModel.TaskId = TaskId;
         await ForumViewModel.GetComments();
+        canSubmitComment = (await AuthenticationState).User.Identity.IsAuthenticated;
     }
 
     private void GoBackToTaskPlayground()
