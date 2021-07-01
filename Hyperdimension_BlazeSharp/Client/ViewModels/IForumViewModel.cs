@@ -7,6 +7,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 {
     public interface IForumViewModel
     {
-        Task<IEnumerable<Comment>> GetComments(Guid taskId);
+        CommentCreateRequest CommentCreateRequest { get; set; }
+        IEnumerable<Comment> Comments { get; set; }
+        Guid TaskId { get; set; }
+
+        Task CreateNewComment();
+        Task GetComments();
     }
 }

@@ -4,14 +4,14 @@
 
 <div class="row">
     <h5 class="cursor-pointer" @onclick="GoBackToTaskPlayground"><span class="oi oi-arrow-left"></span> Back to task</h5>
-    <button class="btn-outline-orange ml-auto">New Comment</button>
+    <button class="btn btn-outline-orange ml-auto" @onclick="ShowNewCommentDialog">New Comment</button>
 </div>
 
 <div class="container mt-5">
 
-    @if (Comments is not null)
+    @if (ForumViewModel.Comments is not null)
     {
-        @foreach (var comment in Comments)
+        @foreach (var comment in ForumViewModel.Comments)
         {
             <Comment AvatarUrl="@comment.AvatarUrl"
                      UserName="@comment.UserName"
@@ -41,19 +41,39 @@
     }
 </div>
 
+@if (showingNewCommentDialog)
+{
+    <NewCommentDialog CommentCreateRequest="ForumViewModel.CommentCreateRequest"
+                      OnCancel="ShowNewCommentDialog"
+                      OnConfirm="OnConfirm" />
+}
+
 @code {
     [Parameter]
     public Guid TaskId { get; set; }
 
-    public IEnumerable<Hyperdimension_BlazeSharp.Shared.Dto.Comment> Comments { get; set; }
+    bool showingNewCommentDialog = false;
+
 
     protected override async Task OnInitializedAsync()
     {
-        Comments = await ForumViewModel.GetComments(TaskId);
+        ForumViewModel.TaskId = TaskId;
+        await ForumViewModel.GetComments();
     }
 
     private void GoBackToTaskPlayground()
     {
         NavigationManager.NavigateTo($"/TaskContainer/{TaskId}");
+    }
+
+    private void ShowNewCommentDialog()
+    {
+        showingNewCommentDialog = !showingNewCommentDialog;
+    }
+
+    private async Task OnConfirm()
+    {
+        ShowNewCommentDialog();
+        await ForumViewModel.CreateNewComment();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Dto;
+﻿using Hyperdimension_BlazeSharp.Client.ExtensionMethods;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,33 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 {
     public class ForumViewModel : IForumViewModel
     {
-        private readonly HttpClient _httpClient;
+        public CommentCreateRequest CommentCreateRequest { get; set; } = new();
+        public IEnumerable<Comment> Comments { get; set; }
+        public Guid TaskId { get; set; }
 
-        public ForumViewModel(HttpClient httpClient)
+        private readonly HttpClient _httpClient;
+        private readonly ILocalStorageService _localStorageService;
+
+        public ForumViewModel(HttpClient httpClient, ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
+            _localStorageService = localStorageService;
         }
 
-        public async Task<IEnumerable<Comment>> GetComments(Guid taskId)
+        public async Task GetComments()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Comment>>($"/Comments/{taskId}");
+            Comments = await _httpClient.GetFromJsonAsync<IEnumerable<Comment>>($"/Comments/{TaskId}");
+        }
+
+        public async Task CreateNewComment()
+        {
+            CommentCreateRequest.TaskId = TaskId;
+            var result = await _httpClient.PostAsJsonAsyncJwtHeader(_localStorageService, CommentCreateRequest, "/Comments");
+
+            if (result.IsSuccessStatusCode)
+            {
+                await GetComments();
+            }
         }
     }
 }
