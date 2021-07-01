@@ -18,8 +18,8 @@
                      CommentId="@comment.Id"
                      Date="@comment.Date"
                      Text="@comment.Text"
-                     IsSubcomment="false" 
-                     OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))"/>
+                     IsSubcomment="false"
+                     OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))" />
 
             @if (comment.Subcomments is not null)
             {
@@ -30,7 +30,8 @@
                              CommentId="@subcomment.MainCommentId"
                              Date="@subcomment.Date"
                              Text="@subcomment.Text"
-                             IsSubcomment="true" />
+                             IsSubcomment="true"
+                             OnReply="@(() => SetMainCommentIdAndShowSubcommentDialog(comment.Id))" />
                 }
             }
             <div class="mb-5"></div>
@@ -48,7 +49,7 @@
                       OnCancel="ShowNewCommentDialog"
                       OnConfirm="OnConfirmNewComment" />
 }
-@if(showingNewSubcommentDialog)
+@if (showingNewSubcommentDialog)
 {
     <NewSubcommentDialog SubcommentCreateRequest="ForumViewModel.SubcommentCreateRequest"
                          OnCancel="ShowNewSubcommentDialog"
