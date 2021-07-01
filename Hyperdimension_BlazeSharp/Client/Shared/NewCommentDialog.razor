@@ -1,0 +1,36 @@
+﻿<div class="dialog-container">
+    <div class="dialog">
+        <EditForm Model="CommentCreateRequest">
+            <div class="form-group p-2">
+                <div>
+                    <ValidationMessage For="() => CommentCreateRequest.Text" />
+                    <h5>Comment:</h5>
+                    <InputTextArea class="form-control" @bind-Value="CommentCreateRequest.Text" rows="3" />
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" @bind-value="CommentCreateRequest.AddLastSubmittedVersion" type="checkbox" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Would ya like to append your last submitted version of solution?
+                    </label>
+                </div>
+            </div>
+            <DataAnnotationsValidator />
+        </EditForm>
+        <div class="dialog-buttons">
+            <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
+            <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
+        </div>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public CommentCreateRequest CommentCreateRequest { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+ 
+}
