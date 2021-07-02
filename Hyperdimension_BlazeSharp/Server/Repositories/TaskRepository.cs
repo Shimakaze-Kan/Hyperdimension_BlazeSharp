@@ -49,6 +49,18 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
             return await _hblazesharpContext.Tasks.ToListAsync();
         }
 
+        public async Task<bool> CheckIfSpecyficTaskPassed(Guid userId, Guid taskId)
+        {
+            var result = await _hblazesharpContext.UserTaskHistory.FirstOrDefaultAsync(x => x.UserId == userId && x.TaskId == taskId);
+            
+            if(result is not null)
+            {
+                return result.IsTaskPassed == 1;
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<UserTaskHistory>> GetUserTaskHistory(Guid userId)
         {
             return await _hblazesharpContext.UserTaskHistory.Where(x => x.UserId == userId)

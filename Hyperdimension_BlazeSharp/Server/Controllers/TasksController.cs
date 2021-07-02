@@ -116,5 +116,11 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return true;
         }
+
+        [HttpGet("ispassed")]
+        public async Task<ActionResult<bool>> CheckIfTaskPassed(Guid userId, Guid taskId)
+        {
+            return await _taskRepository.CheckIfSpecyficTaskPassed(userId, taskId);
+        }
     }
 }
