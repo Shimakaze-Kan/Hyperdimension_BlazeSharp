@@ -25,10 +25,20 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
         public bool CantSubmit { get; set; }
         public bool IsFullscreen { get; set; }
         public string EditorPosition { get; set; } = "col-md-6";
+        public Guid UserId { get; set; }
 
         protected async override Task OnInitializedAsync()
         {
-            CantSubmit = !(await authenticationState).User.Identity.IsAuthenticated;
+            var user = await authenticationState;
+            CantSubmit = !user.User.Identity.IsAuthenticated;
+            var userId = user.User?.FindFirst("nameid")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                UserId = Guid.Parse(userId);
+                await _taskPlaygroundViewModel.CheckIfLastSendVerisonIsPassingTests(UserId, Guid);
+            }
+
             _taskPlaygroundViewModel.TaskId = Guid;
             await _taskPlaygroundViewModel.GetTask();
 
@@ -56,6 +66,9 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
             await _tasksHistoryDraft.RemoveDraft(Guid);
             CantSubmit = false;
+
+            await _taskPlaygroundViewModel.CheckIfLastSendVerisonIsPassingTests(UserId, Guid);
+            _taskPlaygroundViewModel.CopyOfLastExecutedVersion = string.Empty;
         }
 
         public void SwitchFullscreen()

@@ -23,6 +23,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public bool IsPassed { get; set; }
         public bool IsExecuting { get; set; }
         public string CopyOfLastExecutedVersion { get; set; }
+        public bool IsLastSendVersionPassingTests { get; set; }
 
 
         public Task Execute();        
@@ -32,5 +33,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public Task SetValue(string value);
         public Task RestorePreviousVersion();
         public Task GetTask();        
+        public Task CheckIfLastSendVerisonIsPassingTests(Guid userId, Guid taskId);
     }
 }

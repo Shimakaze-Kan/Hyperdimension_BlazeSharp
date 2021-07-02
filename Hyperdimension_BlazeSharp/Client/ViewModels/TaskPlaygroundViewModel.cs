@@ -22,6 +22,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         private string _instruction;
         private Mode _mode = 0;        
         private string _title;
+        private bool _isLastSendVersionPassingTests;
         private MonacoEditor _editor;
 
 
@@ -70,6 +71,11 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         { 
             get => _isExecuting; 
             set => OnPropertyChanged(ref _isExecuting, value); 
+        }
+        public bool IsLastSendVersionPassingTests
+        {
+            get => _isLastSendVersionPassingTests;
+            set => OnPropertyChanged(ref _isLastSendVersionPassingTests, value);
         }
         public string CopyOfLastExecutedVersion { get; set; }
         public TaskDataPlayground TaskDataPlayground { get; set; }
@@ -163,6 +169,14 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             if(task is not null)
             LoadCurrentObject(task);
             await SetValue(_initialCode);
+        }
+
+        public async Task CheckIfLastSendVerisonIsPassingTests(Guid userId, Guid taskId)
+        {
+            if (userId != Guid.Empty && taskId != Guid.Empty)
+            {
+                IsLastSendVersionPassingTests = await _httpClient.GetFromJsonAsync<bool>($"/tasks/ispassed?userId={userId}&taskId={taskId}");
+            }
         }
 
         private void LoadCurrentObject(TaskPlaygroundViewModel taskPlaygroundViewModel)
