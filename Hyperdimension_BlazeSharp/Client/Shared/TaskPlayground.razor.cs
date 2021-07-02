@@ -47,8 +47,8 @@ namespace Hyperdimension_BlazeSharp.Client.Shared
 
             var submitTaskData = new SubmitTaskData()
             {
-                IsTaskPassed = 1,
-                Solution = await _taskPlaygroundViewModel.GetValue(),
+                IsTaskPassed = _taskPlaygroundViewModel.IsPassed ? 1 : 0,
+                Solution = _taskPlaygroundViewModel.CopyOfLastExecutedVersion,
                 TaskId = Guid
             };
 

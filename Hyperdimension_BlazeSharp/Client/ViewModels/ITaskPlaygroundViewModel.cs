@@ -22,6 +22,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public int? Points { get; set; }        
         public bool IsPassed { get; set; }
         public bool IsExecuting { get; set; }
+        public string CopyOfLastExecutedVersion { get; set; }
 
 
         public Task Execute();        

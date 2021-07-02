@@ -71,6 +71,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             get => _isExecuting; 
             set => OnPropertyChanged(ref _isExecuting, value); 
         }
+        public string CopyOfLastExecutedVersion { get; set; }
         public TaskDataPlayground TaskDataPlayground { get; set; }
 
         private readonly TasksHistoryDraft _tasksHistoryDraft;
@@ -106,6 +107,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public async Task Execute()
         {
             var code = await GetValue();
+            CopyOfLastExecutedVersion = code;
             await _tasksHistoryDraft.AddDraft(new(TaskId, Title, code));
             IsExecuting = true;
 
