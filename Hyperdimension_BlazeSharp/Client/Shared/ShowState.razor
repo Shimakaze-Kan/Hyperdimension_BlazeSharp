@@ -1,0 +1,13 @@
+﻿@if (State)
+{
+    <span style="color: #00b300" title="Task Passed" class="oi oi-circle-check"></span>
+}
+else
+{
+    <span style="color: #cc0000" title="Task Failed" class="oi oi-circle-x"></span>
+}
+
+@code {
+    [Parameter]
+    public bool State { get; set; }
+}
