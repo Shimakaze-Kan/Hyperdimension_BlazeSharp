@@ -35,9 +35,7 @@
 
 	<ItemGroup>
 		<Folder Include="Uploads\Images\" />
-		<Folder Include="ProfaneWords\**">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Folder>
+		
 	</ItemGroup>
 
 
