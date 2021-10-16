@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Hyperdimension_BlazeSharp.Server.Service
@@ -28,7 +29,7 @@ namespace Hyperdimension_BlazeSharp.Server.Service
 
         private void AddCommonWordsToCollection(string text, List<string> words)
         {
-            var commonWords = text.Split(' ').Select(x => x.ToLower()).Intersect(words);
+            var commonWords = Regex.Split(text, @"[^\w+]").Select(x => x.ToLower()).Intersect(words);
 
             foreach (var word in commonWords)
             {

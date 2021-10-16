@@ -112,7 +112,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
             foreach (var word in code)
             {
-                codeMd = codeMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>");
+                codeMd = codeMd.Replace(word.Word, @$"->{word.Word}<-");
             }
 
             foreach (var word in text)
@@ -122,8 +122,8 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
             return new ProfanityScannerResponse()
             {
-                IsInappropriate = code.Count() > 0 || text.Count() > 0,
-                CodeMd = codeMd,
+                IsInappropriate = code.Count() > 0 && commentCreateRequest.AddLastSubmittedVersion || text.Count() > 0,
+                CodeMd = commentCreateRequest.AddLastSubmittedVersion ? codeMd : string.Empty,
                 TextMd = textMd,
                 CodeInappropriateWords = code.Select(x => x.Word),
                 TextInappropriateWords = text.Select(x => x.Word)

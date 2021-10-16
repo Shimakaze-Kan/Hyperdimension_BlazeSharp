@@ -51,7 +51,7 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
         [Authorize]
         [HttpGet("CheckComment")]
-        public async Task<ActionResult<ProfanityScannerResponse>> CheckComment(CommentCreateRequest commentCreateRequest)
+        public async Task<ActionResult<ProfanityScannerResponse>> CheckComment([FromQuery]CommentCreateRequest commentCreateRequest)
         {
             var user = await _userRepository.GetUserByName(HttpContext.User.FindFirstValue("name"));
             var result = await _commentRepository.CheckProfanity(commentCreateRequest, user.Id);
