@@ -12,7 +12,6 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         IEnumerable<Comment> Comments { get; set; }
         Guid TaskId { get; set; }
 
-        Task<List<(int Index, string Word)>> ValidateComment(CommentType commentType);
         Task CreateNewComment();
         Task CreateNewSubcomment();
         Task GetComments();
