@@ -1,6 +1,7 @@
 ﻿@page "/forum/{taskid:guid}"
 @inject NavigationManager NavigationManager
 @inject ViewModels.IForumViewModel ForumViewModel
+@inject IJSRuntime JSRuntime
 
 <div class="row">
     <h5 class="cursor-pointer" @onclick="GoBackToTaskPlayground"><span class="oi oi-arrow-left"></span> Back to task</h5>
@@ -94,14 +95,40 @@
 
     private async Task OnConfirmNewComment()
     {
-        ShowNewCommentDialog();
-        await ForumViewModel.CreateNewComment();
+        var result = await ForumViewModel.ValidateComment(ViewModels.CommentType.Comment);
+
+        var canSend = true;
+
+        if (result.Count() > 0)
+            canSend = await JSRuntime.InvokeAsync<bool>("confirm",
+                "The text contains words that may be perceived as inappropriate. Are you sure you want to send a comment?" +
+                Environment.NewLine +
+                string.Join('\n', result));
+
+        if (canSend)
+        {
+            ShowNewCommentDialog();
+            await ForumViewModel.CreateNewComment();
+        }
     }
 
     private async Task OnConfirmNewSubcomment()
     {
-        ShowNewSubcommentDialog();
-        await ForumViewModel.CreateNewSubcomment();
+        var result = await ForumViewModel.ValidateComment(ViewModels.CommentType.Subcomment);
+
+        var canSend = true;
+
+        if (result.Count() > 0)
+            canSend = await JSRuntime.InvokeAsync<bool>("confirm",
+                "The text contains words that may be perceived as inappropriate. Are you sure you want to send a subcomment?" +
+                Environment.NewLine +
+                string.Join('\n', result));
+
+        if (canSend)
+        {
+            ShowNewSubcommentDialog();
+            await ForumViewModel.CreateNewSubcomment();
+        }
     }
 
     private void SetMainCommentIdAndShowSubcommentDialog(Guid id)

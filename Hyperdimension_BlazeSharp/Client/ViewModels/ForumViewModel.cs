@@ -1,5 +1,6 @@
 ﻿using Hyperdimension_BlazeSharp.Client.ExtensionMethods;
 using Hyperdimension_BlazeSharp.Shared.Dto;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,5 +55,45 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
 
             SubcommentCreateRequest = new();
         }
+
+        public async Task<List<(int Index, string Word)>> ValidateComment(CommentType commentType)
+        {
+            var wordsList = await _httpClient.GetFromJsonAsync<List<string>>("profanityList/words.json");
+
+            List<(int Index, string Word)> result = new();
+            if (wordsList is null)
+            {
+                return result;
+            }
+
+            if (commentType == CommentType.Comment)
+            {
+                GetProhibitedWordList(CommentCreateRequest.Text, wordsList, result);
+            }
+            else if (commentType == CommentType.Subcomment)
+            {
+                GetProhibitedWordList(SubcommentCreateRequest.Text, wordsList, result);
+            }
+
+            return result;
+        }
+
+        private void GetProhibitedWordList(string text, List<string> wordsList, List<(int Index, string Word)> result)
+        {
+            var commonWords = text.Split(' ').Select(x => x.ToLower()).Intersect(wordsList);
+            if (commonWords.Count() > 0)
+            {
+                foreach (var word in commonWords)
+                {
+                    result.Add((text.IndexOf(word), word));
+                }
+            }
+        }
+    }
+
+    public enum CommentType
+    {
+        Comment,
+        Subcomment
     }
 }
