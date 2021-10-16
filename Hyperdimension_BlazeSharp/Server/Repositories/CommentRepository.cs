@@ -1,4 +1,5 @@
-﻿using Hyperdimension_BlazeSharp.Shared.Dto;
+﻿using Hyperdimension_BlazeSharp.Server.Service;
+using Hyperdimension_BlazeSharp.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,12 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 {
     public class CommentRepository : BaseRepository, ICommentRepository
     {
-        public CommentRepository(HblazesharpContext hblazesharpContext) : base(hblazesharpContext)
+        private readonly IProfanityScannerService _profanityScannerService;
+
+        public CommentRepository(HblazesharpContext hblazesharpContext, IProfanityScannerService profanityScannerService) 
+            : base(hblazesharpContext)
         {
+            _profanityScannerService = profanityScannerService;
         }
 
         public async Task<IEnumerable<Comment>> GetCommentsWithSubcomments(Guid taskId)
@@ -46,8 +51,7 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
             if(commentCreateRequest.AddLastSubmittedVersion)
             {
-                var historyCode = await _hblazesharpContext.UserTaskHistory.FirstOrDefaultAsync(x => x.UserId == userId && x.TaskId == commentCreateRequest.TaskId);
-                prevCode = $"```{Environment.NewLine}{historyCode.Solution}{Environment.NewLine}```{Environment.NewLine}{Environment.NewLine}";
+                prevCode = await GetLastSubmittedSolution(commentCreateRequest, userId);
             }
 
             var result = await _hblazesharpContext.Comments.AddAsync(new()
@@ -69,6 +73,12 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
             return true;
         }
 
+        private async Task<string> GetLastSubmittedSolution(CommentCreateRequest commentCreateRequest, Guid userId)
+        {
+            var historyCode = await _hblazesharpContext.UserTaskHistory.FirstOrDefaultAsync(x => x.UserId == userId && x.TaskId == commentCreateRequest.TaskId);
+            return $"```{Environment.NewLine}{historyCode.Solution}{Environment.NewLine}```{Environment.NewLine}{Environment.NewLine}";
+        }
+
         public async Task<bool> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest, Guid userId)
         {
             var result = await _hblazesharpContext.Subcomments.AddAsync(new()
@@ -88,6 +98,36 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
             await _hblazesharpContext.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<ProfanityScannerResponse> CheckProfanity(CommentCreateRequest commentCreateRequest, Guid userId)
+        {
+            var prevCode = await GetLastSubmittedSolution(commentCreateRequest, userId);
+
+            var code = await _profanityScannerService.FindProfanityInText(prevCode);
+            var text = await _profanityScannerService.FindProfanityInText(commentCreateRequest.Text);
+
+            var codeMd = prevCode;
+            var textMd = commentCreateRequest.Text;
+
+            foreach (var word in code)
+            {
+                codeMd = codeMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>");
+            }
+
+            foreach (var word in text)
+            {
+                textMd = textMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>");
+            }
+
+            return new ProfanityScannerResponse()
+            {
+                IsInappropriate = code.Count() > 0 || text.Count() > 0,
+                CodeMd = codeMd,
+                TextMd = textMd,
+                CodeInappropriateWords = code.Select(x => x.Word),
+                TextInappropriateWords = text.Select(x => x.Word)
+            };
         }
     }
 }
