@@ -49,26 +49,29 @@
 {
     <NewCommentDialog CommentCreateRequest="ForumViewModel.CommentCreateRequest"
                       ProfanityScannerResponse="ForumViewModel.ProfanityScannerResponse"
+                      SendInappropriate="ForumViewModel.SendInappropriate"
                       OnCancel="ShowNewCommentDialog"
                       OnConfirm="OnConfirmNewComment" />
 }
 @if (showingNewSubcommentDialog)
 {
     <NewSubcommentDialog SubcommentCreateRequest="ForumViewModel.SubcommentCreateRequest"
+                         ProfanityScannerResponse="ForumViewModel.ProfanityScannerResponse"
+                         SendInappropriate="ForumViewModel.SendInappropriate"
                          OnCancel="ShowNewSubcommentDialog"
                          OnConfirm="OnConfirmNewSubcomment" />
 }
 
 @code {
-        [Parameter]
-        public Guid TaskId { get; set; }
+    [Parameter]
+    public Guid TaskId { get; set; }
 
-        [CascadingParameter]
-        public Task<AuthenticationState> AuthenticationState { get; set; }
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
 
-        bool showingNewCommentDialog = false;
-        bool showingNewSubcommentDialog = false;
-        bool canSubmitComment = false;
+    bool showingNewCommentDialog = false;
+    bool showingNewSubcommentDialog = false;
+    bool canSubmitComment = false;
 
 
     protected override async Task OnInitializedAsync()
@@ -86,11 +89,6 @@
     private void ShowNewCommentDialog()
     {
         showingNewCommentDialog = !showingNewCommentDialog;
-
-        if(showingNewCommentDialog)
-        {
-
-        }
     }
 
     private void ShowNewSubcommentDialog()
@@ -102,17 +100,27 @@
     {
         await ForumViewModel.CheckComment();
 
-        if (!ForumViewModel.ProfanityScannerResponse.IsInappropriate)
+        if (ForumViewModel.SendInappropriate.Value || !ForumViewModel.ProfanityScannerResponse.IsInappropriate)
         {
             ShowNewCommentDialog();
             await ForumViewModel.CreateNewComment();
+            ForumViewModel.SendInappropriate.Value = false;
+            ForumViewModel.ProfanityScannerResponse = new();
         }
     }
 
     private async Task OnConfirmNewSubcomment()
     {
-        ShowNewSubcommentDialog();
-        await ForumViewModel.CreateNewSubcomment();
+
+        await ForumViewModel.CheckSubcomment();
+
+        if (ForumViewModel.SendInappropriate.Value || !ForumViewModel.ProfanityScannerResponse.IsInappropriate)
+        {
+            ShowNewSubcommentDialog();
+            await ForumViewModel.CreateNewSubcomment();
+            ForumViewModel.SendInappropriate.Value = false;
+            ForumViewModel.ProfanityScannerResponse = new();
+        }
     }
 
     private void SetMainCommentIdAndShowSubcommentDialog(Guid id)

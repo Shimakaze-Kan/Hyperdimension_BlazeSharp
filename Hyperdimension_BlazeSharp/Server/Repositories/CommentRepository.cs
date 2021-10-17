@@ -112,12 +112,12 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
 
             foreach (var word in code)
             {
-                codeMd = codeMd.Replace(word.Word, @$"->{word.Word}<-");
+                codeMd = codeMd.Replace(word.Word, @$"->{word.Word}<-", StringComparison.OrdinalIgnoreCase);
             }
 
             foreach (var word in text)
             {
-                textMd = textMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>");
+                textMd = textMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>", StringComparison.OrdinalIgnoreCase);
             }
 
             return new ProfanityScannerResponse()
@@ -126,6 +126,25 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
                 CodeMd = commentCreateRequest.AddLastSubmittedVersion ? codeMd : string.Empty,
                 TextMd = textMd,
                 CodeInappropriateWords = code.Select(x => x.Word),
+                TextInappropriateWords = text.Select(x => x.Word)
+            };
+        }
+
+        public async Task<ProfanityScannerResponse> CheckProfanity(SubcommentCreateRequest subcommentCreateRequest)
+        {
+            var text = await _profanityScannerService.FindProfanityInText(subcommentCreateRequest.Text);
+
+            var textMd = subcommentCreateRequest.Text;
+
+            foreach (var word in text)
+            {
+                textMd = textMd.Replace(word.Word, @$"<span style=""color: red"">{word.Word}</span>", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return new ProfanityScannerResponse()
+            {
+                IsInappropriate = text.Count() > 0,
+                TextMd = textMd,
                 TextInappropriateWords = text.Select(x => x.Word)
             };
         }

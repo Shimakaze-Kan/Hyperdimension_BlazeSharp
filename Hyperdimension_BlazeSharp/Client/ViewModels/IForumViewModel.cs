@@ -12,10 +12,12 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         ProfanityScannerResponse ProfanityScannerResponse { get; set; }
         IEnumerable<Comment> Comments { get; set; }
         Guid TaskId { get; set; }
+        public ValueWrapper<bool> SendInappropriate { get; set; }
 
         Task CreateNewComment();
         Task CreateNewSubcomment();
         Task GetComments();
         Task CheckComment();
+        Task CheckSubcomment();
     }
 }

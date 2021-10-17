@@ -58,5 +58,14 @@ namespace Hyperdimension_BlazeSharp.Server.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("CheckSubcomment")]
+        public async Task<ActionResult<ProfanityScannerResponse>> CheckSubcomment([FromQuery]SubcommentCreateRequest subcommentCreateRequest)
+        {
+            var result = await _commentRepository.CheckProfanity(subcommentCreateRequest);
+
+            return Ok(result);
+        }
     }
 }

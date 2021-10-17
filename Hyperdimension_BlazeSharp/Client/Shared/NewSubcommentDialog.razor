@@ -2,17 +2,39 @@
     <div class="dialog">
         <EditForm Model="SubcommentCreateRequest">
             <div class="form-group p-2">
-                <div>
-                    <ValidationMessage For="() => SubcommentCreateRequest.Text" />
-                    <h5>Comment:</h5>
-                    <InputTextArea class="form-control" @bind-Value="SubcommentCreateRequest.Text" rows="3" />
-                </div>
+                @if (ProfanityScannerResponse.IsInappropriate)
+                {
+                    <span style="background: red; color: white">
+                        Your comment may contain offensive words, consider replacing the highlighted words with something else.
+                    </span>
+                    <div>
+                        <label>Text:</label>
+                        <br />
+                        @((MarkupString)ProfanityScannerResponse.TextMd)
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <ValidationMessage For="() => SubcommentCreateRequest.Text" />
+                        <h5>Comment:</h5>
+                        <InputTextArea class="form-control" @bind-Value="SubcommentCreateRequest.Text" rows="3" />
+                    </div>
+                }
             </div>
             <DataAnnotationsValidator />
         </EditForm>
         <div class="dialog-buttons">
-            <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
-            <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
+            @if (!ProfanityScannerResponse.IsInappropriate)
+            {
+                <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
+                <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
+            }
+            else
+            {
+                <button class="btn btn-outline-secondary mr-auto" @onclick="BackToEdit">Edit</button>
+                <button class="btn btn-outline-orange ml-auto" @onclick="ForceSend">Send anyway</button>
+            }
         </div>
     </div>
 </div>
@@ -22,9 +44,26 @@
     public SubcommentCreateRequest SubcommentCreateRequest { get; set; }
 
     [Parameter]
+    public ProfanityScannerResponse ProfanityScannerResponse { get; set; }
+
+    [Parameter]
     public EventCallback OnCancel { get; set; }
 
     [Parameter]
     public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public ValueWrapper<bool> SendInappropriate { get; set; }
+
+    private void BackToEdit()
+    {
+        ProfanityScannerResponse.IsInappropriate = false;
+    }
+
+    private async Task ForceSend()
+    {
+        SendInappropriate.Value = true;
+        await OnConfirm.InvokeAsync();
+    }
 
 }

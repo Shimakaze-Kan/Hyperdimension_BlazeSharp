@@ -42,12 +42,13 @@
             @if (!ProfanityScannerResponse.IsInappropriate)
             {
                 <button class="btn btn-outline-secondary mr-auto" @onclick="OnCancel">Cancel</button>
+                <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
             }
             else
             {
                 <button class="btn btn-outline-secondary mr-auto" @onclick="BackToEdit">Edit</button>
+                <button class="btn btn-outline-orange ml-auto" @onclick="ForceSend">Send anyway</button>
             }
-            <button class="btn btn-outline-orange ml-auto" @onclick="OnConfirm">Confirm</button>
         </div>
     </div>
 </div>
@@ -65,9 +66,18 @@
     [Parameter]
     public EventCallback OnConfirm { get; set; }
 
+    [Parameter]
+    public ValueWrapper<bool> SendInappropriate { get; set; }
+
     private void BackToEdit()
     {
         ProfanityScannerResponse.IsInappropriate = false;
+    }
+
+    private async Task ForceSend()
+    {
+        SendInappropriate.Value = true;
+        await OnConfirm.InvokeAsync();
     }
 
 }

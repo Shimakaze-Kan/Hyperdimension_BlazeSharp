@@ -11,5 +11,6 @@ namespace Hyperdimension_BlazeSharp.Server.Repositories
         Task<bool> CreateComment(CommentCreateRequest commentCreateRequest, Guid userId);
         Task<bool> CreateSubcomment(SubcommentCreateRequest subcommentCreateRequest, Guid userId);
         Task<ProfanityScannerResponse> CheckProfanity(CommentCreateRequest commentCreateRequest, Guid userId);
+        Task<ProfanityScannerResponse> CheckProfanity(SubcommentCreateRequest subcommentCreateRequest);
     }
 }

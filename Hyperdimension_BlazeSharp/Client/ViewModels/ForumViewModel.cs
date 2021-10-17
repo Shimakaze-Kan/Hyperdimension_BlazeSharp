@@ -14,6 +14,7 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
         public CommentCreateRequest CommentCreateRequest { get; set; } = new();
         public SubcommentCreateRequest SubcommentCreateRequest { get; set; } = new();
         public ProfanityScannerResponse ProfanityScannerResponse { get; set; } = new();
+        public ValueWrapper<bool> SendInappropriate { get; set; } = new();
         public IEnumerable<Comment> Comments { get; set; }
         public Guid TaskId { get; set; }
 
@@ -61,6 +62,12 @@ namespace Hyperdimension_BlazeSharp.Client.ViewModels
             CommentCreateRequest.TaskId = TaskId;
             ProfanityScannerResponse = await _httpClient.GetJsonAsyncJwtHeader<ProfanityScannerResponse>
                 (_localStorageService, "/Comments/checkcomment?" + CommentCreateRequest.ToQueryString());
+        }
+
+        public async Task CheckSubcomment()
+        {
+            ProfanityScannerResponse = await _httpClient.GetJsonAsyncJwtHeader<ProfanityScannerResponse>
+                (_localStorageService, "/Comments/checksubcomment?" + SubcommentCreateRequest.ToQueryString());
         }
     }
 }
